@@ -41,7 +41,7 @@ class RTM_model extends CI_Model{
 
 	function searchExistRTMInfoByTestCaseId($projectId, $testCaseId){
 		$sqlStr = "SELECT *
-			FROM M_RTM r
+			FROM M_RTM_VERSION r
 			WHERE r.projectId = $projectId
 			AND r.testCaseId= $testCaseId";
 	 	$result = $this->db->query($sqlStr);
@@ -86,40 +86,6 @@ class RTM_model extends CI_Model{
 		return $result->result_array();
 	}	
 
-	function insertRTMInfo($param, $user){
-		$currentDateTime = date('Y-m-d H:i:s');
-		$sqlStr = "INSERT INTO M_RTM (projectId, functionId, testCaseId, effectiveStartDate, effectiveEndDate, activeFlag, createDate, createUser, updateDate, updateUser) 
-		VALUES ($param->projectId, $param->functionId, $param->testCaseId, '$param->effectiveStartDate', NULL, '$param->activeFlag', '$currentDateTime', '$user', '$currentDateTime', '$user') ";
-		$result = $this->db->query($sqlStr);
-		return $result;
-	}
-
-	function insertRTMVersion($param, $user){
-		$currentDateTime = date('Y-m-d H:i:s');
-		$previousVersionId = !empty($param->previousVersionId)? $param->previousVersionId : 'NULL';
-
-		$sqlStr = "INSERT INTO M_RTM_VERSION (projectId, testCaseId,testCaseversion,functionId,functionVersion,effectiveStartDate, effectiveEndDate, 
-		activeFlag, createDate,	createUser, updateDate, updateUser)
-		VALUES ($param->projectId, '$param->testCaseId','$param->testCaseversion','$param->functionId','$param->functionversion', '$param->effectiveStartDate', NULL, 
-		'$param->activeFlag', '$currentDateTime', '$user', '$currentDateTime', '$user')";
-		$result = $this->db->query($sqlStr);
-		return $result;
-	}
-
-	function updateRTMInfo($param){
-		$effectiveEndDate = !empty($param->effectiveEndDate)? "'".$param->effectiveEndDate."'": "NULL";
-		$sqlStr = "UPDATE M_RTM
-			SET effectiveEndDate = $effectiveEndDate,
-				activeFlag = '$param->activeFlag',
-				updateDate = '$param->updateDate',
-				updateUser = '$param->user'
-			WHERE projectId = $param->projectId 
-			AND functionId = $param->functionId 
-			AND testCaseId = $param->testCaseId";
-		$result = $this->db->query($sqlStr);
-		return $this->db->affected_rows();
-	}
-
 	function updateRTMVersion($param){
 		$effectiveEndDate = !empty($param->effectiveEndDate)? "'".$param->effectiveEndDate."'": "NULL";
 
@@ -141,15 +107,6 @@ class RTM_model extends CI_Model{
 			AND rtmVersionId = $param->rtmVersionId";
 		$result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
-	}
-
-	function deleteRTMInfo($param){
-		$sqlStr = "DELETE FROM M_RTM
-			WHERE projectId = {$param->projectId}
-			AND functionId = {$param->fucntionId}
-			AND testCaseId = {$param->testCaseId}";
-		$result = $this->db->query($sqlStr);
-		return $this->db->affected_rows();	
 	}
 
 	function searchExistFunctionalRequirement($fnId, $projectId){
