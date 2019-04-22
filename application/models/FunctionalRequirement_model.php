@@ -12,7 +12,7 @@ class FunctionalRequirement_model extends CI_Model {
 		}
 		
 		if(isset($param->status) && ("2" != $param->status)){
-			$where[] = "FRV.activeFlag = '".$param->status."'";
+			$where[] = "FRH.activeFlag = '".$param->status."'";
 		}
 
 		if(isset($param->functionId) && !empty($param->functionId)){
@@ -20,22 +20,20 @@ class FunctionalRequirement_model extends CI_Model {
 		}
 
 		if(isset($param->functionVersion) && !empty($param->functionVersion)){
-			$where[] = "FRV.functionVersion = ".$param->functionVersion;
+			$where[] = "FRH.functionVersion = ".$param->functionVersion;
 		}
 		
 		$where_clause = implode(' AND ', $where);
 		$queryStr = "SELECT 
 				FRH.functionId, 
 				FRH.functionNo, 
-				CAST(FRH.functionDescription AS VARBINARY(MAX)) as fnDesc, 
-				FRV.functionVersion, 
-				FRV.activeFlag as functionStatus,
-				CONVERT(nvarchar, FRV.effectiveStartDate , 120) as effectiveStartDate
+				FRH.functionDescription as fnDesc, 
+				FRH.functionVersion, 
+				FRH.activeFlag as functionStatus,
+				CONVERT(FRH.createDate , CHAR(120)) as effectiveStartDate
 			FROM M_FN_REQ_HEADER FRH 
-			INNER JOIN M_FN_REQ_DETAIL FRV 
-			ON FRH.functionId = FRV.functionId 
 			WHERE $where_clause 
-			ORDER BY FRH.functionNo, FRV.functionVersion";
+			ORDER BY FRH.functionNo, FRH.functionVersion";
 			//echo $queryStr;
 		$result = $this->db->query($queryStr);
 		return $result->result_array();
@@ -211,7 +209,7 @@ class FunctionalRequirement_model extends CI_Model {
 				db.schemaVersionId,
 				v.typeData,
 				v.dataId,
-				V.dataName,
+				v.dataName,
 				v.refTableName,
 				v.refColumnName,
 				v.dataType,
@@ -239,8 +237,7 @@ class FunctionalRequirement_model extends CI_Model {
 				v.functionVersion,
 				NULL schemaVersionId,
 				v.typeData,
-				v.dataId,
-				V.dataName,
+				v.dataId,v.dataName,
 				v.refTableName,
 				v.refColumnName,
 				v.dataType,
@@ -262,7 +259,7 @@ class FunctionalRequirement_model extends CI_Model {
 		ON v.refTableName = db.tableName
 		AND v.refColumnName = db.columnName		
 		WHERE $where_clause
-		ORDER BY v.dataId";
+		ORDER BY dataId";
 
 			//var_dump($queryStr);
 		$result = $this->db->query($queryStr);

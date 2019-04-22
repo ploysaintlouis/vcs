@@ -74,8 +74,8 @@ $active_group = 'default';
 $query_builder = TRUE;
 
 $db['default'] = array(
-	//'dsn'	=> 'Driver={SQL Server Native Client 11.0};server=107-NANNAPHAT\SQL2018;Database=test',
-	//'hostname' => '107-NANNAPHAT\SQL2018',
+	/*'dsn'	=> 'Driver={SQL Server Native Client 11.0};server=107-NANNAPHAT\SQL2018;Database=test',
+	'hostname' => '107-NANNAPHAT\SQL2018',
 
 	'dsn'	=> 'Driver={SQL Server Native Client 11.0};server=DESKTOP-71LOP0E\SQLEXPRESS;Database=test',
 	'hostname' => 'DESKTOP-71LOP0E\SQLEXPRESS',
@@ -83,7 +83,14 @@ $db['default'] = array(
 	'username' => 'sa',
 	'password' => 'password',	
 	'database' => 'test',
-	'dbdriver' => 'odbc',
+	'dbdriver' => 'odbc',*/
+	'dsn'	=> '',
+	'hostname' => 'localhost',
+	'username' => 'root',
+	'password' => '',
+	'database' => 'test',
+	'dbdriver' => 'mysqli',
+
 	'dbprefix' => '',
 	'pconnect' => FALSE,
 	'db_debug' => (ENVIRONMENT !== 'production'),

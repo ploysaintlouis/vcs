@@ -92,20 +92,20 @@ class ChangeManagement_model extends CI_Model{
 
 	function searchChangeRequestList(){
 		$sqlStr = "SELECT 
-				top 10
+				
 				p.projectName, 
 				p.projectNameAlias, 
 				i.changeRequestNo,
 				i.changeStatus, 
 				i.changeUserId,
-				CONVERT(nvarchar, i.changeDate, 120) as changeDate,
-				CONCAT(u.firstname, '   ', u.lastname) as changeUser
+				CONVERT(i.changeDate,CHAR) AS changeDate,
+				CONCAT(u.Firstname,' ',u.lastname) AS changeUser
 			FROM T_CHANGE_REQUEST_HEADER i
 			INNER JOIN M_PROJECT p
 			ON i.projectId = p.projectId
 			INNER JOIN M_USERS u
 			ON i.changeUserId = u.userId
-			ORDER BY i.createDate desc";
+			ORDER BY i.createDate desc LIMIT 0,10";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}

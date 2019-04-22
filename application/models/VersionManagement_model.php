@@ -322,14 +322,9 @@ class VersionManagement_model extends CI_Model{
 	}
 
 	public function searchRelatedRTMVersion($projectId){
-		/*$sqlStr = "SELECT * 
-			FROM M_RTM_VERSION 
-			WHERE projectId = $projectId 
-			ORDER BY rtmVersionNumber"; */
 		  $sqlStr = "SELECT * 
-			FROM M_RTM a,M_RTM_VERSION b
-			where a.projectId = $projectId 
-			AND a.projectId = b.projectId";
+			FROM M_RTM_VERSION a
+			where a.projectId = $projectId";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -337,7 +332,7 @@ class VersionManagement_model extends CI_Model{
 
 	public function searchRTMDetailByVersion($param){
 		$sqlStr = "SELECT r.*, fh.functionNo, th.testCaseNo
-			FROM M_RTM r
+			FROM M_RTM_VERSION r
 			INNER JOIN M_FN_REQ_HEADER fh
 			ON r.functionId = fh.functionId
 			INNER JOIN M_TESTCASE_HEADER th
