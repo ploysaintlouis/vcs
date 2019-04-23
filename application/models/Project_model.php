@@ -78,7 +78,7 @@ class Project_model extends CI_Model {
 
 	function searchCountAllProjects(){
 		$result = $this->db->query("
-			SELECT count(*) as counts FROM M_PROJECT WHERE activeFlag = '1'");
+			SELECT count(*) as counts FROM m_project WHERE activeFlag = '1'");
 		return $result->row();
 	}
 
