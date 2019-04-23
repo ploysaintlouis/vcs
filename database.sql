@@ -26,7 +26,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `m_database_schema_info`
 --
 
-CREATE TABLE `m_database_schema_info` (
+CREATE TABLE `M_DATABASE_SCHEMA_INFO` (
   `projectId` int(11) NOT NULL,
   `tableName` char(50) NOT NULL,
   `columnName` char(50) NOT NULL,
@@ -46,7 +46,7 @@ CREATE TABLE `m_database_schema_info` (
 -- Dumping data for table `m_database_schema_info`
 --
 
-INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `schemaVersionId`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`) VALUES
+INSERT INTO `M_DATABASE_SCHEMA_INFO` (`projectId`, `tableName`, `columnName`, `schemaVersionId`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`) VALUES
 (2, 'PRODUCTS', 'PRODUCT_ID', 25, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
 (2, 'PRODUCTS', 'PRODUCT_NAME', 26, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL),
 (2, 'PRODUCTS', 'CATEGORY_ID', 27, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
@@ -78,7 +78,7 @@ INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `s
 -- Table structure for table `m_database_schema_version`
 --
 
-CREATE TABLE `m_database_schema_version` (
+CREATE TABLE `M_DATABASE_SCHEMA_VERSION` (
   `projectId` int(11) NOT NULL,
   `schemaVersionId` int(11) NOT NULL,
   `schemaVersionNumber` char(10) DEFAULT NULL,
@@ -97,7 +97,7 @@ CREATE TABLE `m_database_schema_version` (
 -- Dumping data for table `m_database_schema_version`
 --
 
-INSERT INTO `m_database_schema_version` (`projectId`, `schemaVersionId`, `schemaVersionNumber`, `tableName`, `columnName`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
+INSERT INTO `M_DATABASE_SCHEMA_VERSION` (`projectId`, `schemaVersionId`, `schemaVersionNumber`, `tableName`, `columnName`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
 (2, 25, '1', 'PRODUCTS', 'PRODUCT_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
 (2, 26, '1', 'PRODUCTS', 'PRODUCT_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
 (2, 27, '1', 'PRODUCTS', 'CATEGORY_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
@@ -129,7 +129,7 @@ INSERT INTO `m_database_schema_version` (`projectId`, `schemaVersionId`, `schema
 -- Table structure for table `m_fn_req_detail`
 --
 
-CREATE TABLE `m_fn_req_detail` (
+CREATE TABLE `M_FN_REQ_DETAIL` (
   `projectid` int(11) DEFAULT NULL,
   `functionId` int(11) NOT NULL,
   `functionNo` char(10) NOT NULL,
@@ -162,7 +162,7 @@ CREATE TABLE `m_fn_req_detail` (
 -- Dumping data for table `m_fn_req_detail`
 --
 
-INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functionVersion`, `typeData`, `dataId`, `dataName`, `schemaVersionId`, `refTableName`, `refColumnName`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`) VALUES
+INSERT INTO `M_FN_REQ_DETAIL` (`projectid`, `functionId`, `functionNo`, `functionVersion`, `typeData`, `dataId`, `dataName`, `schemaVersionId`, `refTableName`, `refColumnName`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`) VALUES
 (2, 25, 'OS_FR_03', 1, '1', 36, 'dOrder Id', '44', 'ORDER_DETAILS', 'ORDER_ID', 'int', '', '', 'N', 'N', '', 'Y', '', '', '2019-01-07', '2019-04-20', 1, '2019-01-07', 'ploy', '2019-04-20', 'ploy'),
 (2, 25, 'OS_FR_03', 1, '1', 37, 'dProduct Id', '45', 'ORDER_DETAILS', 'PRODUCT_ID', 'int', '', '', 'N', 'N', '', 'Y', '', '', '2019-01-07', '2019-04-20', 1, '2019-01-07', 'ploy', '2019-04-20', 'ploy'),
 (2, 25, 'OS_FR_03', 1, '1', 38, 'dUnit Price', '46', 'ORDER_DETAILS', 'UNIT_PRICE', 'decimal', '18', '6', 'N', 'N', '', 'Y', '', '', '2019-01-07', '2019-04-20', 1, '2019-01-07', 'ploy', '2019-04-20', 'ploy'),
@@ -187,7 +187,7 @@ INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functio
 -- Table structure for table `m_fn_req_header`
 --
 
-CREATE TABLE `m_fn_req_header` (
+CREATE TABLE `M_FN_REQ_HEADER` (
   `functionId` int(11) NOT NULL,
   `functionNo` char(10) NOT NULL,
   `functionversion` char(10) DEFAULT NULL,
@@ -204,7 +204,7 @@ CREATE TABLE `m_fn_req_header` (
 -- Dumping data for table `m_fn_req_header`
 --
 
-INSERT INTO `m_fn_req_header` (`functionId`, `functionNo`, `functionversion`, `functionDescription`, `createDate`, `createUser`, `updateDate`, `updateUser`, `projectid`, `activeflag`) VALUES
+INSERT INTO `M_FN_REQ_HEADER` (`functionId`, `functionNo`, `functionversion`, `functionDescription`, `createDate`, `createUser`, `updateDate`, `updateUser`, `projectid`, `activeflag`) VALUES
 (25, 'OS_FR_03', '1', 'Create Order List', '2019-01-07', 'ploy', '2019-04-20', 'ploy', 2, 1),
 (26, 'OS_FR_01', '1', 'Add A New Product Information', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 2, 1),
 (27, 'OS_FR_02', '1', 'Create a New Order', '2019-01-07', 'ploy', '2019-04-15', 'ploy', 2, 1);
@@ -215,7 +215,7 @@ INSERT INTO `m_fn_req_header` (`functionId`, `functionNo`, `functionversion`, `f
 -- Table structure for table `m_miscellaneous`
 --
 
-CREATE TABLE `m_miscellaneous` (
+CREATE TABLE `M_MISCELLANEOUS` (
   `miscData` char(30) NOT NULL,
   `miscValue1` char(20) NOT NULL,
   `miscValue2` char(20) DEFAULT NULL,
@@ -227,7 +227,7 @@ CREATE TABLE `m_miscellaneous` (
 -- Dumping data for table `m_miscellaneous`
 --
 
-INSERT INTO `m_miscellaneous` (`miscData`, `miscValue1`, `miscValue2`, `miscDescription`, `activeFlag`) VALUES
+INSERT INTO `M_MISCELLANEOUS` (`miscData`, `miscValue1`, `miscValue2`, `miscDescription`, `activeFlag`) VALUES
 ('inputDataType', 'CHAR', 'char', '', 1),
 ('inputDatatype', 'VARCHAR', 'varchar', '', 1),
 ('inputDatatype', 'DATE', 'date', '', 1),
@@ -242,7 +242,7 @@ INSERT INTO `m_miscellaneous` (`miscData`, `miscValue1`, `miscValue2`, `miscDesc
 -- Table structure for table `m_project`
 --
 
-CREATE TABLE `m_project` (
+CREATE TABLE `M_PROJECT` (
   `projectId` int(11) NOT NULL,
   `projectName` varchar(50) NOT NULL,
   `projectNameAlias` varchar(50) NOT NULL,
@@ -266,7 +266,7 @@ CREATE TABLE `m_project` (
 -- Dumping data for table `m_project`
 --
 
-INSERT INTO `m_project` (`projectId`, `projectName`, `projectNameAlias`, `effDate`, `endDate`, `customer`, `databaseName`, `hostname`, `port`, `username`, `password`, `startFlag`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`) VALUES
+INSERT INTO `M_PROJECT` (`projectId`, `projectName`, `projectNameAlias`, `effDate`, `endDate`, `customer`, `databaseName`, `hostname`, `port`, `username`, `password`, `startFlag`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`) VALUES
 (1, 'Hospital', 'Hospital', '2018-11-29 00:00:00', '2018-12-28 00:00:00', 'test1', 'Hospital', 'localhost', '81', 'ploy', '1234', 1, 1, '2018-11-29 17:59:26', 'ploy', '2018-11-29 17:59:26', 'ploy'),
 (2, 'products', 'products', '2019-01-06 00:00:00', '2019-03-08 00:00:00', 'test2', 'products', 'localhost:81', '81', 'ploy ploy', '1234', 1, 1, '2019-01-06 18:31:30', 'ploy', '2019-01-06 18:44:52', 'ploy');
 
@@ -276,7 +276,7 @@ INSERT INTO `m_project` (`projectId`, `projectName`, `projectNameAlias`, `effDat
 -- Table structure for table `m_rtm_version`
 --
 
-CREATE TABLE `m_rtm_version` (
+CREATE TABLE `M_RTM_VERSION` (
   `projectId` int(11) NOT NULL,
   `testCaseId` int(11) NOT NULL,
   `testCaseversion` int(11) NOT NULL,
@@ -295,7 +295,7 @@ CREATE TABLE `m_rtm_version` (
 -- Dumping data for table `m_rtm_version`
 --
 
-INSERT INTO `m_rtm_version` (`projectId`, `testCaseId`, `testCaseversion`, `functionId`, `functionVersion`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
+INSERT INTO `M_RTM_VERSION` (`projectId`, `testCaseId`, `testCaseversion`, `functionId`, `functionVersion`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
 (2, 17, 1, 26, 1, '2019-01-08', NULL, '2019-01-08', 'ploy', '2019-01-08', 'ploy', 1),
 (2, 18, 1, 27, 1, '2019-01-08', NULL, '2019-01-08', 'ploy', '2019-01-08', 'ploy', 1),
 (2, 16, 1, 25, 1, '2019-01-08', NULL, '2019-01-08', 'ploy', '2019-01-08', 'ploy', 1);
@@ -306,7 +306,7 @@ INSERT INTO `m_rtm_version` (`projectId`, `testCaseId`, `testCaseversion`, `func
 -- Table structure for table `m_running_ch`
 --
 
-CREATE TABLE `m_running_ch` (
+CREATE TABLE `M_RUNNING_CH` (
   `projectId` int(11) NOT NULL,
   `changeRequestNo` varchar(20) NOT NULL,
   `changeRequestId` int(11) NOT NULL
@@ -316,7 +316,7 @@ CREATE TABLE `m_running_ch` (
 -- Dumping data for table `m_running_ch`
 --
 
-INSERT INTO `m_running_ch` (`projectId`, `changeRequestNo`, `changeRequestId`) VALUES
+INSERT INTO `M_RUNNING_CH` (`projectId`, `changeRequestNo`, `changeRequestId`) VALUES
 (2, 'CH', 1);
 
 -- --------------------------------------------------------
@@ -325,7 +325,7 @@ INSERT INTO `m_running_ch` (`projectId`, `changeRequestNo`, `changeRequestId`) V
 -- Table structure for table `m_running_prefix`
 --
 
-CREATE TABLE `m_running_prefix` (
+CREATE TABLE `M_RUNNING_PREFIX` (
   `prefix` char(20) DEFAULT NULL,
   `affix` char(10) DEFAULT NULL,
   `length` char(10) DEFAULT NULL
@@ -337,7 +337,7 @@ CREATE TABLE `m_running_prefix` (
 -- Table structure for table `m_testcase_detail`
 --
 
-CREATE TABLE `m_testcase_detail` (
+CREATE TABLE `M_TESTCASE_DETAIL` (
   `projectId` int(11) NOT NULL,
   `testCaseId` int(11) NOT NULL,
   `testCaseNo` char(10) NOT NULL,
@@ -360,7 +360,7 @@ CREATE TABLE `m_testcase_detail` (
 -- Dumping data for table `m_testcase_detail`
 --
 
-INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `typeData`, `refdataId`, `refdataName`, `testData`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`, `sequenceNo`) VALUES
+INSERT INTO `M_TESTCASE_DETAIL` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `typeData`, `refdataId`, `refdataName`, `testData`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`, `sequenceNo`) VALUES
 (2, 16, 'OS_TC_03', '1', 1, 36, 'dOrder Id', '34', '2019-01-07', NULL, '1', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 11),
 (2, 16, 'OS_TC_03', '1', 1, 37, 'dProduct Id', '1', '2019-01-07', NULL, '1', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 12),
 (2, 16, 'OS_TC_03', '1', 1, 38, 'dUnit Price', '28900', '2019-01-07', NULL, '1', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 13),
@@ -390,7 +390,7 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 -- Table structure for table `m_testcase_header`
 --
 
-CREATE TABLE `m_testcase_header` (
+CREATE TABLE `M_TESTCASE_HEADER` (
   `projectId` int(11) DEFAULT NULL,
   `testCaseId` int(11) NOT NULL,
   `testCaseNo` char(10) DEFAULT NULL,
@@ -408,7 +408,7 @@ CREATE TABLE `m_testcase_header` (
 -- Dumping data for table `m_testcase_header`
 --
 
-INSERT INTO `m_testcase_header` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `testCaseDescription`, `expectedResult`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeflag`) VALUES
+INSERT INTO `M_TESTCASE_HEADER` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `testCaseDescription`, `expectedResult`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeflag`) VALUES
 (2, 16, 'OS_TC_03', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-04-17', 'ploy', 1),
 (2, 17, 'OS_TC_01', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
 (2, 18, 'OS_TC_02', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1);
@@ -419,7 +419,7 @@ INSERT INTO `m_testcase_header` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 -- Table structure for table `m_users`
 --
 
-CREATE TABLE `m_users` (
+CREATE TABLE `M_USERS` (
   `userId` char(10) NOT NULL,
   `Firstname` char(10) DEFAULT NULL,
   `lastname` char(10) DEFAULT NULL,
@@ -433,7 +433,7 @@ CREATE TABLE `m_users` (
 -- Dumping data for table `m_users`
 --
 
-INSERT INTO `m_users` (`userId`, `Firstname`, `lastname`, `username`, `password`, `status`, `staffflag`) VALUES
+INSERT INTO `M_USERS` (`userId`, `Firstname`, `lastname`, `username`, `password`, `status`, `staffflag`) VALUES
 ('0001', 'ploy', 'ploy', 'ploy', '1234', NULL, 3);
 
 -- --------------------------------------------------------
@@ -442,7 +442,7 @@ INSERT INTO `m_users` (`userId`, `Firstname`, `lastname`, `username`, `password`
 -- Table structure for table `t_change_request_detail`
 --
 
-CREATE TABLE `t_change_request_detail` (
+CREATE TABLE `T_CHANGE_REQUEST_DETAIL` (
   `changeRequestNo` char(10) DEFAULT NULL,
   `sequenceNo` char(10) DEFAULT NULL,
   `changeType` char(10) DEFAULT NULL,
@@ -468,7 +468,7 @@ CREATE TABLE `t_change_request_detail` (
 -- Table structure for table `t_change_request_header`
 --
 
-CREATE TABLE `t_change_request_header` (
+CREATE TABLE `T_CHANGE_REQUEST_HEADER` (
   `projectId` char(10) DEFAULT NULL,
   `changeRequestNo` char(10) DEFAULT NULL,
   `changeUserId` char(10) DEFAULT NULL,
@@ -490,7 +490,7 @@ CREATE TABLE `t_change_request_header` (
 -- Table structure for table `t_temp_change_list`
 --
 
-CREATE TABLE `t_temp_change_list` (
+CREATE TABLE `T_TEMP_CHANGE_LIST` (
   `lineNumber` int(11) NOT NULL,
   `userId` char(20) DEFAULT NULL,
   `functionId` int(11) NOT NULL,
@@ -520,7 +520,7 @@ CREATE TABLE `t_temp_change_list` (
 -- Dumping data for table `t_temp_change_list`
 --
 
-INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
+INSERT INTO `T_TEMP_CHANGE_LIST` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
 (20, '0001', 25, '1', 1, 'dDiscount', 48, NULL, NULL, NULL, 'N', 'N', NULL, NULL, '100', 'ORDER_DETAILS', 'DISCOUNT', 'edit', 'ploy', '2019-04-08', 40, 1, NULL),
 (23, '0001', 27, '1', 1, 'dId', 1, 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL, 'add', 'ploy', '2019-04-13', 53, 1, NULL),
 (24, '0001', 27, '1', 1, 'Ship Address', 43, 'VARCHAR', '50', NULL, 'N', 'N', NULL, NULL, NULL, 'ORDERS', 'SHIP_ADDRESS', 'edit', 'ploy', '2019-04-14', 52, 1, NULL),
