@@ -1336,8 +1336,7 @@ echo $keyInputName;
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 
-		$sqlStr = " INSERT INTO tmp_ch_db
-		SELECT *
+		$sqlStr = " INSERT INTO tmp_ch_db	SELECT *
 		FROM T_TEMP_CHANGE_LIST
 		WHERE functionId = '$param->functionId'
 		AND functionversion ='$param->functionVersion'
