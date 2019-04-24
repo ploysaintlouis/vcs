@@ -24,8 +24,8 @@ SELECT *
 FROM T_TEMP_CHANGE_LIST
 WHERE functionId = '25'
 AND functionversion ='1'
-AND tableName is NOT NULL
-AND columnName is NOT  NULL
+AND tableName is NULL
+AND columnName is  NULL
 
 #============================START FUNCTIONAL REQUIREMENT============================
 CREATE TEMPORARY TABLE tmp_FR_Affected 

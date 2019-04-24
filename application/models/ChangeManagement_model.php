@@ -1328,5 +1328,161 @@ echo $keyInputName;
 	   		return TRUE;
 	    }		
 	}
+	function searchChangeRequestrelateSCHEMA($param){
+
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_ch_db 
+		(SELECT *
+		FROM T_TEMP_CHANGE_LIST
+		WHERE 1=2) ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " INSERT INTO tmp_ch_db
+		SELECT *
+		FROM T_TEMP_CHANGE_LIST
+		WHERE functionId = '$param->functionId'
+		AND functionversion ='$param->functionVersion'
+		AND tableName is NOT NULL
+		AND columnName is NOT  NULL ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " SELECT *
+		FROM tmp_ch_db ";
+
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+	function searchChangeRequestNotrelateSCHEMA($param){
+
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_ch_existdb 
+		(SELECT *
+		FROM T_TEMP_CHANGE_LIST
+		WHERE 1=2) ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " INSERT INTO tmp_ch_existdb
+		SELECT *
+		FROM T_TEMP_CHANGE_LIST
+		WHERE functionId = '$param->functionId'
+		AND functionversion ='$param->functionVersion'
+		AND tableName is NULL
+		AND columnName is  NULL ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " SELECT *
+		FROM tmp_ch_existdb ";
+
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+	function checkChangeRequestrelateSCHEMA($param){
+
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_FRDETAIL_Affected 
+		(SELECT  *,'' FR_NAME
+		FROM tmp_ch_db
+		WHERE 1=2)";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
+		SELECT a.*,b.dataName FR_NAME
+		FROM tmp_ch_db a, M_FN_REQ_DETAIL b
+		WHERE a.confirmflag=1 
+		AND a.tableName=b.refTableName 
+		AND a.columnName = b.refColumnName
+		AND a.functionId = b.functionId
+		AND a.functionVersion = b.functionVersion
+		AND b.activeflag = '1' ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " SELECT *
+		FROM tmp_FRDETAIL_Affected ";
+
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}	
+	function checkChangeRequestrelateSCHEMAOtherFr($param){
+		$sqlStr = "DROP TEMPORARY TABLE  tmp_FRDETAIL_Affected ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_FRDETAIL_Affected 
+		(SELECT  *,'' FR_NAME
+		FROM tmp_ch_db
+		WHERE 1=2)";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+		
+		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
+		SELECT a.*,b.dataName FR_NAME
+		FROM tmp_ch_db a, M_FN_REQ_DETAIL b
+		WHERE a.confirmflag=1 
+		AND a.tableName=b.refTableName 
+		AND a.columnName = b.refColumnName
+		AND a.functionId <> b.functionId
+		AND a.functionVersion <> b.functionVersion
+		AND b.activeflag = '1'";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " SELECT *
+		FROM tmp_FRDETAIL_Affected ";
+
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}	
+	function checkChangeRequestNotRelateSchema($param){
+		
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_Not_Schema
+		(SELECT  *,'' FR_NAME
+		FROM tmp_ch_db
+		WHERE 1=2)";
+		$result = $this->db->query($sqlStr);
+
+		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
+		SELECT a.*,b.dataName FR_NAME
+		FROM tmp_ch_existdb a, M_FN_REQ_DETAIL b
+		WHERE a.confirmflag=1 
+		AND a.dataId = b.dataId";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$sqlStr = " INSERT INTO tmp_Not_Schema
+		SELECT a.*,b.dataName FR_NAME
+		FROM tmp_ch_existdb a, M_FN_REQ_DETAIL b
+		WHERE a.confirmflag=1 
+		AND a.dataId = b.dataId";
+		$result = $this->db->query($sqlStr);
+
+		$sqlStr = " 
+		SELECT a.*,'' FR_NAME
+		FROM tmp_ch_existdb a
+		WHERE a.confirmflag = '1' 
+		AND a.changeType = 'add' 
+		UNION
+		SELECT *
+		FROM tmp_Not_Schema";
+
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}		
+	function checkSchemaAffted($param){
+
+		$sqlStr = " SELECT b.*
+		FROM tmp_ch_db a,M_DATABASE_SCHEMA_INFO b
+		WHERE a.tableName = b.tableName
+		AND a.columnName = b.columnName ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}		
+
+
 }
 ?>

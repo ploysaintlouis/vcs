@@ -1167,7 +1167,7 @@ class ChangeManagement extends CI_Controller{
 
 		return true;
 	}
-
+/*
 	function callChangeAPI($param){
 		$passData = array();
 		$allFRHeader = array();
@@ -1198,7 +1198,7 @@ class ChangeManagement extends CI_Controller{
 				'functionVersion' 	=> $value['functionVersion'], 
 				'functionDesc' 		=> $value['fnDesc']);
 		}
-		$passData['FRHeader'] = $allFRHeader;*/
+		$passData['FRHeader'] = $allFRHeader;
 
 		$criteria = (object) array('projectId' => $param->projectId, 'status' => '1','functionId' => $param->functionId);
 		$frHeaderList = $this->mFR->searchFunctionalRequirementHeaderInfo($criteria);
@@ -1312,7 +1312,47 @@ class ChangeManagement extends CI_Controller{
 
 		//echo '<br><hr><h2>'.$this->postCURL($url, $passData).'</h2><br><hr><br>';
 	}
+*/
+function callChangeAPI($param){
+	//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
+	$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+	foreach ($RelateResultSCHEMA as $value) {
+		//var_dump($value) ;
+	}
+	//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
+	$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+	foreach ($NotRelateResultSCHEMA as $value) {
+		//var_dump($value) ;
+	}
+	#============================START FUNCTIONAL REQUIREMENT============================
+	//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
+	$ListofChangeSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+	foreach ($ListofChangeSchema as $value) {
+		//var_dump($value) ;
+	}
 
+	//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
+	$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
+	foreach ($ListofChangeNotSchema as $value) {
+		//var_dump($value) ;
+	}	
+
+	// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
+	$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+	foreach ($ListofChangeSchemaOthFr as $value) {
+		//var_dump($value) ;
+	}
+	#============================END FUNCTIONAL REQUIREMENT============================
+	#===================================START SCHEMA AFFECTED============================
+	//เก้บ SCHEMA ที่ได้รับผลกระทบ
+	$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
+	foreach ($ListofSchemaAffected as $value) {
+		var_dump($value) ;
+	}
+	#===================================END SCHEMA AFFECTED============================
+	#===================================START TESTCASE AFFECTED============================
+
+}
 	private function openView($data, $view){
 		if('search' == $view){
 			$data['html'] = 'ChangeManagement/changeRequestSearch_view';
