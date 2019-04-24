@@ -92,7 +92,6 @@ class ChangeManagement_model extends CI_Model{
 
 	function searchChangeRequestList(){
 		$sqlStr = "SELECT 
-				
 				p.projectName, 
 				p.projectNameAlias, 
 				i.changeRequestNo,
@@ -1016,7 +1015,7 @@ echo $keyInputName;
 			if(1 != $rowUpdate){
 				$errorFlag = true;
 				$error_message = str_replace("{0}", "RTM", ER_MSG_016);
-				break;
+				//break;
 			}
 
 			//Insert New RTM Version
