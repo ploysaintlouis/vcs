@@ -1347,10 +1347,15 @@ function callChangeAPI($param){
 	//เก้บ SCHEMA ที่ได้รับผลกระทบ
 	$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
 	foreach ($ListofSchemaAffected as $value) {
-		var_dump($value) ;
+		//var_dump($value) ;
 	}
 	#===================================END SCHEMA AFFECTED============================
 	#===================================START TESTCASE AFFECTED============================
+	$ListofTCAffected= $this->mChange->chaeckTestCaseAffected($param);
+	foreach ($ListofTCAffected as $value) {
+		var_dump($value) ;
+	}
+	#===================================TEST CASE AFFECTED============================
 
 }
 	private function openView($data, $view){

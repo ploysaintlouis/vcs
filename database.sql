@@ -40,7 +40,7 @@ CREATE TABLE `M_DATABASE_SCHEMA_INFO` (
   `constraintNull` char(1) DEFAULT NULL,
   `constraintMinValue` char(10) DEFAULT NULL,
   `constraintMaxValue` char(10) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  ) ENGINE=InnoDB DEFAULT CHARSET=latin1,;
 
 --
 -- Dumping data for table `m_database_schema_info`
@@ -155,7 +155,11 @@ CREATE TABLE `M_FN_REQ_DETAIL` (
   `createDate` date NOT NULL,
   `createUser` char(10) NOT NULL,
   `updateDate` date DEFAULT NULL,
-  `updateUser` char(10) DEFAULT NULL
+  `updateUser` char(10) DEFAULT NULL,
+     PRIMARY KEY (projectId),
+     PRIMARY KEY (functionId),
+     PRIMARY KEY (functionVersion),
+
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -188,7 +192,7 @@ INSERT INTO `M_FN_REQ_DETAIL` (`projectid`, `functionId`, `functionNo`, `functio
 --
 
 CREATE TABLE `M_FN_REQ_HEADER` (
-  `functionId` int(11) NOT NULL,
+  `functionId` int(11) NOT NULL AUTO_INCREMENT,
   `functionNo` char(10) NOT NULL,
   `functionversion` char(10) DEFAULT NULL,
   `functionDescription` char(50) NOT NULL,
@@ -243,7 +247,7 @@ INSERT INTO `M_MISCELLANEOUS` (`miscData`, `miscValue1`, `miscValue2`, `miscDesc
 --
 
 CREATE TABLE `M_PROJECT` (
-  `projectId` int(11) NOT NULL,
+  `projectId` int(11) NOT NULL AUTO_INCREMENT,
   `projectName` varchar(50) NOT NULL,
   `projectNameAlias` varchar(50) NOT NULL,
   `effDate` datetime NOT NULL,
@@ -392,7 +396,7 @@ INSERT INTO `M_TESTCASE_DETAIL` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 
 CREATE TABLE `M_TESTCASE_HEADER` (
   `projectId` int(11) DEFAULT NULL,
-  `testCaseId` int(11) NOT NULL,
+  `testCaseId` int(11) NOT NULL AUTO_INCREMENT,
   `testCaseNo` char(10) DEFAULT NULL,
   `testcaseVersion` char(10) DEFAULT NULL,
   `testCaseDescription` varchar(50) DEFAULT NULL,
