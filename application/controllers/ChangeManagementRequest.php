@@ -101,11 +101,9 @@ class ChangeManagementRequest extends CI_Controller {
     function add_detail(){
 
     }
-    function edit_detail($id){
-   		//$this->loadPage();
-		//echo $keyId;
-        //$this->openView($this->data, 'detail');
+    function edit_detail($keyId,$functionVersion){
 		if(null !== $keyId && !empty($keyId)){
+			//echo $keyId;
 			$keyList = explode("%7C", $keyId);
 			//inputid
 			$param = (object) array(
@@ -121,16 +119,15 @@ class ChangeManagementRequest extends CI_Controller {
 		);
 
 		$data = array();
-
 		$ListofEdit = $this->mFR->ListofEditChange($param,$param_new);
 		foreach ($ListofEdit as $value) {
-			var_dump($value) ;
+			//var_dump($value) ;
 		}
-
-        $data["projectId"] = $projectId;
+		//echo $ListofEdit['projectId'];
+        $data["projectId"] = $param->projectId;
 		$data["dataId"] = $param->dataId;
-		$data["functionId"] = $functionId;
-		$data["functionVersion"] = $functionVersion;
+		$data["functionId"] = $param->functionId;
+		$data["functionVersion"] = $param_new->functionVersion;
 		$data["functionNo"] = $value['functionNo'];
 		$data["typeData"] = $value['typeData'];
 		$data["dataName"] = $value['dataName'];
@@ -143,64 +140,168 @@ class ChangeManagementRequest extends CI_Controller {
 		$data["constraintMinValue"] = $value['constraintMinValue'];
 		$data["constraintMaxValue"] = $value['constraintMaxValue'];
 		$data["schemaVersionId"] = $value['schemaVersionId'];
+		$data["refTableName"] = $value['refTableName'];
+		$data["refColumnName"] = $value['refColumnName'];
 
-        //echo json_encode($data);
-    
-        $this->load->view('ChangeManagement/popup/edit',$data);
+		$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
+		foreach ($dataTypeCombo as $value) {
+			//var_dump($value) ;
+		}
+		
+		$this->load->view('ChangeManagement/popup/edit',$data);
+		$this->load->view('ChangeManagement/popup/edit',$dataTypeCombo);
     }
 	
-function callChangeAPI($param){//แยก รายการ change 
+	function bind_data_title(){
+		$data = array();
+		$data['change_title'] = array();
+		/// *** call model and bind data here.
+
+		$data['change_title']['FR_Request'] = "FR01";
+		$data['change_title']['FR_Description'] = "Can simulate for calculate value stock";
+		$data['change_title']['FR_Version'] = "V.1";
+		return $data;
+	}
+	function bind_data_change_list(){
+		$data = array();
+		$data['change_list'] = array();
+		/// *** call model and bind data here.
+		$row = array();
+		for($i=1;$i<5;$i++){
+			$row["no"] = $i;
+			$row["type"]= "input";
+			$row["name"]= $i%3 == 0 ? "Stock" : "Unit";
+			$row["data_type"]= "decimal";
+			$row["data_length"]= "20";
+			$row["scale"] ="";
+			$row["default"]="";
+			$row["isNotNull"]= false;
+			$row["uniq"]="";
+			$row["min"] = "10";
+			$row["max"] = "9999";
+			$row["table_name"]="";
+			$row["field_name"]="";
+			$row["change_type"]= $i%3 == 0 ? "Add" : "Edit";
+
+			array_push($data['change_list'],$row);
+		}
 	
-	//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
-	$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-	foreach ($RelateResultSCHEMA as $value) {
-		//var_dump($value) ;
+		return $data;
 	}
-	//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
-	$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
-	foreach ($NotRelateResultSCHEMA as $value) {
-		//var_dump($value) ;
+	function bind_data_aff_testcase(){
+		$data = array();
+		$data['aff_testcase_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		for($i=1;$i<3;$i++){
+			$row["no"] = $i;
+			$row["test_no"]= "Test Case 01";
+			$row["change_type"]= "Edit";
+			$row["version"]="V.2";
+
+			array_push($data['aff_testcase_list'],$row);
+		}
+		return $data;
 	}
-	$this->callImpactFunction($param);
-}
-	#======START FUNCTIONAL REQUIREMENT=======
-function callImpactFunction($param){
-	//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
-	$ListofChangeSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-	foreach ($ListofChangeSchema as $value) {
-		//var_dump($value) ;
+	function bind_data_aff_schema(){
+		$data = array();
+		$data['aff_schema_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		for($i=1;$i<3;$i++){
+			$row["no"] = $i;
+			$row["table_name"]= "Stock";
+			$row["column_name"]= "StockName";
+			$row["change_type"]= "Edit";
+			$row["version"]="V.1";
+
+			array_push($data['aff_schema_list'],$row);
+		}
+		return $data;
 	}
 
-	//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
-	$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
-	foreach ($ListofChangeNotSchema as $value) {
-		//var_dump($value) ;
-	}	
 
-	// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
-	$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
-	foreach ($ListofChangeSchemaOthFr as $value) {
-		//var_dump($value) ;
-	}
-	$this->callImpactTestCase($param,$ListofChangeSchemaOthFr);
-}
+	function view_change_result($projectId){
+		//see this function to bind load data to template view
+		//url -> ChangeManagementRequest/view_change_result/{projectId}
+		$dataForPage = array();
 
-	#========START TESTCASE AFFECTED====
-function callImpactTestCase($param,$ListofChangeSchemaOthFr){
-	$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
-	foreach ($ListofTCAffected as $value) {
-		//var_dump($value) ;
-	}
-	$this->callImpactSchema($param);
-}
-	#========START SCHEMA AFFECTED======
-function callImpactSchema($param){
-	//เก้บ SCHEMA ที่ได้รับผลกระทบ
-	$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
-	foreach ($ListofSchemaAffected as $value) {
-		var_dump($value) ;
-	}
-}
+		//for use query something and send to page
+		$dataForPage["projectId"] = $projectId;
 
+		//bind data for mockup 
+		//see in function parameter relate field in all view
+		$title = $this->bind_data_title();
+		$chglist = $this->bind_data_change_list();
+		$affSchemalist = $this->bind_data_aff_schema();
+		$affTestCaseList = $this->bind_data_aff_testcase();
+		
+		//send to page result/index 
+		$dataForPage["title_panel"]= $title;
+		$dataForPage["change_panel"]=$chglist;
+		$dataForPage["aff_schema_panel"]=$affSchemalist;
+		$dataForPage["aff_testcase_panel"] = $affTestCaseList;
+
+		//template/header,template/body_javascript,template/footer ไม่จำเป็นต้องโหลดซ้ำ ถ้าหน้า อื่นโหลดมาให้แล้ว
+		$this->load->view('template/header');
+		$this->load->view('template/body_javascript');
+		$this->load->view('ChangeManagement/results/index',$dataForPage);
+		$this->load->view('template/footer');
+	}
+	
+	
+	function callChangeAPI($param){//แยก รายการ change 
+	
+		//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
+		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		foreach ($RelateResultSCHEMA as $value) {
+			//var_dump($value) ;
+		}
+		//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
+		$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+		foreach ($NotRelateResultSCHEMA as $value) {
+			//var_dump($value) ;
+		}
+		$this->callImpactFunction($param);
+	}
+		#======START FUNCTIONAL REQUIREMENT=======
+	function callImpactFunction($param){
+		//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
+		$ListofChangeSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+		foreach ($ListofChangeSchema as $value) {
+			//var_dump($value) ;
+		}
+	
+		//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
+		$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
+		foreach ($ListofChangeNotSchema as $value) {
+			//var_dump($value) ;
+		}	
+	
+		// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
+		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		foreach ($ListofChangeSchemaOthFr as $value) {
+			//var_dump($value) ;
+		}
+		$this->callImpactTestCase($param,$ListofChangeSchemaOthFr);
+	}
+	
+		#========START TESTCASE AFFECTED====
+	function callImpactTestCase($param,$ListofChangeSchemaOthFr){
+		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
+		foreach ($ListofTCAffected as $value) {
+			//var_dump($value) ;
+		}
+		$this->callImpactSchema($param);
+	}
+		#========START SCHEMA AFFECTED======
+	function callImpactSchema($param){
+		//เก้บ SCHEMA ที่ได้รับผลกระทบ
+		$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
+		foreach ($ListofSchemaAffected as $value) {
+			var_dump($value) ;
+		}
+	}
+		
 }
 	
