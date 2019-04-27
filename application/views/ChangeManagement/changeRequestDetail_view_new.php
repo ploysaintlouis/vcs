@@ -142,9 +142,16 @@
 	                						</tr>
 											<script type="text/javascript">
 												$(function() {
+													
+
 													$("button[name*='edit']").bind( "click", function() {
+														
 														var id = $(this).prop("id");
-														var url = baseUrl + "index.php/ChangeManagementRequest/edit_detail/"+id;
+														var projectId = $('#projectId').val();
+														var functionId = $('#functionId').val();
+														var functionVersion = $('#functionVersion').val();
+														//var tr = $(this).parent().parent().html());
+														var url = baseUrl + "index.php/ChangeManagement/edit_detail/"+id+"/"+projectId+"/"+functionId+"/"+functionVersion;
 														$.ajax({url: url, 
                                                         success: function(result){
 															$("#loadPopup").html(result);

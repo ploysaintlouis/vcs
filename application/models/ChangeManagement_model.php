@@ -751,20 +751,22 @@ echo $sqlStr;
 
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_FRDETAIL_Affected 
 		(SELECT  *,'' FR_NAME
-		FROM tmp_ch_db
+		FROM T_TEMP_CHANGE_LIST
 		WHERE 1=2)";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 
 		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
 		SELECT a.*,b.dataName FR_NAME
-		FROM tmp_ch_db a, M_FN_REQ_DETAIL b
+		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
 		WHERE a.confirmflag=1 
 		AND a.tableName=b.refTableName 
 		AND a.columnName = b.refColumnName
 		AND a.functionId = b.functionId
 		AND a.functionVersion = b.functionVersion
-		AND b.activeflag = '1' ";
+		AND b.activeflag = '1' 
+		AND a.functionId = '$param->functionId'
+		AND a.functionVersion = '$param->functionVersion' ";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 
@@ -775,88 +777,93 @@ echo $sqlStr;
 		return $result->result_array();
 	}	
 	function checkChangeRequestrelateSCHEMAOtherFr($param){
-		$sqlStr = "DROP TEMPORARY TABLE  tmp_FRDETAIL_Affected ";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
-
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_FRDETAIL_Affected 
-		(SELECT  *,'' FR_NAME
-		FROM tmp_ch_db
-		WHERE 1=2)";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
 		
-		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
-		SELECT a.*,b.dataName FR_NAME
-		FROM tmp_ch_db a, M_FN_REQ_DETAIL b
-		WHERE a.confirmflag=1 
+		$sqlStr = " SELECT a.*,b.dataName FR_NAME
+		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
+		WHERE a.confirmflag = 1 
 		AND a.tableName=b.refTableName 
 		AND a.columnName = b.refColumnName
+		AND a.functionId = '$param->functionId'
+		AND a.functionVersion ='$param->functionVersion'
 		AND a.functionId <> b.functionId
 		AND a.functionVersion <> b.functionVersion
 		AND b.activeflag = '1'";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
-
-		$sqlStr = " SELECT *
-		FROM tmp_FRDETAIL_Affected ";
-
-		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}	
 	function checkChangeRequestNotRelateSchema($param){
-		
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_Not_Schema
+
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_existdb 
 		(SELECT  *,'' FR_NAME
-		FROM tmp_ch_db
+		FROM T_TEMP_CHANGE_LIST
 		WHERE 1=2)";
 		$result = $this->db->query($sqlStr);
 
-		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
+		$sqlStr = " INSERT INTO tmp_existdb
 		SELECT a.*,b.dataName FR_NAME
-		FROM tmp_ch_existdb a, M_FN_REQ_DETAIL b
+		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
 		WHERE a.confirmflag=1 
-		AND a.dataId = b.dataId";
+		AND a.dataId = b.dataId
+		AND a.functionId = b.functionId
+		AND a.functionversion = b.functionversion
+		AND a.functionId = '$param->functionId'
+		AND a.functionversion ='$param->functionVersion'
+		AND a.tableName is NULL
+		AND a.columnName is  NULL ";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 
-		$sqlStr = " INSERT INTO tmp_Not_Schema
-		SELECT a.*,b.dataName FR_NAME
-		FROM tmp_ch_existdb a, M_FN_REQ_DETAIL b
-		WHERE a.confirmflag=1 
-		AND a.dataId = b.dataId";
-		$result = $this->db->query($sqlStr);
-
-		$sqlStr = " 
-		SELECT a.*,'' FR_NAME
-		FROM tmp_ch_existdb a
+		$sqlStr = " SELECT a.*,'' FR_NAME
+		FROM T_TEMP_CHANGE_LIST a
 		WHERE a.confirmflag = '1' 
 		AND a.changeType = 'add' 
+		AND a.functionId = '$param->functionId'
+		AND a.functionversion ='$param->functionVersion'
+		AND a.columnName is  NULL
 		UNION
 		SELECT *
-		FROM tmp_Not_Schema";
-
+		FROM tmp_existdb";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}		
 	function checkSchemaAffted($param){
 
-		$sqlStr = " SELECT b.*
-		FROM tmp_ch_db a,M_DATABASE_SCHEMA_INFO b
+		$sqlStr = " SELECT a.functionId,a.functionversion,b.*
+		FROM T_TEMP_CHANGE_LIST a,M_DATABASE_SCHEMA_INFO b
 		WHERE a.tableName = b.tableName
-		AND a.columnName = b.columnName ";
+		AND a.columnName = b.columnName 
+		AND a.functionId = '$param->functionId'
+		AND a.functionversion ='$param->functionVersion'
+		AND a.tableName is NOT NULL
+		AND a.columnName is NOT NULL";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
-
-		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}		
-	function chaeckTestCaseAffected($param){
-		$sqlStr = "INSERT INTO tmp_FR_Affected
-		SELECT DISTINCT functionId,functionVersion
-		FROM tmp_FRDETAIL_Affected";
+	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
+		$sqlStr = "CREATE TEMPORARY TABLE tmp_FR_Affected
+		(SELECT  functionId,functionVersion
+		FROM T_TEMP_CHANGE_LIST
+		WHERE 1=2)";
 		$result = $this->db->query($sqlStr);
 
+		$sqlStr = "INSERT INTO tmp_FR_Affected
+		SELECT DISTINCT functionId,functionVersion
+		FROM T_TEMP_CHANGE_LIST
+		WHERE functionId = '$param->functionId'
+		AND functionversion ='$param->functionVersion' ";
+		$result = $this->db->query($sqlStr);
+	
+		if(isset($ListofChangeSchemaOthFr->functionId)){
+			$sqlStr = "INSERT INTO tmp_FR_Affected
+			SELECT DISTINCT functionId,functionVersion
+			FROM M_FN_REQ_HEADER
+			WHERE functionId = '$ListofChangeSchemaOthFr->functionId'
+			AND functionversion ='$ListofChangeSchemaOthFr->functionVersion' ";
+			$result = $this->db->query($sqlStr);
+		}
+		
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_RTM
 		(SELECT  testCaseId,testCaseversion,functionId,functionVersion
 		FROM M_RTM_VERSION
@@ -864,10 +871,10 @@ echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 
 		$sqlStr = "INSERT INTO tmp_RTM
-		SELECT a.*    
+		SELECT a.testCaseId,a.testCaseversion,a.functionId,a.functionVersion  
 		FROM M_RTM_VERSION a,tmp_FR_Affected b
 		WHERE a.functionId = b.functionId
-		AND functionVersion = b.functionVersion";
+		AND a.functionVersion = b.functionVersion";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 
@@ -876,7 +883,7 @@ echo $sqlStr;
 		a.refdataName TC_NAME,a.testData,b.dataName CH_NAME,b.changeType,b.newdataType,
 		newDataLength,b.newScaleLength,b.newUnique,newNotNull,
 		newDefaultValue,newMinValue,newMaxValue
-		FROM m_testcase_detail a,T_TEMP_CHANGE_LIST b,tmp_RTM c
+		FROM M_TESTCASE_DETAIL a,T_TEMP_CHANGE_LIST b,tmp_RTM c
 		WHERE a.projectId = '2'
 		AND a.activeflag = '1'
 		AND a.refdataId = b.dataId

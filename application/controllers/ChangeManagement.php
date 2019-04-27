@@ -272,7 +272,8 @@ class ChangeManagement extends CI_Controller{
 		$data['resultDetail'] = $resultList;
 		$data['staffflag'] = $staffflag;
 		$data['inputChangeList'] = $inputChangeList;
-		$this->openView($data, 'detail');
+		//$this->openView($data, 'detail');
+		$this->date = $data;
 	}
 
 	function addFRInputDetail(){
@@ -1313,51 +1314,7 @@ class ChangeManagement extends CI_Controller{
 		//echo '<br><hr><h2>'.$this->postCURL($url, $passData).'</h2><br><hr><br>';
 	}
 */
-function callChangeAPI($param){
-	//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
-	$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-	foreach ($RelateResultSCHEMA as $value) {
-		//var_dump($value) ;
-	}
-	//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
-	$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
-	foreach ($NotRelateResultSCHEMA as $value) {
-		//var_dump($value) ;
-	}
-	#============================START FUNCTIONAL REQUIREMENT============================
-	//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
-	$ListofChangeSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-	foreach ($ListofChangeSchema as $value) {
-		//var_dump($value) ;
-	}
 
-	//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
-	$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
-	foreach ($ListofChangeNotSchema as $value) {
-		//var_dump($value) ;
-	}	
-
-	// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
-	$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
-	foreach ($ListofChangeSchemaOthFr as $value) {
-		//var_dump($value) ;
-	}
-	#============================END FUNCTIONAL REQUIREMENT============================
-	#===================================START SCHEMA AFFECTED============================
-	//เก้บ SCHEMA ที่ได้รับผลกระทบ
-	$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
-	foreach ($ListofSchemaAffected as $value) {
-		//var_dump($value) ;
-	}
-	#===================================END SCHEMA AFFECTED============================
-	#===================================START TESTCASE AFFECTED============================
-	$ListofTCAffected= $this->mChange->chaeckTestCaseAffected($param);
-	foreach ($ListofTCAffected as $value) {
-		var_dump($value) ;
-	}
-	#===================================TEST CASE AFFECTED============================
-
-}
 	private function openView($data, $view){
 		if('search' == $view){
 			$data['html'] = 'ChangeManagement/changeRequestSearch_view';
@@ -1366,7 +1323,7 @@ function callChangeAPI($param){
 			$data['html'] = 'ChangeManagement/changeRequestResult_view';
 		}
 		else{
-			$data['html'] = 'ChangeManagement/changeRequestDetail_view';
+			$data['html'] = 'ChangeManagement/changeRequestDetail_view_new';
 		}
 		
 		$data['active_title'] = 'ChangeManagement';
@@ -1375,7 +1332,7 @@ function callChangeAPI($param){
 		$this->load->view('template/body', $data);
 		$this->load->view('template/footer');
 	}
-
+	
 	private function writeJsonFile($outputData, $inputData, $changedFunctionId){
 		try{
 			$datetime = date('YmdHis');

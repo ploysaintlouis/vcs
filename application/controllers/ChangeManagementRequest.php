@@ -102,17 +102,105 @@ class ChangeManagementRequest extends CI_Controller {
 
     }
     function edit_detail($id){
-        //$this->loadPage();
+   		//$this->loadPage();
+		//echo $keyId;
         //$this->openView($this->data, 'detail');
+		if(null !== $keyId && !empty($keyId)){
+			$keyList = explode("%7C", $keyId);
+			//inputid
+			$param = (object) array(
+				'projectId' => $keyList[0], 
+				'dataId' => $keyList[1], 
+				'schemaVersionId' => $keyList[2], 
+				'functionId' => $keyList[3], 
+				'typeData' => $keyList[4]
+			);
+		}		
+		$param_new = (object) array(
+			'functionVersion' => $functionVersion,
+		);
 
-        //$this->load->view('ChangeManagement/popup/edit');
-        $data = array();
-        $data["projectId"] = $id;
-        $data["functionNo"] = "test";
+		$data = array();
+
+		$ListofEdit = $this->mFR->ListofEditChange($param,$param_new);
+		foreach ($ListofEdit as $value) {
+			var_dump($value) ;
+		}
+
+        $data["projectId"] = $projectId;
+		$data["dataId"] = $param->dataId;
+		$data["functionId"] = $functionId;
+		$data["functionVersion"] = $functionVersion;
+		$data["functionNo"] = $value['functionNo'];
+		$data["typeData"] = $value['typeData'];
+		$data["dataName"] = $value['dataName'];
+		$data["dataType"] = $value['dataType'];
+		$data["dataLength"] = $value['dataLength'];
+		$data["decimalPoint"] = $value['decimalPoint'];
+		$data["constraintUnique"] = $value['constraintUnique'];
+		$data["constraintNull"] = $value['constraintNull'];
+		$data["constraintDefault"] = $value['constraintDefault'];
+		$data["constraintMinValue"] = $value['constraintMinValue'];
+		$data["constraintMaxValue"] = $value['constraintMaxValue'];
+		$data["schemaVersionId"] = $value['schemaVersionId'];
+
         //echo json_encode($data);
     
         $this->load->view('ChangeManagement/popup/edit',$data);
     }
-    
+	
+function callChangeAPI($param){//แยก รายการ change 
+	
+	//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
+	$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+	foreach ($RelateResultSCHEMA as $value) {
+		//var_dump($value) ;
+	}
+	//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
+	$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+	foreach ($NotRelateResultSCHEMA as $value) {
+		//var_dump($value) ;
+	}
+	$this->callImpactFunction($param);
+}
+	#======START FUNCTIONAL REQUIREMENT=======
+function callImpactFunction($param){
+	//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
+	$ListofChangeSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+	foreach ($ListofChangeSchema as $value) {
+		//var_dump($value) ;
+	}
+
+	//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
+	$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
+	foreach ($ListofChangeNotSchema as $value) {
+		//var_dump($value) ;
+	}	
+
+	// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
+	$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+	foreach ($ListofChangeSchemaOthFr as $value) {
+		//var_dump($value) ;
+	}
+	$this->callImpactTestCase($param,$ListofChangeSchemaOthFr);
+}
+
+	#========START TESTCASE AFFECTED====
+function callImpactTestCase($param,$ListofChangeSchemaOthFr){
+	$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
+	foreach ($ListofTCAffected as $value) {
+		//var_dump($value) ;
+	}
+	$this->callImpactSchema($param);
+}
+	#========START SCHEMA AFFECTED======
+function callImpactSchema($param){
+	//เก้บ SCHEMA ที่ได้รับผลกระทบ
+	$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
+	foreach ($ListofSchemaAffected as $value) {
+		var_dump($value) ;
+	}
+}
+
 }
 	

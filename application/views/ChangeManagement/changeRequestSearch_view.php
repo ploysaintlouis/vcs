@@ -117,15 +117,15 @@
 	</div>
 	<?php } ?>
 	<script type="text/javascript">
-		function viewFunctionDetail(functionId){
-			var projectId = $('#selectedProjectId').val();
-			window.location  = baseUrl + "index.php/ChangeManagement/viewFunctionDetail/" + projectId + "/" + functionId;
-		}
+	//	function viewFunctionDetail(functionId){
+		//	var projectId = $('#selectedProjectId').val();
+		//	window.location  = baseUrl + "index.php/ChangeManagement/viewFunctionDetail/" + projectId + "/" + functionId;
+		//}
 		
-		// function viewFunctionDetail(functionId){
-		// 	var projectId = $('#selectedProjectId').val();
-		// 	window.location  = baseUrl + "index.php/ChangeManagementRequest/view_detail/" + projectId + "/" + functionId;		
-		// }
+		 function viewFunctionDetail(functionId){
+		 	var projectId = $('#selectedProjectId').val();
+		 	window.location  = baseUrl + "index.php/ChangeManagementRequest/view_detail/" + projectId + "/" + functionId;		
+		 }
 
 	</script>
 </section>

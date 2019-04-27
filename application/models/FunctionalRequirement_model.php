@@ -574,6 +574,85 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 	   		return true;
 	    }
 	}
+	function ListofEditChange($param,$param_new){
+
+			$queryStr = "SELECT	h.projectId,
+			h.functionId,
+			h.functionNo,
+			h.functionDescription,
+			v.functionVersion,
+			db.schemaVersionId,
+			v.typeData,
+			v.dataId,
+			v.dataName,
+			v.refTableName,
+			v.refColumnName,
+			v.dataType,
+			v.dataLength,
+			v.decimalPoint,
+			v.constraintUnique,
+			v.constraintNull,
+			v.constraintDefault,
+			v.constraintMinValue,
+			v.constraintMaxValue
+		FROM M_FN_REQ_HEADER h
+		INNER JOIN M_FN_REQ_DETAIL v
+		ON h.functionId = v.functionId
+		AND h.projectid = v.projectid
+		AND v.activeFlag = '1'
+		INNER JOIN M_DATABASE_SCHEMA_INFO db
+		ON v.refTableName = db.tableName
+		AND v.refColumnName = db.columnName
+		WHERE h.projectId = '$param->projectId'
+		AND h.functionId = '$param->functionId'
+		AND v.functionVersion = '$param_new->functionVersion'
+		AND v.dataId = '$param->dataId'
+		UNION
+		SELECT 	h.projectId,
+			h.functionId,
+			h.functionNo,
+			h.functionDescription,
+			v.functionVersion,
+			NULL schemaVersionId,
+			v.typeData,
+			v.dataId,v.dataName,
+			v.refTableName,
+			v.refColumnName,
+			v.dataType,
+			v.dataLength,
+			v.decimalPoint,
+			v.constraintUnique,
+			v.constraintNull,
+			v.constraintDefault,
+			v.constraintMinValue,
+			v.constraintMaxValue
+		FROM M_FN_REQ_HEADER h
+		INNER JOIN M_FN_REQ_DETAIL v
+		ON h.functionId = v.functionId
+		AND h.projectid = v.projectid
+		AND v.activeFlag = '1'
+		AND v.refTableName =''
+		AND v.refColumnName = ''
+		LEFT JOIN M_DATABASE_SCHEMA_INFO db
+		ON v.refTableName = db.tableName
+		AND v.refColumnName = db.columnName		
+		WHERE h.projectId = '$param->projectId'
+		AND h.functionId = '$param->functionId'
+		AND v.functionVersion = '$param_new->functionVersion'
+		AND v.dataId = '$param->dataId'
+		ORDER BY dataId";
+
+		//var_dump($queryStr);
+		$result = $this->db->query($queryStr);
+		return $result->result_array();
+		}
+/*
+		function searchLatestFunctionalRequirementMaxId(){
+		$query = $this->db->query("SELECT IDENT_CURRENT('M_FN_REQ_DETAIL') as last_id");
+		$resultId = $query->result();
+		return $resultId[0]->last_id;
+		}
+*/
 }
 
 ?>
