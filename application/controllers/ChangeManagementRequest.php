@@ -112,7 +112,104 @@ class ChangeManagementRequest extends CI_Controller {
         //echo json_encode($data);
     
         $this->load->view('ChangeManagement/popup/edit',$data);
-    }
+	}
+	
+	function bind_data_title(){
+		$data = array();
+		$data['change_title'] = array();
+		/// *** call model and bind data here.
+
+		$data['change_title']['FR_Request'] = "FR01";
+		$data['change_title']['FR_Description'] = "Can simulate for calculate value stock";
+		$data['change_title']['FR_Version'] = "V.1";
+		return $data;
+	}
+	function bind_data_change_list(){
+		$data = array();
+		$data['change_list'] = array();
+		/// *** call model and bind data here.
+		$row = array();
+		for($i=1;$i<5;$i++){
+			$row["no"] = $i;
+			$row["type"]= "input";
+			$row["name"]= $i%3 == 0 ? "Stock" : "Unit";
+			$row["data_type"]= "decimal";
+			$row["data_length"]= "20";
+			$row["scale"] ="";
+			$row["default"]="";
+			$row["isNotNull"]= false;
+			$row["uniq"]="";
+			$row["min"] = "10";
+			$row["max"] = "9999";
+			$row["table_name"]="";
+			$row["field_name"]="";
+			$row["change_type"]= $i%3 == 0 ? "Add" : "Edit";
+
+			array_push($data['change_list'],$row);
+		}
+	
+		return $data;
+	}
+	function bind_data_aff_testcase(){
+		$data = array();
+		$data['aff_testcase_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		for($i=1;$i<3;$i++){
+			$row["no"] = $i;
+			$row["test_no"]= "Test Case 01";
+			$row["change_type"]= "Edit";
+			$row["version"]="V.2";
+
+			array_push($data['aff_testcase_list'],$row);
+		}
+		return $data;
+	}
+	function bind_data_aff_schema(){
+		$data = array();
+		$data['aff_schema_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		for($i=1;$i<3;$i++){
+			$row["no"] = $i;
+			$row["table_name"]= "Stock";
+			$row["column_name"]= "StockName";
+			$row["change_type"]= "Edit";
+			$row["version"]="V.1";
+
+			array_push($data['aff_schema_list'],$row);
+		}
+		return $data;
+	}
+
+
+	function view_change_result($projectId){
+		//see this function to bind load data to template view
+		//url -> ChangeManagementRequest/view_change_result/{projectId}
+		$dataForPage = array();
+
+		//for use query something and send to page
+		$dataForPage["projectId"] = $projectId;
+
+		//bind data for mockup 
+		//see in function parameter relate field in all view
+		$title = $this->bind_data_title();
+		$chglist = $this->bind_data_change_list();
+		$affSchemalist = $this->bind_data_aff_schema();
+		$affTestCaseList = $this->bind_data_aff_testcase();
+		
+		//send to page result/index 
+		$dataForPage["title_panel"]= $title;
+		$dataForPage["change_panel"]=$chglist;
+		$dataForPage["aff_schema_panel"]=$affSchemalist;
+		$dataForPage["aff_testcase_panel"] = $affTestCaseList;
+
+		//template/header,template/body_javascript,template/footer ไม่จำเป็นต้องโหลดซ้ำ ถ้าหน้า อื่นโหลดมาให้แล้ว
+		$this->load->view('template/header');
+		$this->load->view('template/body_javascript');
+		$this->load->view('ChangeManagement/results/index',$dataForPage);
+		$this->load->view('template/footer');
+	}
     
 }
 	
