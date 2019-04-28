@@ -25,7 +25,7 @@
 			</div>
 			<?php } ?>
 			
-			<form role="form" id="changeRequestForm" action="<?php echo base_url() ?>index.php/ChangeManagement/doChangeProcess/" method="post" enctype="multipart/form-data">
+			<form role="form" id="changeRequestForm" action="<?php echo base_url() ?>index.php/ChangeManagementRequest/doChangeProcess/" method="post" enctype="multipart/form-data">
 				<?php echo form_hidden($hfield); ?>
 				<div class="box box-primary">
 					<div class="box-header with-border">

@@ -260,7 +260,7 @@ class FunctionalRequirement_model extends CI_Model {
 		AND v.refColumnName = db.columnName		
 		WHERE $where_clause
 		ORDER BY dataId";
-
+//echo $queryStr;
 			//var_dump($queryStr);
 		$result = $this->db->query($queryStr);
 		return $result->result_array();
