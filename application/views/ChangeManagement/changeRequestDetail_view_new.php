@@ -137,7 +137,7 @@
 	                							<th>Column</th>
 	                							<th> 
 	                							<!-- <a href="#"><span class="label label-success">Add new input</span></a> -->
-	                								<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs addInput" >Add new Input/Output</button>
+	                								<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs " >Add new Input/Output</button>
 	                							</th>
 	                						</tr>
 											<script type="text/javascript">
@@ -157,6 +157,47 @@
 															$("#loadPopup").html(result);
                                                             $("#edit_input_modal").modal("show");
 														}});
+													});
+												});
+											</script>
+											<script type="text/javascript">
+												$(function() {
+
+													$("button[name*='addBtn']").bind( "click", function() {
+														
+														var projectId = $('input[name=projectId]').val();
+														var functionId = $('input[name=functionId]').val();
+														var functionVersion = $('input[name=functionVersion]').val();
+														var schemaVersionId = $('input[name=schemaVersionId]').val();
+
+														//var tr = $(this).parent().parent().html());
+														var url = baseUrl + "index.php/ChangeManagementRequest/add_detail/"+projectId+"/"+functionId+"/"+functionVersion+"/"+schemaVersionId;
+														$.ajax({url: url, 
+                                                        success: function(result){
+															$("#loadPopup").html(result);
+															$('#edit_input_modal').modal('show');
+														}});
+													});
+												});
+											</script>
+											<script type="text/javascript">
+												$(function() {
+
+													$("button[name*='delete']").bind( "click", function() {
+														var msg = "Are you sure to delete this functional requirement's input?";
+														if(confirm(msg))
+														{
+															var id = $(this).prop("id");
+															var projectId = $('#projectId').val();
+															var functionId = $('#functionId').val();
+															var functionVersion = $('#functionVersion').val();
+															//var tr = $(this).parent().parent().html());
+															var url = baseUrl + "index.php/ChangeManagementRequest/delete_detail/"+id;
+															$.ajax({url: url, 
+															success: function(result){
+																$("#loadPopup").html(result);
+															}});
+														}
 													});
 												});
 											</script>
@@ -220,7 +261,7 @@
 
 													<input type="hidden" name="projectId" id="projectId" value="<?php echo $value['projectId']; ?>">
                 									<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs">Edit</button> 
-													<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs delete" >Delete</button> <!-- bug ไม่ส่ง keyid บ้างปุ่ม
+													<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> <!-- bug ไม่ส่ง keyid บ้างปุ่ม
 
                 									<!-- <a href="#"><span class="label label-primary">Edit</span></a>
                 									<a href="#"><span class="label label-danger">Delete</span></a> -->

@@ -128,9 +128,91 @@
 							</tr>
 						</table>	
                     </div>
+					<div class="box-body" align="left">
+				 	<button type="submit" name="saveChange" id="saveChange" class="btn btn-primary">
+				 		<i class="fa fa-save"></i> Save
+				 	</button>
+			 	</div>
                 </form>
 		</div>
 	</div>
-<script>
+	<script>
+			
+			$('#changeInput_form').on("submit", function(event){
+				event.preventDefault(); 
+				
+				var newUnique = ($('#inputUnique').is(":checked"))? "Y": "N";
+				var newNotNull = ($('#inputNotNull').is(":checked"))? "Y": "N";
+				var changeType = $('#changeType').val();
 
-</script>
+				if('edit' == changeType){
+					if($('#inputDataType').val() == "" 
+						&& $('#inputDataLength').val() == "" 
+						&& $('#inputScale').val() == "" 
+						&& newUnique == $('#oldUniqueValue').val() 
+						&& newNotNull == $('#oldNotNullValue').val() 
+						&& $('#inputDefault').val() == "" 
+						&& $('#inputMinValue').val() == "" 
+						&& $('#inputMaxValue').val() == ""){
+						alert("Please enter at least one field.");
+						return false;
+					}
+				}else{
+					if($('#inputDataType').val() == "" 
+						|| $('#dataName').val() == "" 
+					){
+						alert("Please enter all required fields.");
+						return false;
+					}
+				}
+
+				//Pass Validation
+				$.ajax({
+					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_edit/",
+					
+					method: "POST",
+					data: $("#changeInput_form").serialize(),
+					success: function(data){
+						if(null != data){
+							//alert(data);
+							var result = data.split("|");
+							if("error" == result[0]){
+								alert(result[1]);
+								return false;
+							}else{
+								//alert(result[1]);
+								$('#changeInput_form')[0].reset();  
+     							$('#edit_input_modal').modal('hide');
+     							$('#inputChangeListTbl').html(data);  
+							}
+						}else{
+							
+							alert("There is a problem when save data, Please try to save again.");
+							return false; 
+						}
+					},
+					error: function(){ 
+						alert("There is a problem when save data, Please try to save again.");
+				/*alert($('#changeProjectId').val());
+						alert($('#changeType').val());
+						alert($('#user').val());
+
+						alert($('#userId').val());
+						alert($('#oldDataType').val());
+						alert($('#oldScale').val());
+						alert($('#oldDefaultValue').val());
+						alert($('#oldMin').val());
+						alert($('#oldMax').val());
+						alert($('#oldNotNullValue').val());
+						alert($('#oldUniqueValue').val());
+						alert($('#inputTableName').val());
+						alert($('#inputColumnName').val());*/
+					return false; 
+					//return true;
+					}
+				});
+			});
+
+	</script>
+	
+	

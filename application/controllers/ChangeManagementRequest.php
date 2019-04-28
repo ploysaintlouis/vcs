@@ -98,9 +98,36 @@ class ChangeManagementRequest extends CI_Controller {
         $this->loadPage();
         $this->openView($this->data, 'detail');
     }
-    function add_detail(){
+    function add_detail($projectId,$functionId,$functionVersion,$schemaVersionId){
 
-    }
+			$param = (object) array(
+				'projectId' => $projectId, 
+				'functionId' => $functionId, 
+				'functionVersion' => $functionVersion,
+				'schemaVersionId' => $schemaVersionId
+			);
+
+			//echo $functionVersion;
+			$fucntionHeader = $this->mFR->searchFunctionalRequirementHeaderInfo($param);
+			foreach ($fucntionHeader as $value) {
+					$functionNo = $value['functionNo'];
+			}
+			//echo $functionNo;
+			$data = array();
+			$data['projectId'] = $projectId;
+			$data['functionNo'] = $functionNo;
+			$data['functionId'] = $functionId;
+			$data['functionVersion'] = $functionVersion;
+			$data['schemaVersionId'] = $schemaVersionId;
+
+			$this->load->view('ChangeManagement/popup/add',$data);
+			$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
+			foreach ($dataTypeCombo as $value) {
+				$this->load->view('ChangeManagement/popup/add',$dataTypeCombo);
+			}
+
+		}
+		
     function edit_detail($keyId,$functionVersion){
 		if(null !== $keyId && !empty($keyId)){
 			//echo $keyId;
@@ -151,7 +178,38 @@ class ChangeManagementRequest extends CI_Controller {
 		$this->load->view('ChangeManagement/popup/edit',$data);
 		$this->load->view('ChangeManagement/popup/edit',$dataTypeCombo);
     }
-	
+    function delete_detail($id){
+		$data = array();
+		$data['keyid'] = $id;
+		echo $id;
+		if(null !== $id && !empty($id)){
+			//echo $keyId;
+			$keyList = explode("%7C", $id);
+			//inputid
+			$param = (object) array(
+				'projectId' => $keyList[0], 
+				'dataId' => $keyList[1], 
+				'schemaVersionId' => $keyList[2], 
+				'functionId' => $keyList[3], 
+				'typeData' => $keyList[4]
+			);
+		}	
+		$userId = $this->session->userdata('userId');
+		$user = $this->session->userdata('username');
+
+		//echo $param->functionId;
+		$dataDelete = $this->mMisc->searchMiscellaneous('','');
+		foreach ($dataDelete as $value) {
+			var_dump($value) ;
+		}
+    }	
+
+	function saveTempFRInput_edit($dataName){
+		$output = '';
+		$error_message = '';
+		echo 'HEOOL"';
+	}
+
 	function bind_data_title(){
 		$data = array();
 		$data['change_title'] = array();
