@@ -162,12 +162,16 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['change_title']['FR_Version'] = "V.1";
 		return $data;
 	}
-	function bind_data_change_list(){
+	function bind_data_change_list($param){
 		$data = array();
 		$data['change_list'] = array();
 		/// *** call model and bind data here.
+		$schemaRelate = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		
 		$row = array();
-		for($i=1;$i<5;$i++){
+		for($i=1;$i<sizeof($schemaRelate);$i++){
+			$val = $schemaRelate[$i];
+
 			$row["no"] = $i;
 			$row["type"]= "input";
 			$row["name"]= $i%3 == 0 ? "Stock" : "Unit";
@@ -222,6 +226,18 @@ class ChangeManagementRequest extends CI_Controller {
 
 
 	function view_change_result($projectId){
+		$param = (object) array(
+			'projectId' 	  => 2,//$projectId,
+			'functionId' 	  => 25,//$functionId,
+			'functionNo' 	  => '',//$functionNo,
+			'functionVersion' => 1,//$functionVersion,
+			'changeRequestNo' => 'CH',//'',
+			'userId'		  => '0001',//$userId,
+			'type' 	 		  => 1 //1 = Change, 2 = Cancel
+			);
+		//$changeResult = $this->callChangeAPI($param);
+
+
 		//see this function to bind load data to template view
 		//url -> ChangeManagementRequest/view_change_result/{projectId}
 		$dataForPage = array();
@@ -232,7 +248,7 @@ class ChangeManagementRequest extends CI_Controller {
 		//bind data for mockup 
 		//see in function parameter relate field in all view
 		$title = $this->bind_data_title();
-		$chglist = $this->bind_data_change_list();
+		$chglist = $this->bind_data_change_list($param);
 		$affSchemalist = $this->bind_data_aff_schema();
 		$affTestCaseList = $this->bind_data_aff_testcase();
 		
@@ -299,7 +315,7 @@ class ChangeManagementRequest extends CI_Controller {
 		//เก้บ SCHEMA ที่ได้รับผลกระทบ
 		$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
 		foreach ($ListofSchemaAffected as $value) {
-			var_dump($value) ;
+			//var_dump($value) ;
 		}
 	}
 		
