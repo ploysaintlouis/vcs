@@ -700,14 +700,7 @@ echo $sqlStr;
 	}
 	function searchChangeRequestrelateSCHEMA($param){
 
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_ch_db 
-		(SELECT *
-		FROM T_TEMP_CHANGE_LIST
-		WHERE 1=2) ";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
-
-		$sqlStr = " INSERT INTO tmp_ch_db	SELECT *
+		$sqlStr = " SELECT *
 		FROM T_TEMP_CHANGE_LIST
 		WHERE functionId = '$param->functionId'
 		AND functionversion ='$param->functionVersion'
@@ -715,34 +708,16 @@ echo $sqlStr;
 		AND columnName is NOT  NULL ";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
-
-		$sqlStr = " SELECT *
-		FROM tmp_ch_db ";
-
-		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 	function searchChangeRequestNotrelateSCHEMA($param){
 
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_ch_existdb 
-		(SELECT *
-		FROM T_TEMP_CHANGE_LIST
-		WHERE 1=2) ";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
-
-		$sqlStr = " INSERT INTO tmp_ch_existdb
-		SELECT *
+		$sqlStr = " SELECT *
 		FROM T_TEMP_CHANGE_LIST
 		WHERE functionId = '$param->functionId'
 		AND functionversion ='$param->functionVersion'
 		AND tableName is NULL
 		AND columnName is  NULL ";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
-
-		$sqlStr = " SELECT *
-		FROM tmp_ch_existdb ";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();

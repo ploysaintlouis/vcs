@@ -3,6 +3,7 @@
     // you can reorder panel at here.
     $this->load->view('ChangeManagement/results/panel_change_title',$title_panel);
     $this->load->view('ChangeManagement/results/panel_change_list',$change_panel);
+    $this->load->view('ChangeManagement/results/panel_affect_fr',$aff_fr_panel);
     $this->load->view('ChangeManagement/results/panel_affect_schema',$aff_schema_panel);
     $this->load->view('ChangeManagement/results/panel_affect_testcase',$aff_testcase_panel);
 ?>

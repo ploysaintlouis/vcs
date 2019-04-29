@@ -28,23 +28,29 @@
                 ?>
                     <tr>
                         <td><?php echo $val["no"]; ?></td>
-                        <td><?php echo $val["type"]; ?></td>
-                        <td><?php echo $val["name"]; ?></td>
-                        <td><?php echo $val["data_type"]; ?></td>
-                        <td><?php echo $val["data_length"]; ?></td>
-                        <td><?php echo $val["scale"]; ?></td>
-                        <td><?php echo $val["default"]; ?></td>
-                        <td><?php echo $val["isNotNull"]; ?></td>
-                        <td><?php echo $val["uniq"]; ?></td>
-                        <td><?php echo $val["min"]; ?></td>
-                        <td><?php echo $val["max"]; ?></td>
-                        <td><?php echo $val["table_name"]; ?></td>
-                        <td><?php echo $val["field_name"]; ?></td>
+                        <?php if($val["typeData"] == '1'){
+                            $typeData = "Input";
+                        }else{
+                            $typeData = "Output";               
+                        }
+                        ?>
+                        <td><?php echo $typeData; ?></td>
+                        <td><?php echo $val["dataName"]; ?></td>
+                        <td><?php echo $val["newDataType"]; ?></td>
+                        <td><?php echo $val["newDataLength"]; ?></td>
+                        <td><?php echo $val["newScaleLength"]; ?></td>
+                        <td><?php echo $val["newDefaultValue"]; ?></td>
+                        <td><?php echo $val["newNotNull"]; ?></td>
+                        <td><?php echo $val["newUnique"]; ?></td>
+                        <td><?php echo $val["newMinValue"]; ?></td>
+                        <td><?php echo $val["newMaxValue"]; ?></td>
+                        <td><?php echo $val["tableName"]; ?></td>
+                        <td><?php echo $val["columnName"]; ?></td>
                         <td><?php 
                             //for example can add logic to change css and html here
-                            echo $val["change_type"] == "Edit" ?
+                            echo $val["changeType"] == "Edit" ?
                                   "<button class='btn btn-block bg-orange btn-xs' disabled='disabled'>Edit</button>"
-                                : "<button class='btn btn-block bg-green btn-xs' disabled='disabled'>".$val["change_type"]."</button>"; 
+                                : "<button class='btn btn-block bg-green btn-xs' disabled='disabled'>".$val["changeType"]."</button>"; 
                         ?></td>
                     </tr>
                 <?php

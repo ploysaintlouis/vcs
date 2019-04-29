@@ -220,7 +220,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$data = array();
 		$data['change_title'] = array();
 		/// *** call model and bind data here.
-
+		$data['change_title']['CH_NO'] = "CH01";
 		$data['change_title']['FR_Request'] = "FR01";
 		$data['change_title']['FR_Description'] = "Can simulate for calculate value stock";
 		$data['change_title']['FR_Version'] = "V.1";

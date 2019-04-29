@@ -1,5 +1,6 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
+
 /**
 * Change Management Controller
 **/
@@ -7,6 +8,7 @@ class ChangeManagementRequest extends CI_Controller {
     var $data;
     var $projectId;
     var $functionId;
+
     function __construct(){
         parent::__construct();
         $this->data = array();
@@ -17,13 +19,18 @@ class ChangeManagementRequest extends CI_Controller {
 		$this->load->model('Miscellaneous_model', 'mMisc');
 		$this->load->model('ChangeManagement_model', 'mChange');
 		$this->load->model('FunctionalRequirement_model', 'mFR');
+		$this->load->model('Running_model', 'mRunning');
+		$this->load->model('User_model', 'mUser');
+
 		$this->load->library('form_validation', null, 'FValidate');
 		$this->load->library('session');
     }
-    private function loadPage(){
-        $resultHeader = array();
+		
+		function loadPage($errorMessage, $projectId, $functionId, $functionVersion = ''){
+    $resultHeader = array();
 		$resultList = array();
 		$inputChangeList = array();
+
 		$userId = $this->session->userdata('userId'); //echo $_SESSION['userId'] ;
 		$staffflag = $this->session->userdata('staffflag'); //echo $_SESSION['staffflag'] ;
         
@@ -44,7 +51,9 @@ class ChangeManagementRequest extends CI_Controller {
 				'functionDescription' => $resultList[0]['functionDescription'],
 				'functionVersion' => $resultList[0]['functionVersion'],
 				'schemaVersionId' => $resultList[0]['schemaVersionId']);
+
 				$functionVersion = (!empty($functionVersion)? $functionVersion : $resultList[0]['functionVersion']);
+//echo $functionVersion;
 				//get temp change list
 				$criteria = (object) array('userId' => $userId, 'functionId' => $functionId, 'functionVersion' => $functionVersion);
 				$inputChangeList = $this->mChange->searchTempFRInputChangeList($criteria);
@@ -54,7 +63,12 @@ class ChangeManagementRequest extends CI_Controller {
 		}else{
 			$error_message = ER_MSG_011;
 		}
-		$hfield = array('projectId' => $projectId, 'functionId' => $functionId, 'functionVersion' => $functionVersion);
+	//	echo $functionVersion;
+		$hfield = array(
+			'projectId' => $projectId, 
+		'functionId' => $functionId, 
+		'functionVersion' => $functionVersion
+		);
 		$data['hfield'] = $hfield;
 		$data['error_message'] = '';
 		$data['resultHeader'] = $resultHeader;
@@ -63,7 +77,8 @@ class ChangeManagementRequest extends CI_Controller {
         $data['inputChangeList'] = $inputChangeList;
         
         $this->data = $data;
-    }
+		}
+		
     private function openView($data, $view){
 		if('search' == $view){
 			$data['html'] = 'ChangeManagement/changeRequestSearch_view';
@@ -86,11 +101,41 @@ class ChangeManagementRequest extends CI_Controller {
     function view_detail($projectId, $functionId){
         $this->projectId = $projectId;
         $this->functionId = $functionId;
-        $this->loadPage();
+
+        $this->loadPage('', $projectId, $functionId);
         $this->openView($this->data, 'detail');
-    }
-    function add_detail(){
-    }
+		}
+		
+    function add_detail($projectId,$functionId,$functionVersion,$schemaVersionId){
+
+			$param = (object) array(
+				'projectId' => $projectId, 
+				'functionId' => $functionId, 
+				'functionVersion' => $functionVersion,
+				'schemaVersionId' => $schemaVersionId
+			);
+
+			//echo $functionVersion;
+			$fucntionHeader = $this->mFR->searchFunctionalRequirementHeaderInfo($param);
+			foreach ($fucntionHeader as $value) {
+					$functionNo = $value['functionNo'];
+			}
+			//echo $functionNo;
+			$data = array();
+			$data['projectId'] = $projectId;
+			$data['functionNo'] = $functionNo;
+			$data['functionId'] = $functionId;
+			$data['functionVersion'] = $functionVersion;
+			$data['schemaVersionId'] = $schemaVersionId;
+
+			$this->load->view('ChangeManagement/popup/add',$data);
+			$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
+			foreach ($dataTypeCombo as $value) {
+				$this->load->view('ChangeManagement/popup/add',$dataTypeCombo);
+			}
+
+		}
+		
     function edit_detail($keyId,$functionVersion){
 		if(null !== $keyId && !empty($keyId)){
 			//echo $keyId;
@@ -107,6 +152,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$param_new = (object) array(
 			'functionVersion' => $functionVersion,
 		);
+
 		$data = array();
 		$ListofEdit = $this->mFR->ListofEditChange($param,$param_new);
 		foreach ($ListofEdit as $value) {
@@ -131,6 +177,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$data["schemaVersionId"] = $value['schemaVersionId'];
 		$data["refTableName"] = $value['refTableName'];
 		$data["refColumnName"] = $value['refColumnName'];
+
 		$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
 		foreach ($dataTypeCombo as $value) {
 			//var_dump($value) ;
@@ -139,54 +186,144 @@ class ChangeManagementRequest extends CI_Controller {
 		$this->load->view('ChangeManagement/popup/edit',$data);
 		$this->load->view('ChangeManagement/popup/edit',$dataTypeCombo);
     }
-	
-	function bind_data_title(){
+    function delete_detail($id){
+		$data = array();
+		$data['keyid'] = $id;
+		echo $id;
+		if(null !== $id && !empty($id)){
+			//echo $keyId;
+			$keyList = explode("%7C", $id);
+			//inputid
+			$param = (object) array(
+				'projectId' => $keyList[0], 
+				'dataId' => $keyList[1], 
+				'schemaVersionId' => $keyList[2], 
+				'functionId' => $keyList[3], 
+				'typeData' => $keyList[4]
+			);
+		}	
+		$userId = $this->session->userdata('userId');
+		$user = $this->session->userdata('username');
+
+		//echo $param->functionId;
+		$dataDelete = $this->mMisc->searchMiscellaneous('','');
+		foreach ($dataDelete as $value) {
+			var_dump($value) ;
+		}
+    }	
+
+	function saveTempFRInput_edit($dataName){
+		$output = '';
+		$error_message = '';
+		echo 'HEOOL"';
+	}
+
+	function bind_data_title($param){
 		$data = array();
 		$data['change_title'] = array();
 		/// *** call model and bind data here.
-		$data['change_title']['FR_Request'] = "FR01";
-		$data['change_title']['FR_Description'] = "Can simulate for calculate value stock";
-		$data['change_title']['FR_Version'] = "V.1";
+		$ChangeRequestNo = $this->mRunning->running_ch();
+		$Change_title = "CH";
+		$ChangeRequestNo->changeRequestId = str_pad($ChangeRequestNo->changeRequestId, 2,'0',STR_PAD_LEFT);
+		$UserName = $this->mUser->UserName($param->userId);
+		//$rowResult = $this->mRunning->Update_Running_ch();
+
+		$data['change_title']['CH_NO'] = $Change_title.$ChangeRequestNo->changeRequestId;
+		$data['change_title']['FR_Request'] = $param->functionNo;
+		$data['change_title']['FR_Description'] = $param->fnDesc;
+		$data['change_title']['FR_Version'] = $param->functionVersion;
+		$data['change_title']['username'] = $UserName->username;
+		
 		return $data;
 	}
+
 	function bind_data_change_list($param){
 		$data = array();
 		$data['change_list'] = array();
 		/// *** call model and bind data here.
-		$schemaRelate = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		$row = array(); //อยากจะส่ง $RelateResultSCHEMA,$RelateResultNotSCHEMA ไป display 
+		//echo $param->functionId;
+		$count = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+
+		$RelateResultSCHEMA = $this->callChangeRelate($param);
+		//echo $RelateResultSCHEMA->functionId;
 		
-		$row = array();
-		for($i=1;$i<sizeof($schemaRelate);$i++){
-			$val = $schemaRelate[$i];
+		for($i=1; $i <= sizeof($count); $i++ ) {// มันไม่ยอมดึง row แรกมาแสดง
+				//$val = $RelateResultSCHEMA[$i];
+				$row["no"] = $i;
+				$row["typeData"]= $RelateResultSCHEMA->typeData;
+				$row["dataName"]= $RelateResultSCHEMA->dataName;
+				$row["newDataType"]= $RelateResultSCHEMA->newDataType;
+				$row["newDataLength"]= $RelateResultSCHEMA->newDataLength;
+				$row["newScaleLength"] = $RelateResultSCHEMA->newScaleLength;
+				$row["newUnique"]= $RelateResultSCHEMA->newUnique;
+				$row["newNotNull"]= $RelateResultSCHEMA->newNotNull;
+				$row["newDefaultValue"]= $RelateResultSCHEMA->newDefaultValue;
+				$row["newMinValue"] = $RelateResultSCHEMA->newMinValue;
+				$row["newMaxValue"] = $RelateResultSCHEMA->newMaxValue;
+				$row["tableName"]= $RelateResultSCHEMA->tableName;
+				$row["columnName"]= $RelateResultSCHEMA->columnName;
+				$row["changeType"]= $RelateResultSCHEMA->changeType;
+				array_push($data['change_list'],$row);
+		}
+
+		$RelateResultNotSCHEMA  = $this->callChangeNotRelate($param);
+		for($i=1; $i <= sizeof($count); $i++ ) {// มันไม่ยอมดึง row แรกมาแสดง
+			//$val = $RelateResultSCHEMA[$i];
 			$row["no"] = $i;
-			$row["type"]= "input";
-			$row["name"]= $i%3 == 0 ? "Stock" : "Unit";
-			$row["data_type"]= "decimal";
-			$row["data_length"]= "20";
-			$row["scale"] ="";
-			$row["default"]="";
-			$row["isNotNull"]= false;
-			$row["uniq"]="";
-			$row["min"] = "10";
-			$row["max"] = "9999";
-			$row["table_name"]="";
-			$row["field_name"]="";
-			$row["change_type"]= $i%3 == 0 ? "Add" : "Edit";
+			$row["typeData"]= $RelateResultNotSCHEMA->typeData;
+			$row["dataName"]= $RelateResultNotSCHEMA->dataName;
+			$row["newDataType"]= $RelateResultNotSCHEMA->newDataType;
+			$row["newDataLength"]= $RelateResultNotSCHEMA->newDataLength;
+			$row["newScaleLength"] = $RelateResultNotSCHEMA->newScaleLength;
+			$row["newUnique"]= $RelateResultNotSCHEMA->newUnique;
+			$row["newNotNull"]= $RelateResultNotSCHEMA->newNotNull;
+			$row["newDefaultValue"]= $RelateResultNotSCHEMA->newDefaultValue;
+			$row["newMinValue"] = $RelateResultNotSCHEMA->newMinValue;
+			$row["newMaxValue"] = $RelateResultNotSCHEMA->newMaxValue;
+			$row["tableName"]= $RelateResultNotSCHEMA->tableName;
+			$row["columnName"]= $RelateResultNotSCHEMA->columnName;
+			$row["changeType"]= $RelateResultNotSCHEMA->changeType;
 			array_push($data['change_list'],$row);
 		}
-	
+
 		return $data;
 	}
+	
+
+	function bind_data_aff_functionalrequirement($param){
+		$data = array();
+		$data['aff_fr_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		$ListofAffectFRRelateSchema = $this->callImpactFunctionRelate($param);
+		$ListofAffectFRNotRelateSchema = $this->callImpactFunctionNotRelate($param);
+		$ListofAffectOthFr = $this->callImpactOthFunction($param);
+
+		for($i=1;$i<3;$i++){
+			$row["no"] = $i;
+			$row["fr_no"]= "Functional Requirement 01";
+			$row["change_type"]= "Edit";
+			$row["version"]="V.2";
+
+			array_push($data['aff_fr_list'],$row);
+		}
+		return $data;
+	}	
+
 	function bind_data_aff_testcase(){
 		$data = array();
 		$data['aff_testcase_list'] = array();
 		/// *** call model and bind data here.
 		$row=array();
+		$ListofAffectedTestCase = $this->callImpactTestCase($param,$ListofAffectOthFr);
+
 		for($i=1;$i<3;$i++){
 			$row["no"] = $i;
 			$row["test_no"]= "Test Case 01";
 			$row["change_type"]= "Edit";
 			$row["version"]="V.2";
+
 			array_push($data['aff_testcase_list'],$row);
 		}
 		return $data;
@@ -196,103 +333,341 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['aff_schema_list'] = array();
 		/// *** call model and bind data here.
 		$row=array();
+		$ListofAffectedSchema = $this->callImpactSchema($param);
+
 		for($i=1;$i<3;$i++){
 			$row["no"] = $i;
 			$row["table_name"]= "Stock";
 			$row["column_name"]= "StockName";
 			$row["change_type"]= "Edit";
 			$row["version"]="V.1";
+
 			array_push($data['aff_schema_list'],$row);
 		}
 		return $data;
 	}
-	function view_change_result($projectId){
-		$param = (object) array(
-			'projectId' 	  => 2,//$projectId,
-			'functionId' 	  => 25,//$functionId,
-			'functionNo' 	  => '',//$functionNo,
-			'functionVersion' => 1,//$functionVersion,
-			'changeRequestNo' => 'CH',//'',
-			'userId'		  => '0001',//$userId,
-			'type' 	 		  => 1 //1 = Change, 2 = Cancel
-			);
-		//$changeResult = $this->callChangeAPI($param);
+
+	function doChangeProcess(){ //requestChangeFRInputs
+		$errorFlag = false;
+		$success_message = '';
+		$error_message = '';
+
+		$functionNo = '';
+		$changeRequestNo = '';
+		$userId = $this->session->userdata('userId');
+		$projectId = $this->input->post('projectId');
+		$functionId = $this->input->post('functionId');
+		$functionVersion = $this->input->post('functionVersion');
+
 		//see this function to bind load data to template view
 		//url -> ChangeManagementRequest/view_change_result/{projectId}
 		$dataForPage = array();
+		//echo $RelateResultSCHEMA->functionId;
 		//for use query something and send to page
-		$dataForPage["projectId"] = $projectId;
-		//bind data for mockup 
-		//see in function parameter relate field in all view
-		$title = $this->bind_data_title();
-		$chglist = $this->bind_data_change_list($param);
-		$affSchemalist = $this->bind_data_aff_schema();
-		$affTestCaseList = $this->bind_data_aff_testcase();
-		
-		//send to page result/index 
-		$dataForPage["title_panel"]= $title;
-		$dataForPage["change_panel"]=$chglist;
-		$dataForPage["aff_schema_panel"]=$affSchemalist;
-		$dataForPage["aff_testcase_panel"] = $affTestCaseList;
-		//template/header,template/body_javascript,template/footer ไม่จำเป็นต้องโหลดซ้ำ ถ้าหน้า อื่นโหลดมาให้แล้ว
-		$this->load->view('template/header');
-		$this->load->view('template/body_javascript');
-		$this->load->view('ChangeManagement/results/index',$dataForPage);
-		$this->load->view('template/footer');
+
+		//$this->load->library('common');
+		//echo $functionId;
+		try{
+			/** 1.Validate
+			*** 1.1 Check Temp Change List Data
+			**/
+			$criteria = (object) array('userId' => $userId, 'functionId' => $functionId, 'functionVersion' => $functionVersion);
+			$resultExistTempChangeList = $this->mChange->searchTempFRInputChangeList($criteria);
+			if(null == $resultExistTempChangeList || 0 == count($resultExistTempChangeList)){
+				$error_message = ER_TRN_010;
+				//$this->reloadPage($error_message, $projectId, $functionId, $functionVersion);
+				$this->loadpage($error_message, $projectId, $functionId, $functionVersion);
+				return false;
+			}
+
+			/* 1.2 Check status of Requirement Header */
+			$criteria->status = '1';
+			$resultReqHeader = $this->mFR->searchFunctionalRequirementHeaderInfo($criteria);
+			if(null == $resultReqHeader || 0 == count($resultReqHeader)){
+				$error_message = ER_TRN_011;
+				$this->loadpage($error_message, $projectId, $functionId, $functionVersion);
+
+//				$this->reloadPage($error_message, $projectId, $functionId, $functionVersion);
+				return false;
+			}else{
+				$functionNo = $resultReqHeader[0]['functionNo'];
+			}
+
+			/** 2.Call Change API */
+			$param = (object) array(
+				'projectId' 	  => $projectId,
+				'functionId' 	  => $functionId,
+				'functionNo' 	  => $functionNo,
+				'functionVersion' => $functionVersion,
+				'changeRequestNo' => '',
+				'userId'		  => $userId,
+				'type' 	 		  => 1, //1 = Change, 2 = Cancel
+				'fnDesc'		  => $resultReqHeader[0]['fnDesc']
+			);
+
+			$title = $this->bind_data_title($param);
+			$chglist = $this->bind_data_change_list($param);
+			$affFrList = $this->bind_data_aff_functionalrequirement($param);
+			$affSchemalist = $this->bind_data_aff_schema($param);
+			$affTestCaseList = $this->bind_data_aff_testcase($param);
+
+			$dataForPage["functionId"] = $param->functionId;
+
+			//send to page result/index 
+			$dataForPage["title_panel"]= $title;
+			$dataForPage["change_panel"]=$chglist;
+			$dataForPage["aff_fr_panel"]=$affFrList;
+			$dataForPage["aff_testcase_panel"]=$affTestCaseList;
+			$dataForPage["aff_schema_panel"] = $affSchemalist;
+
+			$this->load->view('template/header');
+			$this->load->view('template/body_javascript');
+			$this->load->view('ChangeManagement/results/index',$dataForPage);
+			$this->load->view('template/footer');
+
+		}catch(Exception $e){
+			$errorFlag = true;
+			$error_message = $e;
+		}
+
+		$data['success_message'] = $success_message;
+		$data['error_message'] = $error_message;
 	}
 	
-	
-	function callChangeAPI($param){//แยก รายการ change 
+	function callChangeRelate($param){//แยก รายการ change ที่ realte
 	
 		//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
 		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
 		foreach ($RelateResultSCHEMA as $value) {
-			//var_dump($value) ;
+			$param_schema = (object) array(
+				'lineNumber' 	  	=> $value['lineNumber'],
+				'userId' 	  		=> $value['userId'],
+				'functionId' 	  	=> $value['functionId'],
+				'functionVersion' 	=> $value['functionVersion'],
+				'typeData' 			=> $value['typeData'],
+				'dataName'		  	=> $value['dataName'],
+				'schemaVersionId' 	=> $value['schemaVersionId'],
+				'newDataType' 	  	=> $value['newDataType'],
+				'newDataLength'  	=> $value['newDataLength'],
+				'newScaleLength' 	=> $value['newScaleLength'],
+				'newUnique' 		=> $value['newUnique'],
+				'newNotNull'		=> $value['newNotNull'],
+				'newDefaultValue' 	=> $value['newDefaultValue'],
+				'newMinValue' 	  	=> $value['newMinValue'],
+				'newMaxValue' 		=> $value['newMaxValue'],
+				'tableName' 		=> $value['tableName'],
+				'columnName'		=> $value['columnName'],
+				'changeType' 	 	=> $value['changeType'],
+				'createUser'		=> $value['createUser'],
+				'createDate' 	  	=> $value['createDate'],
+				'dataId' 	  		=> $value['dataId'],
+				'confirmflag' 		=> $value['confirmflag'],
+				'approveflag' 		=> $value['approveflag']
+				);	
 		}
+		return $param_schema;
+	}
+	function callChangenotRelate($param){//แยก รายการ change ที่ไม่ relate
 		//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
 		$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
 		foreach ($NotRelateResultSCHEMA as $value) {
-			//var_dump($value) ;
+			$param_notschema = (object) array(
+				'lineNumber' 	  	=> $value['lineNumber'],
+				'userId' 	  		=> $value['userId'],
+				'functionId' 	  	=> $value['functionId'],
+				'functionVersion' 	=> $value['functionVersion'],
+				'typeData' 			=> $value['typeData'],
+				'dataName'		  	=> $value['dataName'],
+				'schemaVersionId' 	=> $value['schemaVersionId'],
+				'newDataType' 	  	=> $value['newDataType'],
+				'newDataLength'  	=> $value['newDataLength'],
+				'newScaleLength' 	=> $value['newScaleLength'],
+				'newUnique' 		=> $value['newUnique'],
+				'newNotNull'		=> $value['newNotNull'],
+				'newDefaultValue' 	=> $value['newDefaultValue'],
+				'newMinValue' 	  	=> $value['newMinValue'],
+				'newMaxValue' 		=> $value['newMaxValue'],
+				'tableName' 		=> $value['tableName'],
+				'columnName'		=> $value['columnName'],
+				'changeType' 	 	=> $value['changeType'],
+				'createUser'		=> $value['createUser'],
+				'createDate' 	  	=> $value['createDate'],
+				'dataId' 	  		=> $value['dataId'],
+				'confirmflag' 		=> $value['confirmflag'],
+				'approveflag' 		=> $value['approveflag']
+				);	
 		}
-		$this->callImpactFunction($param);
+		return $param_notschema;
 	}
 		#======START FUNCTIONAL REQUIREMENT=======
-	function callImpactFunction($param){
+	function callImpactFunctionRelate($param){
 		//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
-		$ListofChangeSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-		foreach ($ListofChangeSchema as $value) {
-			//var_dump($value) ;
-		}
-	
+		$ListofFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+			foreach ($ListofFRRelateSchema as $value) {
+				$param_Fr_relate = (object) array(
+					'lineNumber' 	  	=> $value['lineNumber'],
+					'userId' 	  		=> $value['userId'],
+					'functionId' 	  	=> $value['functionId'],
+					'functionVersion' 	=> $value['functionVersion'],
+					'typeData' 			=> $value['typeData'],
+					'dataName'		  	=> $value['dataName'],
+					'schemaVersionId' 	=> $value['schemaVersionId'],
+					'newDataType' 	  	=> $value['newDataType'],
+					'newDataLength'  	=> $value['newDataLength'],
+					'newScaleLength' 	=> $value['newScaleLength'],
+					'newUnique' 		=> $value['newUnique'],
+					'newNotNull'		=> $value['newNotNull'],
+					'newDefaultValue' 	=> $value['newDefaultValue'],
+					'newMinValue' 	  	=> $value['newMinValue'],
+					'newMaxValue' 		=> $value['newMaxValue'],
+					'tableName' 		=> $value['tableName'],
+					'columnName'		=> $value['columnName'],
+					'changeType' 	 	=> $value['changeType'],
+					'createUser'		=> $value['createUser'],
+					'createDate' 	  	=> $value['createDate'],
+					'dataId' 	  		=> $value['dataId'],
+					'confirmflag' 		=> $value['confirmflag'],
+					'approveflag' 		=> $value['approveflag'],
+					'FR_NAME'			=> $value['FR_NAME']
+					);		
+				}
+			return $param_Fr_relate;
+	}
+
+
+	function callImpactFunctionNotRelate($param){
 		//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
 		$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
-		foreach ($ListofChangeNotSchema as $value) {
-			//var_dump($value) ;
-		}	
+		if(0 < count($ListofChangeNotSchema)){
+			foreach ($ListofChangeNotSchema as $value) {
+				$param_Fr_Notrelate = (object) array(
+					'lineNumber' 	  	=> $value['lineNumber'],
+					'userId' 	  		=> $value['userId'],
+					'functionId' 	  	=> $value['functionId'],
+					'functionVersion' 	=> $value['functionVersion'],
+					'typeData' 			=> $value['typeData'],
+					'dataName'		  	=> $value['dataName'],
+					'schemaVersionId' 	=> $value['schemaVersionId'],
+					'newDataType' 	  	=> $value['newDataType'],
+					'newDataLength'  	=> $value['newDataLength'],
+					'newScaleLength' 	=> $value['newScaleLength'],
+					'newUnique' 		=> $value['newUnique'],
+					'newNotNull'		=> $value['newNotNull'],
+					'newDefaultValue' 	=> $value['newDefaultValue'],
+					'newMinValue' 	  	=> $value['newMinValue'],
+					'newMaxValue' 		=> $value['newMaxValue'],
+					'tableName' 		=> $value['tableName'],
+					'columnName'		=> $value['columnName'],
+					'changeType' 	 	=> $value['changeType'],
+					'createUser'		=> $value['createUser'],
+					'createDate' 	  	=> $value['createDate'],
+					'dataId' 	  		=> $value['dataId'],
+					'confirmflag' 		=> $value['confirmflag'],
+					'approveflag' 		=> $value['approveflag'],
+					'FR_NAME'			=> $value['FR_NAME']
+					);
+				}	
+		}else{
+			$param_Fr_Notrelate = null;
+		}
+		return $param_Fr_Notrelate;
+	}
 	
+	function callImpactOthFunction($param){
 		// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
-		foreach ($ListofChangeSchemaOthFr as $value) {
-			//var_dump($value) ;
+		if(0 < count($ListofChangeSchemaOthFr)){
+			foreach ($ListofChangeSchemaOthFr as $value) {
+				$param_OthFr = (object) array(
+					'lineNumber' 	  	=> $value['lineNumber'],
+					'userId' 	  		=> $value['userId'],
+					'functionId' 	  	=> $value['functionId'],
+					'functionVersion' 	=> $value['functionVersion'],
+					'typeData' 			=> $value['typeData'],
+					'dataName'		  	=> $value['dataName'],
+					'schemaVersionId' 	=> $value['schemaVersionId'],
+					'newDataType' 	  	=> $value['newDataType'],
+					'newDataLength'  	=> $value['newDataLength'],
+					'newScaleLength' 	=> $value['newScaleLength'],
+					'newUnique' 		=> $value['newUnique'],
+					'newNotNull'		=> $value['newNotNull'],
+					'newDefaultValue' 	=> $value['newDefaultValue'],
+					'newMinValue' 	  	=> $value['newMinValue'],
+					'newMaxValue' 		=> $value['newMaxValue'],
+					'tableName' 		=> $value['tableName'],
+					'columnName'		=> $value['columnName'],
+					'changeType' 	 	=> $value['changeType'],
+					'createUser'		=> $value['createUser'],
+					'createDate' 	  	=> $value['createDate'],
+					'dataId' 	  		=> $value['dataId'],
+					'confirmflag' 		=> $value['confirmflag'],
+					'approveflag' 		=> $value['approveflag'],
+					'FR_NAME'			=> $value['FR_NAME']
+					);
+			}		
+		}else{
+			$param_OthFr = null;
 		}
-		$this->callImpactTestCase($param,$ListofChangeSchemaOthFr);
+		return $param_OthFr;
 	}
 	
 		#========START TESTCASE AFFECTED====
 	function callImpactTestCase($param,$ListofChangeSchemaOthFr){
 		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
-		foreach ($ListofTCAffected as $value) {
-			//var_dump($value) ;
+		if(0 < count($ListofTCAffected)){
+			foreach ($ListofTCAffected as $value) {
+				$param_TC = (object) array(
+					'testCaseId' 	  		=> $value['testCaseId'],
+					'testCaseNo' 	  		=> $value['testCaseNo'],
+					'testcaseVersion' 	  	=> $value['testcaseVersion'],
+					'typeData' 				=> $value['typeData'],
+					'TC_NAME' 				=> $value['TC_NAME'],
+					'testData'		  		=> $value['testData'],
+					'CH_NAME' 	  			=> $value['CH_NAME'],
+					'changeType' 	  		=> $value['changeType'],
+					'newdataType' 	  		=> $value['newdataType'],
+					'newDataLength' 		=> $value['newDataLength'],
+					'newScaleLength' 		=> $value['newScaleLength'],
+					'newUnique'		  		=> $value['newUnique'],
+					'newDefaultValue' 	  	=> $value['newDefaultValue'],
+					'newMinValue' 	  		=> $value['newMinValue'],
+					'newMaxValue' 			=> $value['newMaxValue']
+					);		
+			}			
+		}else{
+			$param_TC = null;
 		}
-		$this->callImpactSchema($param);
+		return $param_TC;
 	}
 		#========START SCHEMA AFFECTED======
 	function callImpactSchema($param){
 		//เก้บ SCHEMA ที่ได้รับผลกระทบ
 		$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
-		foreach ($ListofSchemaAffected as $value) {
-			//var_dump($value) ;
+		if(0 < count($ListofSchemaAffected)){
+			foreach ($ListofSchemaAffected as $value) {
+				$param_schema = (object) array(
+					'functionId' 	  		=> $value['functionId'],
+					'functionversion' 	  	=> $value['functionversion'],
+					'projectId' 	  		=> $value['projectId'],
+					'tableName' 			=> $value['tableName'],
+					'columnName' 			=> $value['columnName'],
+					'schemaVersionId'		=> $value['schemaVersionId'],
+					'dataType' 	  			=> $value['dataType'],
+					'dataLength' 	  		=> $value['dataLength'],
+					'decimalPoint' 	  		=> $value['decimalPoint'],
+					'constraintPrimaryKey' 	=> $value['constraintPrimaryKey'],
+					'constraintUnique' 		=> $value['constraintUnique'],
+					'constraintDefault'		=> $value['constraintDefault'],
+					'constraintNull' 	  	=> $value['constraintNull'],
+					'constraintMinValue' 	=> $value['constraintMinValue'],
+					'constraintMaxValue' 	=> $value['constraintMaxValue']
+					);				
+				}
+		}else{
+			$param_schema = null;
 		}
+		return $param_schema;
 	}
 		
 }
+	

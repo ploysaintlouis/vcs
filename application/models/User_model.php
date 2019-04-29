@@ -13,5 +13,13 @@ class User_model extends CI_Model {
 		//return (int)$result->counts > 0 ? TRUE : FALSE;
 		return $result;
 	}
+	function UserName($userId){
+		$queryStr 
+		= "SELECT username FROM M_USERS where userId = '$userId' ";
+		$result = $this->db->query($queryStr);
+		//echo $queryStr ;
+		return $result->row();
+
+	}
 }
 ?>
