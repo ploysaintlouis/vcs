@@ -20,7 +20,7 @@
                     <tr>
                         <td><?php echo $val["no"]; ?></td>
                         <td><?php echo $val["fr_no"]; ?></td>
-                        <td><?php echo $val["change_type"]; ?></td>
+                        <td><?php echo ($val["change_type"] == 'add' || $val["change_type"] == 'delete') ? "Delete" : "Edit"; ?></td>
                         <td><?php echo $val["version"]; ?></td>
                     </tr>
                 <?php

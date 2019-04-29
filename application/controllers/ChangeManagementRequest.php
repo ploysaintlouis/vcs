@@ -389,7 +389,8 @@ class ChangeManagementRequest extends CI_Controller {
 		$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
 		$i = 1;
 		foreach($ListofSchemaAffected as $value)
-		for($i=1;$i<3;$i++){
+		{
+			//for($i=1;$i<3;$i++){
 			$row["no"] = $i++;
 			$row["table_name"]= $value["tableName"];
 			$row["column_name"]= $value["columnName"];
