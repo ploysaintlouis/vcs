@@ -297,18 +297,36 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['aff_fr_list'] = array();
 		/// *** call model and bind data here.
 		$row=array();
-		$ListofAffectFRRelateSchema = $this->callImpactFunctionRelate($param);
-		$ListofAffectFRNotRelateSchema = $this->callImpactFunctionNotRelate($param);
-		$ListofAffectOthFr = $this->callImpactOthFunction($param);
-
-		for($i=1;$i<3;$i++){
-			$row["no"] = $i;
-			$row["fr_no"]= "Functional Requirement 01";
-			$row["change_type"]= "Edit";
-			$row["version"]="V.2";
-
+		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+		//print_r($ListofAffectFRRelateSchema);
+		$i = 1;
+		foreach($ListofAffectFRRelateSchema as $value){
+			$row["no"] = $i++;
+			$row["fr_no"]= $value["functionId"];
+			$row["change_type"]= $value['changeType'];
+			$row["version"]= $value['functionVersion'];
+			array_push($data['aff_fr_list'],$row);
+			
+		}
+		
+		//$ListofAffectFRNotRelateSchema = $this->callImpactFunctionNotRelate($param);
+		//ListofAffectOthFr = $this->callImpactOthFunction($param);
+		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		foreach($ListofChangeSchemaOthFr as $value){
+			$row["no"] = $i++;
+			$row["fr_no"]= $value["functionId"];
+			$row["change_type"]= $value['changeType'];
+			$row["version"]= $value['functionVersion'];
 			array_push($data['aff_fr_list'],$row);
 		}
+		// for($i=1;$i<3;$i++){
+		// 	$row["no"] = $i;
+		// 	$row["fr_no"]= $value["functionId"];
+		// 	$row["change_type"]= $value['changeType'];
+		// 	$row["version"]= $value['functionVersion'];
+
+		// 	array_push($data['aff_fr_list'],$row);
+		// }
 		return $data;
 	}	
 

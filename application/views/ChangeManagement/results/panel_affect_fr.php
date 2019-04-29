@@ -7,8 +7,7 @@
             <table id="aff_fr_panel" class="table table-striped table-responsive no-padding">
                 <tr>
                     <th style="text-align: left;">#</th>
-                    <th>Table Name</th>
-                    <th>Column Name</th>
+                    <th>Functional Req No.</th>
                     <th>Change Type</th>
                     <th>Old Version</th>
                 </tr>
@@ -20,8 +19,7 @@
                 ?>
                     <tr>
                         <td><?php echo $val["no"]; ?></td>
-                        <td><?php echo $val["table_name"]; ?></td>
-                        <td><?php echo $val["column_name"]; ?></td>
+                        <td><?php echo $val["fr_no"]; ?></td>
                         <td><?php echo $val["change_type"]; ?></td>
                         <td><?php echo $val["version"]; ?></td>
                     </tr>
