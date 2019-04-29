@@ -311,7 +311,7 @@ class ChangeManagementRequest extends CI_Controller {
 		return $data;
 	}	
 
-	function bind_data_aff_testcase(){
+	function bind_data_aff_testcase($param){
 		$data = array();
 		$data['aff_testcase_list'] = array();
 		/// *** call model and bind data here.
@@ -328,7 +328,7 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 		return $data;
 	}
-	function bind_data_aff_schema(){
+	function bind_data_aff_schema($param){
 		$data = array();
 		$data['aff_schema_list'] = array();
 		/// *** call model and bind data here.
