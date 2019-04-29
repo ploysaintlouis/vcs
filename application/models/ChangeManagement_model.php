@@ -753,7 +753,8 @@ echo $sqlStr;
 	}	
 	function checkChangeRequestrelateSCHEMAOtherFr($param){
 		
-		$sqlStr = " SELECT a.*,b.dataName FR_NAME
+		$sqlStr = " SELECT a.*,
+		b.dataName FR_NAME,b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
 		WHERE a.confirmflag = 1 
 		AND a.tableName=b.refTableName 
@@ -761,7 +762,6 @@ echo $sqlStr;
 		AND a.functionId = '$param->functionId'
 		AND a.functionVersion ='$param->functionVersion'
 		AND a.functionId <> b.functionId
-		AND a.functionVersion <> b.functionVersion
 		AND b.activeflag = '1'";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
@@ -804,8 +804,9 @@ echo $sqlStr;
 	}		
 	function checkSchemaAffted($param){
 
-		$sqlStr = " SELECT a.functionId,a.functionversion,b.*
-		FROM T_TEMP_CHANGE_LIST a,M_DATABASE_SCHEMA_INFO b
+		$sqlStr = " SELECT a.functionId,a.functionversion,a.changeType,
+		b.projectId,b.schemaVersionId,b.schemaVersionNumber,b.tableName,b.columnName
+		FROM T_TEMP_CHANGE_LIST a,M_DATABASE_SCHEMA_VERSION b
 		WHERE a.tableName = b.tableName
 		AND a.columnName = b.columnName 
 		AND a.functionId = '$param->functionId'
@@ -822,6 +823,7 @@ echo $sqlStr;
 		FROM T_TEMP_CHANGE_LIST
 		WHERE 1=2)";
 		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
 
 		$sqlStr = "INSERT INTO tmp_FR_Affected
 		SELECT DISTINCT functionId,functionVersion
@@ -829,16 +831,21 @@ echo $sqlStr;
 		WHERE functionId = '$param->functionId'
 		AND functionversion ='$param->functionVersion' ";
 		$result = $this->db->query($sqlStr);
-	
-		if(isset($ListofChangeSchemaOthFr->functionId)){
+		//echo $sqlStr ;
+		$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
+		$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
+		$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
+
+		if(!isset($FROthr_No)){
 			$sqlStr = "INSERT INTO tmp_FR_Affected
 			SELECT DISTINCT functionId,functionVersion
 			FROM M_FN_REQ_HEADER
-			WHERE functionId = '$ListofChangeSchemaOthFr->functionId'
-			AND functionversion ='$ListofChangeSchemaOthFr->functionVersion' ";
+			WHERE functionId = '$FROth_Id'
+			AND functionversion ='$FROth_Version' ";
 			$result = $this->db->query($sqlStr);
 		}
-		
+		//echo $sqlStr ;
+
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_RTM
 		(SELECT  testCaseId,testCaseversion,functionId,functionVersion
 		FROM M_RTM_VERSION
@@ -851,7 +858,7 @@ echo $sqlStr;
 		WHERE a.functionId = b.functionId
 		AND a.functionVersion = b.functionVersion";
 		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
+		echo $sqlStr ;
 
 		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
 		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,a.typeData,
@@ -877,6 +884,7 @@ echo $sqlStr;
 		AND b.functionVersion = '1'
 		AND b.confirmflag = '1'
 		AND b.changeType = 'add'";
+		//echo $sqlStr ;
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();

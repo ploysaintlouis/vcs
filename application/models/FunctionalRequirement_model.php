@@ -70,7 +70,6 @@ class FunctionalRequirement_model extends CI_Model {
 			FROM M_FN_REQ_DETAIL i
 			WHERE i.projectId = $projectId
 			AND i.dataName = '$dataName'
-			AND i.functionId =
 			AND ($activeFlag is null or i.activeFlag = $activeFlag)
 			ORDER BY i.createDate desc";
 		$result = $this->db->query($queryStr);

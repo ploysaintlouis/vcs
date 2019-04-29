@@ -299,13 +299,15 @@ class ChangeManagementRequest extends CI_Controller {
 		$row=array();
 		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
 		$i = 1;
-		$frNo = "";
+		$frId = "";
 		$frVersion = "";
+
 		foreach($ListofAffectFRRelateSchema as $value){
 
-			if($frNo != $value["functionId"] && $frVersion != $value['functionVersion']){
+			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
 				$row["no"] = $i++;
-				$row["fr_no"]= $value["functionId"];
+				$row["frId"]= $value["functionId"];
+				$row["fr_no"] =$param->functionNo;
 				$row["change_type"]= $value['changeType'];
 				$row["version"]= $value['functionVersion'];
 				$frNo = $value["functionId"];
@@ -316,9 +318,10 @@ class ChangeManagementRequest extends CI_Controller {
 		
 		$ListofAffectFRNotRelateSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
 		foreach($ListofAffectFRNotRelateSchema as $value){
-			if($frNo != $value["functionId"] && $frVersion != $value['functionVersion']){
+			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
 				$row["no"] = $i++;
-				$row["fr_no"]= $value["functionId"];
+				$row["frId"]= $value["functionId"];
+				$row["fr_no"]= $param->functionNo;
 				$row["change_type"]= $value['changeType'];
 				$row["version"]= $value['functionVersion'];
 				array_push($data['aff_fr_list'],$row);
@@ -328,11 +331,15 @@ class ChangeManagementRequest extends CI_Controller {
 		//ListofAffectOthFr = $this->callImpactOthFunction($param);
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
 		foreach($ListofChangeSchemaOthFr as $value){
-			$row["no"] = $i++;
-			$row["fr_no"]= $value["functionId"];
-			$row["change_type"]= $value['changeType'];
-			$row["version"]= $value['functionVersion'];
-			array_push($data['aff_fr_list'],$row);
+			if($frId != $value["FROth_Id"]){
+				$row["no"] = $i++;
+				$row["fr_id"]= $value["FROth_Id"];
+				$row["fr_no"]= $value["FROth_NO"];
+				$row["change_type"]= $value['changeType'];
+				$row["version"]= $value['FROth_Version'];
+				array_push($data['aff_fr_list'],$row);
+				$frId = $value["FROth_Id"];
+			}
 		}
 
 
@@ -355,6 +362,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$row=array();
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
 		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
+			//	print_r($ListofChangeSchemaOthFr);
 		$i = 1;
 		$testNo = "";
 		$testVersion = "";
@@ -370,6 +378,7 @@ class ChangeManagementRequest extends CI_Controller {
 				}
 			}
 		}
+		
 		// for($i=1;$i<3;$i++){
 		// 	$row["no"] = $i;
 		// 	$row["test_no"]= "Test Case 01";
@@ -394,8 +403,8 @@ class ChangeManagementRequest extends CI_Controller {
 			$row["no"] = $i++;
 			$row["table_name"]= $value["tableName"];
 			$row["column_name"]= $value["columnName"];
-			$row["change_type"]= "Edit";
-			$row["version"]= $value["schemaVersionId"];
+			$row["change_type"]= $value["changeType"];
+			$row["version"]= $value["schemaVersionNumber"];
 
 			array_push($data['aff_schema_list'],$row);
 		}
@@ -657,7 +666,10 @@ class ChangeManagementRequest extends CI_Controller {
 					'dataId' 	  		=> $value['dataId'],
 					'confirmflag' 		=> $value['confirmflag'],
 					'approveflag' 		=> $value['approveflag'],
-					'FR_NAME'			=> $value['FR_NAME']
+					'FR_NAME'			=> $value['FR_NAME'],
+					'FROth_Id'		=> $value['FROth_Id'],
+					'FROth_Version'	 => $value['FROth_Version'],
+					'FROth_functionNo'	=> $value['FROth_NO']
 					);
 			}		
 		}else{
@@ -703,19 +715,12 @@ class ChangeManagementRequest extends CI_Controller {
 				$param_schema = (object) array(
 					'functionId' 	  		=> $value['functionId'],
 					'functionversion' 	  	=> $value['functionversion'],
+					'changeType'				=> $value['changeType'],
 					'projectId' 	  		=> $value['projectId'],
-					'tableName' 			=> $value['tableName'],
-					'columnName' 			=> $value['columnName'],
 					'schemaVersionId'		=> $value['schemaVersionId'],
-					'dataType' 	  			=> $value['dataType'],
-					'dataLength' 	  		=> $value['dataLength'],
-					'decimalPoint' 	  		=> $value['decimalPoint'],
-					'constraintPrimaryKey' 	=> $value['constraintPrimaryKey'],
-					'constraintUnique' 		=> $value['constraintUnique'],
-					'constraintDefault'		=> $value['constraintDefault'],
-					'constraintNull' 	  	=> $value['constraintNull'],
-					'constraintMinValue' 	=> $value['constraintMinValue'],
-					'constraintMaxValue' 	=> $value['constraintMaxValue']
+					'schemaVersionNumber'		=> $value['schemaVersionNumber'],
+					'tableName' 			=> $value['tableName'],
+					'columnName' 			=> $value['columnName']
 					);				
 				}
 		}else{

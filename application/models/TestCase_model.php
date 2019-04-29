@@ -128,11 +128,14 @@ class TestCase_model extends CI_Model{
 		$currentDateTime = date('Y-m-d H:i:s');
 		$sqlStr = "INSERT INTO M_TESTCASE_HEADER (testCaseNo, testCaseDescription, expectedResult, projectId, createDate, createUser, updateDate, updateUser) VALUES ('{$param->testCaseNo}', '{$param->testCaseDescription}', '{$param->expectedResult}', {$param->projectId}, '{$currentDateTime}', '$user', '{$currentDateTime}', '$user')";
 		$result = $this->db->query($sqlStr);
+		/*
 		if($result){
-			$query = $this->db->query("SELECT IDENT_CURRENT('M_TESTCASE_HEADER') as last_id");
+			//$query = $this->db->query("SELECT IDENT_CURRENT('M_TESTCASE_HEADER') as last_id");
+			$query = $this->db->query("SELECT MAX(last_id) AS last_id FROM M_TESTCASE_HEADER");
+
 			$resultId = $query->result();
 			return $resultId[0]->last_id;
-		}
+		}*/
 		return null;
 	}
 function searchFRMAXTCNo() {
@@ -277,7 +280,7 @@ function searchFRMAXTCNo() {
 
 			$param[0]->testCaseId = $testCaseId;
 			$param[0]->effectiveStartDate = $effectiveStartDate;
-			$this->insertTestCaseVersion($param[0], $user);
+			//$this->insertTestCaseVersion($param[0], $user);
 		}
 		
 		//Insert new Test Case Details

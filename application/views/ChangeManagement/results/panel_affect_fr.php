@@ -13,6 +13,7 @@
                 </tr>
 
                 <?php
+                		$Version_title = "V.";
                     // start loop for each 
                     foreach($aff_fr_list as $val)
                     {
@@ -21,7 +22,7 @@
                         <td><?php echo $val["no"]; ?></td>
                         <td><?php echo $val["fr_no"]; ?></td>
                         <td><?php echo ($val["change_type"] == 'add' || $val["change_type"] == 'delete') ? "Delete" : "Edit"; ?></td>
-                        <td><?php echo $val["version"]; ?></td>
+                        <td><?php echo $Version_title.$val["version"]; ?></td>
                     </tr>
                 <?php
                     //to end loop for each

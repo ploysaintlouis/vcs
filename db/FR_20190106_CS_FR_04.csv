@@ -1,0 +1,4 @@
+functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
+OS_FR_04,Create Order Discount,input,dDiscount,,,,Order_Details,discount
+OS_FR_04,Create Order Discount,input,dUnit Price,,,,Order_Details,unit_price
+OS_FR_04,Create Order Discount,output,dPrice,decimal,18,2,,

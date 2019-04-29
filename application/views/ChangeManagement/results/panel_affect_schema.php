@@ -14,6 +14,7 @@
                 </tr>
 
                 <?php
+                    $version_title = "V.";
                     // start loop for each 
                     foreach($aff_schema_list as $val)
                     {
@@ -23,7 +24,7 @@
                         <td><?php echo $val["table_name"]; ?></td>
                         <td><?php echo $val["column_name"]; ?></td>
                         <td><?php echo $val["change_type"]; ?></td>
-                        <td><?php echo $val["version"]; ?></td>
+                        <td><?php echo $version_title.$val["version"]; ?></td>
                     </tr>
                 <?php
                     //to end loop for each
