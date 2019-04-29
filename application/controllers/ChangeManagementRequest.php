@@ -243,50 +243,51 @@ class ChangeManagementRequest extends CI_Controller {
 		/// *** call model and bind data here.
 		$row = array(); //อยากจะส่ง $RelateResultSCHEMA,$RelateResultNotSCHEMA ไป display 
 		//echo $param->functionId;
-		$count = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-
-		$RelateResultSCHEMA = $this->callChangeRelate($param);
-		//echo $RelateResultSCHEMA->functionId;
 		
-		for($i=1; $i <= sizeof($count); $i++ ) {// มันไม่ยอมดึง row แรกมาแสดง
-				//$val = $RelateResultSCHEMA[$i];
-				$row["no"] = $i;
-				$row["typeData"]= $RelateResultSCHEMA->typeData;
-				$row["dataName"]= $RelateResultSCHEMA->dataName;
-				$row["newDataType"]= $RelateResultSCHEMA->newDataType;
-				$row["newDataLength"]= $RelateResultSCHEMA->newDataLength;
-				$row["newScaleLength"] = $RelateResultSCHEMA->newScaleLength;
-				$row["newUnique"]= $RelateResultSCHEMA->newUnique;
-				$row["newNotNull"]= $RelateResultSCHEMA->newNotNull;
-				$row["newDefaultValue"]= $RelateResultSCHEMA->newDefaultValue;
-				$row["newMinValue"] = $RelateResultSCHEMA->newMinValue;
-				$row["newMaxValue"] = $RelateResultSCHEMA->newMaxValue;
-				$row["tableName"]= $RelateResultSCHEMA->tableName;
-				$row["columnName"]= $RelateResultSCHEMA->columnName;
-				$row["changeType"]= $RelateResultSCHEMA->changeType;
-				array_push($data['change_list'],$row);
-		}
 
-		$RelateResultNotSCHEMA  = $this->callChangeNotRelate($param);
-		for($i=1; $i <= sizeof($count); $i++ ) {// มันไม่ยอมดึง row แรกมาแสดง
-			//$val = $RelateResultSCHEMA[$i];
-			$row["no"] = $i;
-			$row["typeData"]= $RelateResultNotSCHEMA->typeData;
-			$row["dataName"]= $RelateResultNotSCHEMA->dataName;
-			$row["newDataType"]= $RelateResultNotSCHEMA->newDataType;
-			$row["newDataLength"]= $RelateResultNotSCHEMA->newDataLength;
-			$row["newScaleLength"] = $RelateResultNotSCHEMA->newScaleLength;
-			$row["newUnique"]= $RelateResultNotSCHEMA->newUnique;
-			$row["newNotNull"]= $RelateResultNotSCHEMA->newNotNull;
-			$row["newDefaultValue"]= $RelateResultNotSCHEMA->newDefaultValue;
-			$row["newMinValue"] = $RelateResultNotSCHEMA->newMinValue;
-			$row["newMaxValue"] = $RelateResultNotSCHEMA->newMaxValue;
-			$row["tableName"]= $RelateResultNotSCHEMA->tableName;
-			$row["columnName"]= $RelateResultNotSCHEMA->columnName;
-			$row["changeType"]= $RelateResultNotSCHEMA->changeType;
+		//$RelateResultSCHEMA = $this->callChangeRelate($param);
+		//echo $RelateResultSCHEMA->functionId;
+		//print_r($RelateResultSCHEMA);
+		//sizeof();
+		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		$i=1;
+		foreach ($RelateResultSCHEMA as $value) {
+			$row["no"] = $i++;
+			$row["typeData"]= $value["typeData"];
+			$row["dataName"]= $value["dataName"];
+			$row["newDataType"]= $value["newDataType"];
+			$row["newDataLength"]= $value["newDataLength"];
+			$row["newScaleLength"] = $value["newScaleLength"];
+			$row["newUnique"]= $value["newUnique"];
+			$row["newNotNull"]= $value["newNotNull"];
+			$row["newDefaultValue"]= $value["newDefaultValue"];
+			$row["newMinValue"] = $value["newMinValue"];
+			$row["newMaxValue"] = $value["newMaxValue"];
+			$row["tableName"]= $value["tableName"];
+			$row["columnName"]= $value["columnName"];
+			$row["changeType"]= $value["changeType"];
 			array_push($data['change_list'],$row);
 		}
 
+		$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+		foreach ($RelateResultNotSCHEMA as $value) {
+			$row["no"] = $i++;
+			$row["typeData"]= $value["typeData"];
+			$row["dataName"]= $value["dataName"];
+			$row["newDataType"]= $value["newDataType"];
+			$row["newDataLength"]= $value["newDataLength"];
+			$row["newScaleLength"] = $value["newScaleLength"];
+			$row["newUnique"]= $value["newUnique"];
+			$row["newNotNull"]= $value["newNotNull"];
+			$row["newDefaultValue"]= $value["newDefaultValue"];
+			$row["newMinValue"] = $value["newMinValue"];
+			$row["newMaxValue"] = $value["newMaxValue"];
+			$row["tableName"]= $value["tableName"];
+			$row["columnName"]= $value["columnName"];
+			$row["changeType"]= $value["changeType"];
+			array_push($data['change_list'],$row);
+		}
+		
 		return $data;
 	}
 	

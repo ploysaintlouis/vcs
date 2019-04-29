@@ -19,7 +19,7 @@ class Running_model extends CI_Model{
 
     function running_ch(){
 
-		$sqlStr = "select max(changeRequestId) AS changeRequestId from m_running_ch";
+		$sqlStr = "select max(changeRequestId) AS changeRequestId from M_RUNNING_CH";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 		return $result->row();
@@ -29,7 +29,7 @@ class Running_model extends CI_Model{
 		$this->db->trans_start(); //Starting Transaction
         $this->db->trans_strict(FALSE);
         
-		$sqlStr = "UPDATE m_running_ch SET changeRequestId = changeRequestId+1 ";
+		$sqlStr = "UPDATE M_RUNNING_CH SET changeRequestId = changeRequestId+1 ";
 		$this->db->query($sqlStr);
 		$this->db->trans_complete();
     	$trans_status = $this->db->trans_status();
