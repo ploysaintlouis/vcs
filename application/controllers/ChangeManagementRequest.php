@@ -299,21 +299,30 @@ class ChangeManagementRequest extends CI_Controller {
 		$row=array();
 		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
 		$i = 1;
+		$frNo = "";
+		$frVersion = "";
 		foreach($ListofAffectFRRelateSchema as $value){
-			$row["no"] = $i++;
-			$row["fr_no"]= $value["functionId"];
-			$row["change_type"]= $value['changeType'];
-			$row["version"]= $value['functionVersion'];
-			array_push($data['aff_fr_list'],$row);
+
+			if($frNo != $value["functionId"] && $frVersion != $value['functionVersion']){
+				$row["no"] = $i++;
+				$row["fr_no"]= $value["functionId"];
+				$row["change_type"]= $value['changeType'];
+				$row["version"]= $value['functionVersion'];
+				$frNo = $value["functionId"];
+				$frVersion = $value['functionVersion'];
+				array_push($data['aff_fr_list'],$row);
+			}
 		}
 		
 		$ListofAffectFRNotRelateSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
 		foreach($ListofAffectFRNotRelateSchema as $value){
-			$row["no"] = $i++;
-			$row["fr_no"]= $value["functionId"];
-			$row["change_type"]= $value['changeType'];
-			$row["version"]= $value['functionVersion'];
-			array_push($data['aff_fr_list'],$row);
+			if($frNo != $value["functionId"] && $frVersion != $value['functionVersion']){
+				$row["no"] = $i++;
+				$row["fr_no"]= $value["functionId"];
+				$row["change_type"]= $value['changeType'];
+				$row["version"]= $value['functionVersion'];
+				array_push($data['aff_fr_list'],$row);
+			}
 		}
 
 		//ListofAffectOthFr = $this->callImpactOthFunction($param);
@@ -325,6 +334,9 @@ class ChangeManagementRequest extends CI_Controller {
 			$row["version"]= $value['functionVersion'];
 			array_push($data['aff_fr_list'],$row);
 		}
+
+
+		
 		// for($i=1;$i<3;$i++){
 		// 	$row["no"] = $i;
 		// 	$row["fr_no"]= $value["functionId"];
@@ -344,14 +356,18 @@ class ChangeManagementRequest extends CI_Controller {
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
 		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
 		$i = 1;
+		$testNo = "";
+		$testVersion = "";
 		foreach($ListofTCAffected as $value)
 		{
-			if($value["testCaseNo"] != ""){
-				$row["no"] = $i++;
-				$row["test_no"]= $value["testCaseNo"];
-				$row["change_type"]= "Edit";
-				$row["version"]= $value['testcaseVersion'];
-				array_push($data['aff_testcase_list'],$row);
+			if($testNo != $value["testCaseNo"] && $testVersion != $value['testcaseVersion']){
+				if($value["testCaseNo"] != ""){
+					$row["no"] = $i++;
+					$testNo = $row["test_no"]= $value["testCaseNo"];
+					$row["change_type"]= "Edit";
+					$testVersion = $row["version"]= $value['testcaseVersion'];
+					array_push($data['aff_testcase_list'],$row);
+				}
 			}
 		}
 		// for($i=1;$i<3;$i++){
