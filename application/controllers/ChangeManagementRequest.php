@@ -298,7 +298,6 @@ class ChangeManagementRequest extends CI_Controller {
 		/// *** call model and bind data here.
 		$row=array();
 		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-		//print_r($ListofAffectFRRelateSchema);
 		$i = 1;
 		foreach($ListofAffectFRRelateSchema as $value){
 			$row["no"] = $i++;
@@ -306,10 +305,17 @@ class ChangeManagementRequest extends CI_Controller {
 			$row["change_type"]= $value['changeType'];
 			$row["version"]= $value['functionVersion'];
 			array_push($data['aff_fr_list'],$row);
-			
 		}
 		
-		//$ListofAffectFRNotRelateSchema = $this->callImpactFunctionNotRelate($param);
+		$ListofAffectFRNotRelateSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
+		foreach($ListofAffectFRNotRelateSchema as $value){
+			$row["no"] = $i++;
+			$row["fr_no"]= $value["functionId"];
+			$row["change_type"]= $value['changeType'];
+			$row["version"]= $value['functionVersion'];
+			array_push($data['aff_fr_list'],$row);
+		}
+
 		//ListofAffectOthFr = $this->callImpactOthFunction($param);
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
 		foreach($ListofChangeSchemaOthFr as $value){
@@ -335,16 +341,27 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['aff_testcase_list'] = array();
 		/// *** call model and bind data here.
 		$row=array();
-		$ListofAffectedTestCase = $this->callImpactTestCase($param,$ListofAffectOthFr);
-
-		for($i=1;$i<3;$i++){
-			$row["no"] = $i;
-			$row["test_no"]= "Test Case 01";
-			$row["change_type"]= "Edit";
-			$row["version"]="V.2";
-
-			array_push($data['aff_testcase_list'],$row);
+		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
+		$i = 1;
+		foreach($ListofTCAffected as $value)
+		{
+			if($value["testCaseNo"] != ""){
+				$row["no"] = $i++;
+				$row["test_no"]= $value["testCaseNo"];
+				$row["change_type"]= "Edit";
+				$row["version"]= $value['testcaseVersion'];
+				array_push($data['aff_testcase_list'],$row);
+			}
 		}
+		// for($i=1;$i<3;$i++){
+		// 	$row["no"] = $i;
+		// 	$row["test_no"]= "Test Case 01";
+		// 	$row["change_type"]= "Edit";
+		// 	$row["version"]="V.2";
+
+		// 	array_push($data['aff_testcase_list'],$row);
+		// }
 		return $data;
 	}
 	function bind_data_aff_schema($param){
@@ -352,14 +369,16 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['aff_schema_list'] = array();
 		/// *** call model and bind data here.
 		$row=array();
-		$ListofAffectedSchema = $this->callImpactSchema($param);
-
+		// $ListofAffectedSchema = $this->callImpactSchema($param);
+		$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
+		$i = 1;
+		foreach($ListofSchemaAffected as $value)
 		for($i=1;$i<3;$i++){
-			$row["no"] = $i;
-			$row["table_name"]= "Stock";
-			$row["column_name"]= "StockName";
+			$row["no"] = $i++;
+			$row["table_name"]= $value["tableName"];
+			$row["column_name"]= $value["columnName"];
 			$row["change_type"]= "Edit";
-			$row["version"]="V.1";
+			$row["version"]= $value["schemaVersionId"];
 
 			array_push($data['aff_schema_list'],$row);
 		}

@@ -14,7 +14,7 @@
 
                 <?php
                     // start loop for each 
-                    foreach($aff_fr_panel as $val)
+                    foreach($aff_fr_list as $val)
                     {
                 ?>
                     <tr>
