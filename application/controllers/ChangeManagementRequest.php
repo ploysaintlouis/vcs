@@ -330,8 +330,10 @@ class ChangeManagementRequest extends CI_Controller {
 
 		//ListofAffectOthFr = $this->callImpactOthFunction($param);
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		$fr_title = $frId.$frVersion ;
 		foreach($ListofChangeSchemaOthFr as $value){
-			if($frId != $value["FROth_Id"]){
+			if($frId.$frVersion  != $value["FROth_Id"].$value["FROth_Version"] ){
+				//echo $value['changeType'];
 				$row["no"] = $i++;
 				$row["fr_id"]= $value["FROth_Id"];
 				$row["fr_no"]= $value["FROth_NO"];
@@ -342,16 +344,6 @@ class ChangeManagementRequest extends CI_Controller {
 			}
 		}
 
-
-		
-		// for($i=1;$i<3;$i++){
-		// 	$row["no"] = $i;
-		// 	$row["fr_no"]= $value["functionId"];
-		// 	$row["change_type"]= $value['changeType'];
-		// 	$row["version"]= $value['functionVersion'];
-
-		// 	array_push($data['aff_fr_list'],$row);
-		// }
 		return $data;
 	}	
 
@@ -362,31 +354,52 @@ class ChangeManagementRequest extends CI_Controller {
 		$row=array();
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
 		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
-			//	print_r($ListofChangeSchemaOthFr);
+			//	print_r($ListofTCAffected);
+
 		$i = 1;
 		$testNo = "";
 		$testVersion = "";
 		foreach($ListofTCAffected as $value)
 		{
-			if($testNo != $value["testCaseNo"] && $testVersion != $value['testcaseVersion']){
+			$test_title = $testNo.$testVersion;
+			if($test_title != $value["testCaseNo"].$value['testcaseVersion'] ){
 				if($value["testCaseNo"] != ""){
 					$row["no"] = $i++;
 					$testNo = $row["test_no"]= $value["testCaseNo"];
-					$row["change_type"]= "Edit";
 					$testVersion = $row["version"]= $value['testcaseVersion'];
+					if($value["tctype"] == 'Oth'){
+						$changetype = "edit";
+						$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+						foreach($ListofAffectFRRelateSchema as $value){
+							if($changetype != $value["changeType"] ){
+								$changetype = $value['changeType'];
+							}
+						}					
+					}else{
+						$changetype = "edit";
+						$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+						foreach($RelateResultSCHEMA as $value){
+							if($changetype  != $value["changeType"] ){
+								if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+									$changetype = "delete";
+								}
+							}
+						}
+						$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+						foreach($RelateResultNotSCHEMA as $value){
+							if($changetype  != "delete" ){
+								if($changetype != $value["changeType"]){
+									$changetype = $value['changeType'];
+								}
+							}
+						}
+					}
+					$row['change_type'] = $changetype;
 					array_push($data['aff_testcase_list'],$row);
 				}
 			}
 		}
-		
-		// for($i=1;$i<3;$i++){
-		// 	$row["no"] = $i;
-		// 	$row["test_no"]= "Test Case 01";
-		// 	$row["change_type"]= "Edit";
-		// 	$row["version"]="V.2";
 
-		// 	array_push($data['aff_testcase_list'],$row);
-		// }
 		return $data;
 	}
 	function bind_data_aff_schema($param){

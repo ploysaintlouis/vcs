@@ -2,3 +2,4 @@ functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataT
 OS_FR_04,Create Order Discount,input,dDiscount,,,,Order_Details,discount
 OS_FR_04,Create Order Discount,input,dUnit Price,,,,Order_Details,unit_price
 OS_FR_04,Create Order Discount,output,dPrice,decimal,18,2,,
+OS_FR_04,Create Order Discount,input,dName,char,20,,,

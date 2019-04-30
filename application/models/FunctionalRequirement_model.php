@@ -316,7 +316,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 	}
 		$result = $this->db->query($sqlStr);
 		if($result){
-			$query = $this->db->query("SELECT IDENT_CURRENT('M_FN_REQ_HEADER') as last_id");
+			$query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_HEADER");
 			$resultId = $query->result();
 			return $resultId[0]->last_id;
 		}
@@ -365,11 +365,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 			'{$param->dataLength}','{$param->decimalPoint}',NULL,NULL,NULL,NULL,NULL,NULL)";   
 		}
 		$result = $this->db->query($sqlStr);
-		if($result){
-			$query = $this->db->query("SELECT IDENT_CURRENT('M_FN_REQ_DETAIL') as last_id");
-			$resultId = $query->result();
-			return $resultId[0]->last_id;
-		}
+
 		return NULL;
 	}
 
@@ -505,14 +501,11 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 				'activeFlag' => $param[0]->activeFlag,
 				'user' => $param[0]->user);
 
-			//insert Functional Requirement Version
-			$resultInsertVersion = $this->insertFRVersion($headerData);
-
 			//insert Functional Requirement Detail
 			foreach ($param as $detail) {
 				$dataId = '';
 				//Check Exist Input
-				if(empty($detail->dataId)){
+				
 					//Insert New Input
 					if ($detail->typeData == 'input'){
 						$detail->typeData = '1';
@@ -550,9 +543,8 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 					$detail->effectiveStartDate = $effectiveStartDate;
 					$detail->effectiveEndDate = 'NULL';
 
-					$inputId = $this->insertFRInput($functionId,$detail);
-					$detail->dataId = $dataId;
-				}
+					$dataId = $this->insertFRInput($functionId,$detail);
+				
 /*
 				$resultSchemaInfo = $this->searchReferenceDatabaseSchemaInfo($detail);
 

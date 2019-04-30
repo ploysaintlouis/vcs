@@ -127,6 +127,18 @@ class RTM_model extends CI_Model{
 		return $result->row();
 	}
 
+	function insertRTMVersion($param, $user){
+		$currentDateTime = date('Y-m-d H:i:s');
+		$previousVersionId = !empty($param->previousVersionId)? $param->previousVersionId : 'NULL';
+
+		$sqlStr = "INSERT INTO M_RTM_VERSION (projectId, testCaseId,testCaseversion,functionId,functionVersion,effectiveStartDate, effectiveEndDate, 
+		activeFlag, createDate,	createUser, updateDate, updateUser)
+		VALUES ($param->projectId, '$param->testCaseId','$param->testCaseversion','$param->functionId','$param->functionversion', '$param->effectiveStartDate', NULL, 
+		'$param->activeFlag', '$currentDateTime', '$user', '$currentDateTime', '$user')";
+		$result = $this->db->query($sqlStr);
+		return $result;
+	}
+
 	function uploadRTM($param, $user){
 		$this->db->trans_begin(); //Starting Transaction
 		$effectiveStartDate = '';
@@ -160,7 +172,6 @@ class RTM_model extends CI_Model{
 
 			$value->effectiveStartDate = $effectiveStartDate;
 			$resultInsertRTMVersion = $this->insertRTMVersion($param[0], $user);
-			$resultInsertRTMInfo = $this->insertRTMInfo($value, $user);
 		}
 
     	$trans_status = $this->db->trans_status();

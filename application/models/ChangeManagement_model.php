@@ -355,7 +355,7 @@ echo $sqlStr;
 		return $result->row();
 	}	
 	function getLastTestCaseVersion($projectId, $testCaseNo, $testCaseVersionNo){
-		$sqlStr = "SELECT h.testCaseId,v.testCaseVersion,v.testCaseVersionNumber, v.updateDate
+		$sqlStr = "SELECT h.testCaseId,v.testCaseVersion, v.updateDate
 			FROM M_TESTCASE_HEADER h
 			INNER JOIN M_TESTCASE_VERSION v
 			ON h.testCaseId = v.testCaseId
@@ -724,15 +724,7 @@ echo $sqlStr;
 	}
 	function checkChangeRequestrelateSCHEMA($param){
 
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_FRDETAIL_Affected 
-		(SELECT  *,'' FR_NAME
-		FROM T_TEMP_CHANGE_LIST
-		WHERE 1=2)";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
-
-		$sqlStr = " INSERT INTO tmp_FRDETAIL_Affected
-		SELECT a.*,b.dataName FR_NAME
+		$sqlStr = " SELECT a.*,b.dataName FR_NAME
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
 		WHERE a.confirmflag=1 
 		AND a.tableName=b.refTableName 
@@ -744,9 +736,6 @@ echo $sqlStr;
 		AND a.functionVersion = '$param->functionVersion' ";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
-
-		$sqlStr = " SELECT *
-		FROM tmp_FRDETAIL_Affected ";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -818,76 +807,55 @@ echo $sqlStr;
 		return $result->result_array();
 	}		
 	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_FR_Affected
-		(SELECT  functionId,functionVersion
-		FROM T_TEMP_CHANGE_LIST
-		WHERE 1=2)";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
 
-		$sqlStr = "INSERT INTO tmp_FR_Affected
-		SELECT DISTINCT functionId,functionVersion
-		FROM T_TEMP_CHANGE_LIST
-		WHERE functionId = '$param->functionId'
-		AND functionversion ='$param->functionVersion' ";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
 		$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
 		$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
 		$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
 
-		if(!isset($FROthr_No)){
-			$sqlStr = "INSERT INTO tmp_FR_Affected
-			SELECT DISTINCT functionId,functionVersion
-			FROM M_FN_REQ_HEADER
-			WHERE functionId = '$FROth_Id'
-			AND functionversion ='$FROth_Version' ";
-			$result = $this->db->query($sqlStr);
-		}
-		//echo $sqlStr ;
-
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_RTM
-		(SELECT  testCaseId,testCaseversion,functionId,functionVersion
+		(SELECT  testCaseId,testCaseversion,functionId,functionVersion,'' AS tctype
 		FROM M_RTM_VERSION
 		WHERE 1=2)";
 		$result = $this->db->query($sqlStr);
 
-		$sqlStr = "INSERT INTO tmp_RTM
-		SELECT a.testCaseId,a.testCaseversion,a.functionId,a.functionVersion  
-		FROM M_RTM_VERSION a,tmp_FR_Affected b
-		WHERE a.functionId = b.functionId
-		AND a.functionVersion = b.functionVersion";
-		$result = $this->db->query($sqlStr);
-		echo $sqlStr ;
-
-		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
-		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,a.typeData,
-		a.refdataName TC_NAME,a.testData,b.dataName CH_NAME,b.changeType,b.newdataType,
-		newDataLength,b.newScaleLength,b.newUnique,newNotNull,
-		newDefaultValue,newMinValue,newMaxValue
-		FROM M_TESTCASE_DETAIL a,T_TEMP_CHANGE_LIST b,tmp_RTM c
-		WHERE a.projectId = '2'
-		AND a.activeflag = '1'
-		AND a.refdataId = b.dataId
-		AND b.confirmflag = '1'
-		AND a.testCaseId = c.testCaseId
-		AND a.testCaseversion = c.testCaseversion
-		AND b.functionId = c.functionId
-		AND b.functionVersion = c.functionVersion
-		UNION ALL
-		/*การหา TESTCASE ที่เป็นการ add //ยังไม่มีใน testCase*/
-		SELECT '' testCaseId,'' testCaseNo,'' testcaseVersion,b.typeData,'' TC_NAME,'' testData
-		,b.dataName CH_NAME,b.changeType,b.newdataType,newDataLength,b.newScaleLength,b.newUnique,newNotNull,
-		newDefaultValue,newMinValue,newMaxValue
-		FROM T_TEMP_CHANGE_LIST b
-		WHERE b.functionId = '25'
-		AND b.functionVersion = '1'
-		AND b.confirmflag = '1'
-		AND b.changeType = 'add'";
-		//echo $sqlStr ;
-
+		//echo $FROth_Id;
+		if(null != $FROth_Id) {
+			//echo "1";
+			$sqlStr = "SELECT a.testCaseId,b.testcaseVersion,b.testCaseNo,'' tctype
+			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
+			WHERE a.functionId = '$param->functionId'
+			AND a.functionversion ='$param->functionVersion' 
+			AND a.testCaseId = b.testCaseId
+			AND a.testCaseversion = b.testCaseversion
+			UNION
+			SELECT a.testCaseId,b.testcaseVersion,b.testCaseNo,'Oth' tctype
+			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
+			WHERE a.functionId = '$FROth_Id'
+			AND a.functionversion ='$FROth_Version' 
+			AND a.testCaseId = b.testCaseId
+			AND a.testCaseversion = b.testCaseversion		";
+		}else{
+			$sqlStr = "SELECT a.testCaseId,a.testcaseVersion,b.testCaseNo,'' tctype
+			FROM M_RTM_VERSION b,M_TESTCASE_HEADER b
+			WHERE a.functionId = '$param->functionId'
+			AND a.functionversion ='$param->functionVersion'
+			AND a.testCaseId = b.testCaseId
+			AND a.testCaseversion = b.testCaseversion ";
+		}
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
+
+		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
+		/*
+		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,c.tctype
+		FROM M_TESTCASE_HEADER a, tmp_RTM c
+		WHERE a.projectId = '$param->projectId'
+		AND a.activeflag = '1'
+		AND a.testCaseId = c.testCaseId
+		AND a.testCaseversion = c.testCaseversion";
+		//echo $sqlStr ;
+*/
+
 	}	
 
 }

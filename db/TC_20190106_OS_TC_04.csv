@@ -1,3 +1,5 @@
 No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
 1,OS_TC_04,,Valid,input,dUnit Price,28900
 2,OS_TC_04,,Valid,input,dDiscount,2000
+3,OS_TC_04,,Valid,Output,dPrice,100.5
+4,OS_TC_04,,Valid,input,dName,jlkgjdkdfj45

@@ -48,10 +48,15 @@
                         <td><?php echo $val["columnName"]; ?></td>
                         <td><?php 
                             //for example can add logic to change css and html here
-                            echo $val["changeType"] == "Edit" ?
-                                  "<button class='btn btn-block bg-orange btn-xs' disabled='disabled'>Edit</button>"
-                                : "<button class='btn btn-block bg-green btn-xs' disabled='disabled'>".$val["changeType"]."</button>"; 
-                        ?></td>
+                                if('add' == $val['changeType']){
+                                    echo "<span class=' badge bg-green'>".$val['changeType']."</span>";
+                                }else if('edit' == $val['changeType']){
+                                    echo "<span class='badge bg-orange'>".$val['changeType']."</span>";
+                                }else{
+                                    echo "<span class='badge bg-red'>".$val['changeType']."</span>";
+                                }
+                            ?>
+                        </td>
                     </tr>
                 <?php
                     //to end loop for each

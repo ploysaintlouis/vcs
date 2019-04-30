@@ -105,16 +105,13 @@ class TestCase_model extends CI_Model{
 		if(isset($param->testCaseId) && !empty($param->testCaseId)){
 			$where[] = "h.testCaseId = $param->testCaseId";
 		}
-		if(isset($param->testCaseVersionNumber) && !empty($param->testCaseVersionNumber)){
-			$where[] = "v.testCaseVersion = $param->testCaseVersion";
-		}
 		if(isset($param->testCaseVersion) && !empty($param->testCaseVersion)){
 			$where[] = "v.testCaseVersion = $param->testCaseVersion";
 		}
 		$where_condition = implode(" AND ", $where);
 		
 		$sqlStr = "SELECT 
-			h.testCaseId, h.testCaseNo, v.testCaseVersion, v.testCaseVersionNumber, 
+			h.testCaseId, h.testCaseNo, v.testCaseVersion, 
 			v.effectiveStartDate, v.effectiveEndDate, v.updateDate, v.activeFlag
 			FROM M_TESTCASE_HEADER h
 			INNER JOIN M_TESTCASE_DETAIL v
@@ -126,16 +123,14 @@ class TestCase_model extends CI_Model{
 
 	function insertTestCaseHeader($param, $user){
 		$currentDateTime = date('Y-m-d H:i:s');
-		$sqlStr = "INSERT INTO M_TESTCASE_HEADER (testCaseNo, testCaseDescription, expectedResult, projectId, createDate, createUser, updateDate, updateUser) VALUES ('{$param->testCaseNo}', '{$param->testCaseDescription}', '{$param->expectedResult}', {$param->projectId}, '{$currentDateTime}', '$user', '{$currentDateTime}', '$user')";
+		$sqlStr = "INSERT INTO M_TESTCASE_HEADER (testCaseNo, testCaseDescription, expectedResult, projectId, createDate, createUser, updateDate, updateUser,testcaseVersion,activeflag) 
+		VALUES ('{$param->testCaseNo}', '{$param->testCaseDescription}', '{$param->expectedResult}', {$param->projectId}, '{$currentDateTime}', '$user', '{$currentDateTime}', '$user','{$param->testcaseVersion}','{$param->activeflag}')";
 		$result = $this->db->query($sqlStr);
-		/*
 		if($result){
-			//$query = $this->db->query("SELECT IDENT_CURRENT('M_TESTCASE_HEADER') as last_id");
-			$query = $this->db->query("SELECT MAX(last_id) AS last_id FROM M_TESTCASE_HEADER");
-
+			$query = $this->db->query("SELECT MAX(testCaseId) AS last_id FROM M_TESTCASE_HEADER");
 			$resultId = $query->result();
 			return $resultId[0]->last_id;
-		}*/
+		}
 		return null;
 	}
 function searchFRMAXTCNo() {
@@ -247,7 +242,7 @@ function searchFRMAXTCNo() {
 			$where[] = "testCaseId = $param->testCaseId";
 		}
 		if(isset($param->inputId) && !empty($param->inputId)){
-			$where[] = "inputId = $param->inputId";
+			$where[] = "dataId = $param->dataId";
 		}
 		if(isset($param->effectiveStartDate) && !empty($param->effectiveStartDate)){
 			$where[] = "effectiveStartDate = '$param->effectiveStartDate'";
@@ -268,6 +263,9 @@ function searchFRMAXTCNo() {
 
 		//Check Existing Test Case Header
 		//var_dump($param[0]);
+		$param[0]->testcaseVersion = '1';
+		$param[0]->activeflag = '1';
+
 		$result = $this->searchExistTestCaseHeader($param[0]->projectId, $param[0]->testCaseNo);
 		if(null != $result && 0 < count($result)){
 			$testCaseId = $result->testCaseId;
@@ -286,10 +284,10 @@ function searchFRMAXTCNo() {
 		//Insert new Test Case Details
 		if(null != $testCaseId && !empty($testCaseId)){
 			foreach ($param as $value){
-				if ($value->typeData == 'input'){
+				if (($value->typeData == 'input') || ($value->typeData == 'Input')) {
 					$value->typeData  = '1';
 				}
-				if ($value->typeData == 'output'){
+				if (($value->typeData == 'output') || ($value->typeData == 'Output')) {
 					$value->typeData  = '2';
 				}	
 

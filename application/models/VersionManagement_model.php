@@ -23,14 +23,14 @@ class VersionManagement_model extends CI_Model{
 		$sqlStr = "SELECT 
 				fh.functionId, 
 				fh.functionNo, 
-				fv.functionVersionId, 
-				fv.functionVersionNumber 
+				fv.functionVersion
 			FROM M_FN_REQ_HEADER fh
-			INNER JOIN M_FN_REQ_VERSION fv
+			INNER JOIN M_FN_REQ_DETAIL fv
 			ON fh.functionId = fv.functionId
+			AND fh.functionVersion = fv.functionVersion
 			WHERE fh.projectId = $param->projectId
 			AND fh.functionId = $param->functionId
-			ORDER BY fv.functionVersionNumber";
+			ORDER BY fv.functionVersion";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -71,24 +71,26 @@ class VersionManagement_model extends CI_Model{
 			fd.dataId,
 			fd.dataName,
 			fd.schemaVersionId,
-			ds.tableName, ds.columnName,
-			ds.dataType, ds.dataLength,
-			ds.decimalPoint,
-			ds.constraintUnique, ds.constraintNull,
-			ds.constraintDefault, ds.constraintPrimaryKey,
-			ds.constraintMinValue, ds.constraintMaxValue
+			fd.refTableName AS tableName,
+			fd.refColumnName AS columnName,
+			fd.dataType, 
+			fd.dataLength,
+			fd.decimalPoint,
+			fd.constraintUnique, 
+			fd.constraintNull,
+			fd.constraintDefault,
+			fd.constraintPrimaryKey,
+			fd.constraintMinValue, 
+			fd.constraintMaxValue
 		FROM M_FN_REQ_HEADER fh
 		INNER JOIN M_FN_REQ_DETAIL fd
 		ON fh.functionId = fd.functionId
-		INNER JOIN M_DATABASE_SCHEMA_INFO ds
-		ON ds.tableName = fd.refTableName
-		AND ds.columnName = fd.refColumnName
-		AND ds.schemaVersionId = fd.schemaVersionId
 		WHERE fh.projectId = $param->projectId
 		AND fh.functionId = $param->functionId
 		AND  fd.effectiveStartDate <= '$param->targetDate'
 		AND ('$param->targetDate' <= fd.effectiveEndDate OR fd.effectiveEndDate is null)
-		AND (fd.effectiveEndDate != '$param->targetDate' OR fd.effectiveEndDate is null)" ;
+		AND (fd.effectiveEndDate != '$param->targetDate' OR fd.effectiveEndDate is null)
+		" ;
 
 		
 		$result = $this->db->query($sqlStr);
@@ -183,10 +185,10 @@ class VersionManagement_model extends CI_Model{
 				th.testCaseNo,
 				tv.testCaseVersion
 			FROM M_TESTCASE_HEADER th
-			INNER JOIN M_TESTCASE_VERSION tv
+			INNER JOIN M_TESTCASE_DETAIL tv
 			ON th.testCaseId = tv.testCaseId
 			WHERE th.testCaseId = $param->testCaseId
-			ORDER BY tv.testCaseVersionNumber";
+			ORDER BY tv.testCaseVersion";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
