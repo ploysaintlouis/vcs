@@ -289,7 +289,7 @@ class ChangeManagementRequest extends CI_Controller {
 		//see this function to bind load data to template view
 		//url -> ChangeManagementRequest/view_change_result/{projectId}
 		$dataForPage = array();
-echo $RelateResultSCHEMA ->functionId;
+//echo $RelateResultSCHEMA ->functionId;
 		//for use query something and send to page
 		$dataForPage["projectId"] = $projectId;
 

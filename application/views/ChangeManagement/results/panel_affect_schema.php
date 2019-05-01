@@ -10,7 +10,7 @@
                     <th>Table Name</th>
                     <th>Column Name</th>
                     <th>Change Type</th>
-                    <th>Old Version</th>
+                    <th>Version</th>
                 </tr>
 
                 <?php
@@ -23,7 +23,12 @@
                         <td><?php echo $val["no"]; ?></td>
                         <td><?php echo $val["table_name"]; ?></td>
                         <td><?php echo $val["column_name"]; ?></td>
-                        <td><?php echo $val["change_type"]; ?></td>
+                        <td><?php
+									$label = "add" == $val['change_type']? "text-green" : ("edit" == $val['change_type']? "text-yellow" : "text-red");
+									?>
+									<i class="fa fa-circle-o <?php echo $label; ?>"></i>
+									<span><?php echo $val['change_type'] ?></span>
+						</td>
                         <td><?php echo $version_title.$val["version"]; ?></td>
                     </tr>
                 <?php

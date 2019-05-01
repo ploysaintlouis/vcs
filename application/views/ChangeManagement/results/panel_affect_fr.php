@@ -9,7 +9,7 @@
                     <th style="text-align: left;">#</th>
                     <th>Functional Req No.</th>
                     <th>Change Type</th>
-                    <th>Old Version</th>
+                    <th>Version</th>
                 </tr>
 
                 <?php
@@ -21,7 +21,14 @@
                     <tr>
                         <td><?php echo $val["no"]; ?></td>
                         <td><?php echo $val["fr_no"]; ?></td>
-                        <td><?php echo ($val["change_type"] == 'add' || $val["change_type"] == 'delete') ? "Delete" : "Edit"; ?></td>
+
+                        <td><?php
+									$label = "add" == $val['change_type']? "text-green" : ("edit" == $val['change_type']? "text-yellow" : "text-red");
+									?>
+									<i class="fa fa-circle-o <?php echo $label; ?>"></i>
+									<span><?php echo $val['change_type'] ?></span>
+						</td>
+
                         <td><?php echo $Version_title.$val["version"]; ?></td>
                     </tr>
                 <?php

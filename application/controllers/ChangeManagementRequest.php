@@ -180,11 +180,11 @@ class ChangeManagementRequest extends CI_Controller {
 
 		$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
 		foreach ($dataTypeCombo as $value) {
-			//var_dump($value) ;
+			//var_dump($value) ;			
+			$data['miscValue1'] = $value['miscValue1'];
 		}
-		
+
 		$this->load->view('ChangeManagement/popup/edit',$data);
-		$this->load->view('ChangeManagement/popup/edit',$dataTypeCombo);
     }
     function delete_detail($id){
 		$data = array();
@@ -244,11 +244,6 @@ class ChangeManagementRequest extends CI_Controller {
 		$row = array(); //อยากจะส่ง $RelateResultSCHEMA,$RelateResultNotSCHEMA ไป display 
 		//echo $param->functionId;
 		
-
-		//$RelateResultSCHEMA = $this->callChangeRelate($param);
-		//echo $RelateResultSCHEMA->functionId;
-		//print_r($RelateResultSCHEMA);
-		//sizeof();
 		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
 		$i=1;
 		foreach ($RelateResultSCHEMA as $value) {
@@ -301,14 +296,25 @@ class ChangeManagementRequest extends CI_Controller {
 		$i = 1;
 		$frId = "";
 		$frVersion = "";
+		$change_title = "edit";
 
 		foreach($ListofAffectFRRelateSchema as $value){
+			//echo $change_title;
 
 			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
 				$row["no"] = $i++;
 				$row["frId"]= $value["functionId"];
 				$row["fr_no"] =$param->functionNo;
-				$row["change_type"]= $value['changeType'];
+				$changetype = $this->mChange->searchTempFRInputChangeList($param);
+				foreach($changetype as $new_type){
+					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
+						$change_title = $new_type['changeType'];
+					}
+					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
+							$change_title = "delete";
+					}										
+				}
+				$row["change_type"]= $change_title;
 				$row["version"]= $value['functionVersion'];
 				$frNo = $value["functionId"];
 				$frVersion = $value['functionVersion'];
@@ -318,11 +324,23 @@ class ChangeManagementRequest extends CI_Controller {
 		
 		$ListofAffectFRNotRelateSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
 		foreach($ListofAffectFRNotRelateSchema as $value){
+
+			//echo $change_title;
+
 			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
 				$row["no"] = $i++;
 				$row["frId"]= $value["functionId"];
 				$row["fr_no"]= $param->functionNo;
-				$row["change_type"]= $value['changeType'];
+				$changetype = $this->mChange->searchTempFRInputChangeList($param);
+				foreach($changetype as $new_type){
+					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
+						$change_title = $new_type['changeType'];
+					}
+					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
+							$change_title = "delete";
+					}										
+				}
+				$row["change_type"]= $change_title;
 				$row["version"]= $value['functionVersion'];
 				array_push($data['aff_fr_list'],$row);
 			}
@@ -331,13 +349,19 @@ class ChangeManagementRequest extends CI_Controller {
 		//ListofAffectOthFr = $this->callImpactOthFunction($param);
 		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
 		$fr_title = $frId.$frVersion ;
+		$change_title = "edit";
 		foreach($ListofChangeSchemaOthFr as $value){
 			if($frId.$frVersion  != $value["FROth_Id"].$value["FROth_Version"] ){
-				//echo $value['changeType'];
+				if($change_title != $value['changeType']&& "edit" != $value['changeType']){
+					$change_title = $value['changeType'];
+				}
+				if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+						$change_title = "delete";
+				}			
+				$row['change_type'] = $change_title;
 				$row["no"] = $i++;
 				$row["fr_id"]= $value["FROth_Id"];
 				$row["fr_no"]= $value["FROth_NO"];
-				$row["change_type"]= $value['changeType'];
 				$row["version"]= $value['FROth_Version'];
 				array_push($data['aff_fr_list'],$row);
 				$frId = $value["FROth_Id"];
@@ -752,11 +776,12 @@ class ChangeManagementRequest extends CI_Controller {
 	function confirm_change_request(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
-		
+		$CH_NO = $this->input->post('CH_NO');
+
 		//logic to confirm here
 		$data = array(
 			'success' => true,
-			'result' => "Done !!! ".$prjId."  ".$funId
+			'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO
 		);
 		
 		echo json_encode($data);

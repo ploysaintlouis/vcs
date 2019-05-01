@@ -144,8 +144,48 @@
 								</td>
 							</tr>
 							</table>						
-						
 						</div>
+							<div class="col-sm-1">
+							<button type="button" class="btn btn-primary" id="btnConfirmResult">
+								<i class="fa fa-save"></i>Save
+							</button>
+							</div>
                 	</form>
 		</div>
 	</div>
+	
+<script>
+    $(function(){
+		$("#btnConfirmResult").on("click",function(){
+
+                $.ajax({
+					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_edit/",
+                    method: "POST",
+					data: $("#changeInput_form").serialize(),
+					success: function(data){
+						if(null != data){
+							//alert(data);
+							var result = data.split("|");
+							if("error" == result[0]){
+								alert(result[1]);
+								return false;
+							}else{
+								//alert(result[1]);
+								$('#changeInput_form')[0].reset();  
+     							$('#edit_input_modal').modal('hide');
+     							$('#inputChangeListTbl').html(data);  
+							}
+						}else{
+							
+							alert("There is a problem when save data, Please try to save again.");
+							return false; 
+						}
+					},
+					error: function(){
+						alert("There is a problem when save data, Please try to save again.");
+						return false;
+					}
+				});
+		});
+	});
+</script>

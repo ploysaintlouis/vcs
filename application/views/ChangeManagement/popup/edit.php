@@ -13,9 +13,21 @@
 						} else {
 							$displayInput = 'Output Name';
 						}
+						
 				?>
 
 				<form method="post" id="changeInput_form" >
+				<input type="hidden" id="inputTableName" name="inputTableName" value= " <?php echo $refTableName ?> " >
+				<input type="hidden" id="inputColumnName" name="inputColumnName" value="<?php echo $refColumnName ?> ">
+				<input type="hidden" name="oldDataType" id="oldDataType"	value="<?php echo $dataType ?> ">
+				<input type="hidden" name="oldDataLength" id="oldDataLength"	value="<?php echo $dataLength ?>">
+				<input type="hidden" name="oldScale" 	id="oldScale"	value=" <?php echo $decimalPoint ?>" >
+				<input type="hidden" name="oldDefaultValue" id="oldDefaultValue" value="<?php echo $constraintDefault ?> ">
+				<input type="hidden" name="oldMin" id="oldMin"	value="<?php echo $constraintMinValue ?> ">
+				<input type="hidden" name="oldMax" 	id="oldMax" value="<?php echo $constraintMaxValue ?> ">
+				<input type="hidden" id="oldNotNullValue" name="oldNotNullValue" value="<?php echo $constraintNull ?> ">
+				<input type="hidden" id="oldUniqueValue" name="oldUniqueValue" value="<?php echo $constraintUnique ?> ">
+
 					<div class="modal-body" id="input_detail" align="center">
 						<table style="width:100%">
 							<tr height="40">
@@ -35,15 +47,13 @@
 									</label>
 								</td>
 								<td>
-								<select name="inputDataType" class="form-control select2" style="width: 100%;" id="inputDataType" value="<?php echo $dataTypeCombo['miscValue1'] ?>">
+								<select name="inputDataType" class="form-control select2" style="width: 100%;" id="inputDataType" value="<?php echo $miscValue1 ?>">
 										<option value="">--Please Select--</option>
-	            						<?php if(null != $dataTypeCombo) {  ?>
-	            						<?php foreach($dataTypeCombo as $value): ?>
-	            								<option value="<?php echo $value['miscValue1']; ?> "">
-	            									<?php echo $value['miscValue1']; ?>: <?php echo $value['miscValue1']; ?>
+	            						<?php if(null != $miscValue1) {  ?>
+	            								<option value="<?php echo $miscValue1; ?> ">
+	            									<?php echo $miscValue1; ?> 
 	        									</option>
-	            						<?php endforeach; ?>
-	            						<?php } ?>
+	            						<?php } ?> 
 					            </select>
 								</td>
 							</tr>
@@ -193,22 +203,8 @@
 					},
 					error: function(){ 
 						alert("There is a problem when save data, Please try to save again.");
-				/*alert($('#changeProjectId').val());
-						alert($('#changeType').val());
-						alert($('#user').val());
 
-						alert($('#userId').val());
-						alert($('#oldDataType').val());
-						alert($('#oldScale').val());
-						alert($('#oldDefaultValue').val());
-						alert($('#oldMin').val());
-						alert($('#oldMax').val());
-						alert($('#oldNotNullValue').val());
-						alert($('#oldUniqueValue').val());
-						alert($('#inputTableName').val());
-						alert($('#inputColumnName').val());*/
-					return false; 
-					//return true;
+					return true;
 					}
 				});
 			});

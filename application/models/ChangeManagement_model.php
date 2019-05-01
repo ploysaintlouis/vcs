@@ -54,7 +54,7 @@ class ChangeManagement_model extends CI_Model{
 			FROM T_TEMP_CHANGE_LIST
 			WHERE $where_clause
 			ORDER BY lineNumber";
-		//	echo $sqlStr;
+			//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
