@@ -1,8 +1,10 @@
 
 <div class='col-md-12'>
     <div class="box box-primary">
-        <div class="form-group">
-            <h2 class="page-header">
+        
+		<div class="box-header" style="">
+			<div class="form-group">
+				<h4>
                 <i class="fa fa-tag"></i>
                 	Change Request No. : 
                 <b><?php echo isset($change_title['CH_NO'])? $change_title['CH_NO']: ""; ?></b>
@@ -10,7 +12,8 @@
                 	Change User: 
             	<b><?php echo isset($change_title['username'])? $change_title['username']: "";  ?></b>
                 </small>
-            </h2>
+				</h4>
+            </div>
         </div>
 	<?php $version_title = "V."; ?>
         <div class="box-body">

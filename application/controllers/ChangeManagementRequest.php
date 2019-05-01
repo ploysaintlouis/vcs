@@ -489,6 +489,7 @@ class ChangeManagementRequest extends CI_Controller {
 			$affTestCaseList = $this->bind_data_aff_testcase($param);
 
 			$dataForPage["functionId"] = $param->functionId;
+			$dataForPage["projectId"] = $param->projectId;
 
 			//send to page result/index 
 			$dataForPage["title_panel"]= $title;
@@ -498,8 +499,14 @@ class ChangeManagementRequest extends CI_Controller {
 			$dataForPage["aff_schema_panel"] = $affSchemalist;
 
 			$this->load->view('template/header');
+			$data = array();
+			$data['active_title'] = 'ChangeManagement';
+			$data['active_page'] = 'trns001';
+			$data['html'] = 'ChangeManagement/results/index';//$this->load->view('ChangeManagement/results/index',$dataForPage);
+			$data['dataForPage']= $dataForPage;
+			$this->load->view('template/menu',$data);
 			$this->load->view('template/body_javascript');
-			$this->load->view('ChangeManagement/results/index',$dataForPage);
+
 			$this->load->view('template/footer');
 
 		}catch(Exception $e){
@@ -741,6 +748,18 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 		return $param_schema;
 	}
+	
+	function confirm_change_request(){
+		$prjId = $this->input->post('projectId');
+		$funId = $this->input->post('functionId');
 		
+		//logic to confirm here
+		$data = array(
+			'success' => true,
+			'result' => "Done !!! ".$prjId."  ".$funId
+		);
+		
+		echo json_encode($data);
+	}
 }
 	

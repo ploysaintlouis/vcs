@@ -162,7 +162,14 @@
 
 	<!-- Content Wrapper. Contains page content -->
 	<div class="content-wrapper">
-		<?php $this->view($html); ?>
+		<?php
+			if(isset($dataForPage)){ 
+				$this->view($html,$dataForPage); 
+			}
+			else{
+				$this->view($html);
+			}
+		?>
 	</div>
 
 	<!-- Footer -->
