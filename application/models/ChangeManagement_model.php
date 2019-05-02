@@ -59,6 +59,49 @@ class ChangeManagement_model extends CI_Model{
 		return $result->result_array();
 	}
 
+	function searchTempFRInputChangeConfirm($param){
+
+		if(!empty($param->userId)){
+			$where[] = "userId = $param->userId";
+		}
+
+		if(!empty($param->functionId)){
+			$where[] = "functionId = $param->functionId";
+		}
+
+		if(!empty($param->functionVersion)){
+			$where[] = "functionVersion = $param->functionVersion";
+		}
+
+		if(!empty($param->dataId)){
+			$where[] = "dataId = $param->dataId";
+		}
+
+		if(!empty($param->schemaVersionId)){
+			$where[] = "schemaVersionId = $param->schemaVersionId";
+		}
+
+		//For Adding new input
+	/*	if(!empty($param->dataName) && !empty($param->table) && !empty($param->column)){
+			$where[] = "((dataName = '$param->dataName') 
+				OR (tableName = '$param->table' AND columnName = '$param->column'))";
+		}
+		*/
+		if(!empty($param->dataName)){
+			$where[] = "dataName = '$param->dataName'";
+		}
+		$where_clause = implode(' AND ', $where);
+
+		$sqlStr = "SELECT distinct functionId,functionVersion
+			FROM T_TEMP_CHANGE_LIST
+			WHERE $where_clause
+			AND confirmflag <> '0'
+			ORDER BY lineNumber";
+			//echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
 	function searchFRInputChangeList($param){
 		if(!empty($param->userId)){
 			$where[] = "userId = '$param->userId'";

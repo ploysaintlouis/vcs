@@ -260,14 +260,23 @@
                 									<?php $keyId = $projectInfo->projectId."|".$value['dataId']."|".$value['schemaVersionId']."|".$hfield['functionId']."|".$value['typeData']; ?>
 
 													<input type="hidden" name="projectId" id="projectId" value="<?php echo $value['projectId']; ?>">
-                									<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs">Edit</button> 
-													<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> <!-- bug ไม่ส่ง keyid บ้างปุ่ม
+													<?php if(isset($inputChangeConfirm) && 0 < count($inputChangeConfirm)) { 
+														foreach($inputChangeConfirm as $value1): 
+															if ($value['functionId'] == $value1['functionId'])
+															{
+																$var =1; ?>
+																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" <?php echo isset($var) ? 'disabled="true"' : ''; ?> >Edit</button> 
+																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " <?php echo isset($var) ? 'disabled="true"' : ''; ?> >Delete</button> <!-- bug ไม่ส่ง keyid บ้างปุ่ม -->
+															<?php }else{ ?>
+																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" >Edit</button> 
+																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> 
+															<?php } 
+														endforeach; 
+													} ?>
 
-                									<!-- <a href="#"><span class="label label-primary">Edit</span></a>
-                									<a href="#"><span class="label label-danger">Delete</span></a> -->
                 								</td>
                 							</tr>
-	                						<?php endforeach ?>
+												<?php endforeach; ?>
 											
 	                					</tbody>
 	                				</table>
@@ -336,11 +345,20 @@
 	                					</tbody>
 	                				</table
 
-									<?php $var = ('1' == $value['confirmflag'])? 'disabled' : ''; ?>
 									<div class="box-body" align="right">
-										<button type="button" name="confirmChange" id="confirmChange" class="btn btn-primary" style="margin-top: -10px;" onclick="mst001Save()" <?php echo $var;?>>
-										<i class="fa fa-save"></i> Confirm
-										</button>
+									<?php 
+														
+										if (isset($value['confirmflag']))
+										{
+											$var =1; ?>
+											<button type="button" name="confirmChange" id="confirmChange" class="btn btn-primary" style="margin-top: -10px;" onclick="mst001Save()" <?php echo isset($var) ? 'disabled="true"' : ''; ?>>
+											<i class="fa fa-save"></i> Confirm
+											</button>
+										<?php }else{ ?>
+											<button type="button" name="confirmChange" id="confirmChange" class="btn btn-primary" style="margin-top: -10px;" onclick="mst001Save()" >
+											<i class="fa fa-save"></i> Confirm
+											</button>
+										<?php } ?>
 									</div>		
 									
 									<input type="hidden" name="functionId" id="functionId" value="<?php echo $value['functionId']; ?>">
@@ -350,15 +368,21 @@
 	                	</div>
 	                </div>
                 </div>
-				<?php if ( 3 == $staffflag){ ?>
-				<?php $var = ('1' == $value['approveflag'])? 'disabled' : ''; ?>
                 <div align="right">
-                	<button type="button" class="btn btn-primary sumbitChangeRequest" style="margin-top: -10px;" <?php echo $var;?>>
-                		<i class="fa fa-save"></i> Submit
-                	</button>
-                </div>
+				<?php if ( 3 == $staffflag){ 
+						if (isset($value['approveflag']))
+						{
+							$var =1; ?>		
+						<button type="button" class="btn btn-primary sumbitChangeRequest" style="margin-top: -10px;" <?php echo isset($var) ? 'disabled="true"' : ''; ?>>
+						<i class="fa fa-save"></i> Submit
+						</button>
+					<?php }else{ ?>
+						<button type="button" class="btn btn-primary sumbitChangeRequest" style="margin-top: -10px;" >
+						<i class="fa fa-save"></i> Submit
+						</button>
+						<?php } ?>
 				<?php } ?>
-
+</div>
 				<script type="text/javascript">
 					function mst001Save(){
 						var msg = "Are you sure to Confirm Change?";

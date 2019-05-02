@@ -258,6 +258,7 @@ class ChangeManagement extends CI_Controller{
 				//get temp change list
 				$criteria = (object) array('userId' => $userId, 'functionId' => $functionId, 'functionVersion' => $functionVersion);
 				$inputChangeList = $this->mChange->searchTempFRInputChangeList($criteria);
+				
 			}else{
 				$error_message = ER_MSG_012;
 			}
@@ -647,7 +648,7 @@ class ChangeManagement extends CI_Controller{
 		{
 			try{
 				$changeType = $this->input->post('changeType');
-				
+				//echo $changeType ;
 				$userId = $this->session->userdata('userId');
 				$functionId = $this->input->post('changeFunctionId');
 				$functionVersion = $this->input->post('changeFunction');

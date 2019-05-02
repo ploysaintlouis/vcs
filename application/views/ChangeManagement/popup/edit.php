@@ -17,6 +17,7 @@
 				?>
 
 				<form method="post" id="changeInput_form" >
+				<input type="hidden" name="changeType" id="changeType" value="edit">
 				<input type="hidden" id="inputTableName" name="inputTableName" value= " <?php echo $refTableName ?> " >
 				<input type="hidden" id="inputColumnName" name="inputColumnName" value="<?php echo $refColumnName ?> ">
 				<input type="hidden" name="oldDataType" id="oldDataType"	value="<?php echo $dataType ?> ">
@@ -27,6 +28,12 @@
 				<input type="hidden" name="oldMax" 	id="oldMax" value="<?php echo $constraintMaxValue ?> ">
 				<input type="hidden" id="oldNotNullValue" name="oldNotNullValue" value="<?php echo $constraintNull ?> ">
 				<input type="hidden" id="oldUniqueValue" name="oldUniqueValue" value="<?php echo $constraintUnique ?> ">
+				<input type="hidden" name="changeFunctionId" id="changeFunctionId" value="<?php echo $functionId ?> ">
+				<input type="hidden" name="changeFunction" id="changeFunction" value="<?php echo $functionVersion ?> ">
+				<input type="hidden" name="changedataId" id="changedataId" value="<?php echo $dataId ?> ">
+				<input type="hidden" name="changeSchemaVersionId" id="changeSchemaVersionId" value="<?php echo $schemaVersionId ?> ">
+				<input type="hidden" name="userId" id="userId"  value="<?php echo $_SESSION['userId'] ?> ">
+				<input type="hidden" name="user" id="user"  value="<?php echo $_SESSION['username'] ?> ">
 
 					<div class="modal-body" id="input_detail" align="center">
 						<table style="width:100%">
@@ -139,23 +146,25 @@
 						</table>	
                     </div>
 					<div class="box-body" align="left">
-				 	<button type="submit" name="saveChange" id="saveChange" class="btn btn-primary">
+				 	<button type="button" name="saveChange" id="saveChange" class="btn btn-primary">
 				 		<i class="fa fa-save"></i> Save
-				 	</button>
+					 </button>
 			 	</div>
                 </form>
 		</div>
 	</div>
 	<script>
 			
-			$('#changeInput_form').on("submit", function(event){
-				event.preventDefault(); 
-				
+			$('#saveChange').on("click", function(event){
+									alert($('input[name=userId]').val());
+									alert($('input[name=changeFunctionId]').val());
+									alert($('input[name=changeFunction]').val());
+									alert($('input[name=changedataId]').val());
+									alert($('input[name=changetypeData]').val());
+
 				var newUnique = ($('#inputUnique').is(":checked"))? "Y": "N";
 				var newNotNull = ($('#inputNotNull').is(":checked"))? "Y": "N";
-				var changeType = $('#changeType').val();
 
-				if('edit' == changeType){
 					if($('#inputDataType').val() == "" 
 						&& $('#inputDataLength').val() == "" 
 						&& $('#inputScale').val() == "" 
@@ -167,24 +176,15 @@
 						alert("Please enter at least one field.");
 						return false;
 					}
-				}else{
-					if($('#inputDataType').val() == "" 
-						|| $('#dataName').val() == "" 
-					){
-						alert("Please enter all required fields.");
-						return false;
-					}
-				}
 
 				//Pass Validation
 				$.ajax({
 					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_edit/",
-					
 					method: "POST",
 					data: $("#changeInput_form").serialize(),
 					success: function(data){
 						if(null != data){
-							//alert(data);
+							alert(data);
 							var result = data.split("|");
 							if("error" == result[0]){
 								alert(result[1]);

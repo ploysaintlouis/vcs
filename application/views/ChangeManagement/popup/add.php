@@ -45,15 +45,13 @@
 									</label>
 								</td>
 								<td>
-								<select name="inputDataType" class="form-control select2" style="width: 100%;" id="inputDataType" value="<?php echo $dataTypeCombo['miscValue1'] ?>">
+								<select name="inputDataType" class="form-control select2" style="width: 100%;" id="inputDataType" value="<?php echo $miscValue1 ?>">
 										<option value="">--Please Select--</option>
-	            						<?php if(null != $dataTypeCombo) {  ?>
-	            						<?php foreach($dataTypeCombo as $value): ?>
-	            								<option value="<?php echo $value['miscValue1']; ?> "">
-	            									<?php echo $value['miscValue1']; ?>: <?php echo $value['miscValue1']; ?>
+	            						<?php if(null != $miscValue1) {  ?>
+	            								<option value="<?php echo $miscValue1; ?> ">
+	            									<?php echo $miscValue1; ?> 
 	        									</option>
-	            						<?php endforeach; ?>
-	            						<?php } ?>
+	            						<?php } ?> 
 					            </select>
 								</td>
 							</tr>

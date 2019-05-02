@@ -57,6 +57,8 @@ class ChangeManagementRequest extends CI_Controller {
 				//get temp change list
 				$criteria = (object) array('userId' => $userId, 'functionId' => $functionId, 'functionVersion' => $functionVersion);
 				$inputChangeList = $this->mChange->searchTempFRInputChangeList($criteria);
+				$inputChangeConfirm = $this->mChange->searchTempFRInputChangeConfirm($criteria);
+//print_r($inputChangeConfirm);
 			}else{
 				$error_message = ER_MSG_012;
 			}
@@ -74,8 +76,9 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['resultHeader'] = $resultHeader;
 		$data['resultDetail'] = $resultList;
 		$data['staffflag'] = $staffflag;
-        $data['inputChangeList'] = $inputChangeList;
-        
+    $data['inputChangeList'] = $inputChangeList;
+		$data['inputChangeConfirm'] = $inputChangeConfirm;
+       
         $this->data = $data;
 		}
 		
