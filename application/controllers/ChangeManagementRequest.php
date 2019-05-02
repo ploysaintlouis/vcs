@@ -21,6 +21,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$this->load->model('FunctionalRequirement_model', 'mFR');
 		$this->load->model('Running_model', 'mRunning');
 		$this->load->model('User_model', 'mUser');
+		$this->load->model('Version_model', 'mVersion');
 
 		$this->load->library('form_validation', null, 'FValidate');
 		$this->load->library('session');
@@ -414,10 +415,8 @@ class ChangeManagementRequest extends CI_Controller {
 						}
 						$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
 						foreach($RelateResultNotSCHEMA as $value){
-							if($changetype  != "delete" ){
-								if($changetype != $value["changeType"]){
-									$changetype = $value['changeType'];
-								}
+							if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+								$changetype = "delete";
 							}
 						}
 					}
@@ -780,11 +779,40 @@ class ChangeManagementRequest extends CI_Controller {
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
 		$CH_NO = $this->input->post('CH_NO');
-
+		$FR_Version = $this->input->post('FR_Version');
+		$FR_Description = $this->input->post('FR_Description');
+		//$userId = $this->session->userdata('userId');
+//echo $userId ;
+		/**1.SAVE Change*/// Loading หมุนๆๆๆ ไม่ยอมทำ
+	/*	if(!empty($_POST))
+		{
+			try{
+				$param = array(
+					'projectId' 	  => $prjId ,
+					'functionId' 	  => $funId,
+					'functionNo' 	  => $functionNo,
+					'functionVersion' => $FR_Version,
+					'changeRequestNo' => $CH_NO,
+					'userId'		  => $userId,
+					'type' 	 		  => 1, //1 = Change, 2 = Cancel
+					'fnDesc'		  => $FR_Description
+				);
+		print_r($param);
+				if (!isset($param)){
+					$ListChange = $this->callChangeRelate($param);
+					print_r($ListChange);
+					//$resultChange = $this->mVersion>saveChangeList($ListChange);
+				}
+			}catch (Exception $e){
+				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
+			}
+		}
+*/
 		//logic to confirm here
 		$data = array(
 			'success' => true,
-			'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO
+			'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO."  ".$FR_Version."  ".$FR_Description,
+			'FR_Description' => $FR_Description
 		);
 		
 		echo json_encode($data);

@@ -262,6 +262,7 @@
 													<input type="hidden" name="projectId" id="projectId" value="<?php echo $value['projectId']; ?>">
 													<?php if(isset($inputChangeConfirm) && 0 < count($inputChangeConfirm)) { 
 														foreach($inputChangeConfirm as $value1): 
+															//echo $value1['functionId'];
 															if ($value['functionId'] == $value1['functionId'])
 															{
 																$var =1; ?>
@@ -272,7 +273,11 @@
 																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> 
 															<?php } 
 														endforeach; 
-													} ?>
+													}else{ ?>
+																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" >Edit</button> 
+																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> 
+
+													<?php } ?>
 
                 								</td>
                 							</tr>
@@ -335,10 +340,12 @@
 				               							<small class="label <?php echo $labelType ?>">
 			               									<?php echo $value['changeType']; ?>
 			               								</small>
-				               						</td>
+				               						</td>		
+													 <?php if(!isset($value['confirmflag']) || ('1' != $value['confirmflag']) ){ ?>
 				               						<td>
-				               							<span id="<?php echo $value['lineNumber']; ?>" class="glyphicon glyphicon-trash deleteTmpFRInputChg"></span>
-				               						</td>
+				               							<span id="<?php echo $value['lineNumber']; ?>" class="glyphicon glyphicon-trash deleteTmpFRInputChg" ></span>
+													   
+													</td><?php } ?>
 				               					</tr>
 			               					<?php endforeach; ?>
 	                						<?php }  ?>

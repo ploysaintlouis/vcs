@@ -851,9 +851,15 @@ echo $sqlStr;
 	}		
 	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
 
-		$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
-		$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
-		$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
+		if (!isset($ListofChangeSchemaOthFr)){
+			$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
+			$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
+			$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
+		}else{
+			$FROth_No =  "";
+			$FROth_Id =  "";
+			$FROth_Version =  "";
+		}
 
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_RTM
 		(SELECT  testCaseId,testCaseversion,functionId,functionVersion,'' AS tctype
@@ -879,7 +885,7 @@ echo $sqlStr;
 			AND a.testCaseversion = b.testCaseversion		";
 		}else{
 			$sqlStr = "SELECT a.testCaseId,a.testcaseVersion,b.testCaseNo,'' tctype
-			FROM M_RTM_VERSION b,M_TESTCASE_HEADER b
+			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
 			WHERE a.functionId = '$param->functionId'
 			AND a.functionversion ='$param->functionVersion'
 			AND a.testCaseId = b.testCaseId

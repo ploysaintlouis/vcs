@@ -156,25 +156,29 @@
 	<script>
 			
 			$('#saveChange').on("click", function(event){
-									alert($('input[name=userId]').val());
-									alert($('input[name=changeFunctionId]').val());
-									alert($('input[name=changeFunction]').val());
-									alert($('input[name=changedataId]').val());
-									alert($('input[name=changetypeData]').val());
 
 				var newUnique = ($('#inputUnique').is(":checked"))? "Y": "N";
 				var newNotNull = ($('#inputNotNull').is(":checked"))? "Y": "N";
 
-					if($('#inputDataType').val() == "" 
-						&& $('#inputDataLength').val() == "" 
-						&& $('#inputScale').val() == "" 
-						&& newUnique == $('#oldUniqueValue').val() 
-						&& newNotNull == $('#oldNotNullValue').val() 
-						&& $('#inputDefault').val() == "" 
-						&& $('#inputMinValue').val() == "" 
-						&& $('#inputMaxValue').val() == ""){
+					if($('#inputDataType').val() == ""){
+						alert("Please enter at DataType field.");
+						return false;						
+					} 
+					if($('#inputDataLength').val() == ""){
+						alert("Please enter at DataLength field.");
+						return false;						
+					}
+					if($('#inputScale').val() == ""){
 						alert("Please enter at least one field.");
-						return false;
+						return false;						
+					}
+					if(newUnique == $('#oldUniqueValue').val() ){
+						alert("Please enter at least one field.");
+						return false;						
+					}
+					if(newNotNull == $('#oldNotNullValue').val() ){
+						alert("Please enter at least one field.");
+						return false;							
 					}
 
 				//Pass Validation
