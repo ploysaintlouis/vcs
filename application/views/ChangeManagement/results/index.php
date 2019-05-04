@@ -23,11 +23,26 @@
     ?>
     <div class="col-sm-11"></div><div class="col-sm-1"><button type="button" class="btn btn-success" id="btnConfirmResult">Confirm</button></div>
     
+    <button id="btnTestFunction">
+        test function callChangeRelate
+    </button>
+    <div id="divTestFunction">
+    </div>
 </div>
 
 <script>
     $(function(){
-    
+        $("#btnTestFunction").on('click',function(){
+            $.ajax({
+                url: "<?php echo base_url(); ?>index.php/ChangeManagementRequest/testfunction",
+                method: "POST",
+                dataType:"text",
+                success: function(data){
+                    $("#divTestFunction").html(data);
+                }
+            });
+        });
+        
         $("body").addClass("skin-blue-light sidebar-mini");
         $("#btnConfirmResult").on("click",function(){
             // get param from this page or other page
@@ -41,7 +56,7 @@
 
             //logic in javascript
             $("#loadingPage").modal('show');
-            
+            debugger
             //setTimeout(() => {
                 $.ajax({
                     url: "<?php echo base_url(); ?>index.php/ChangeManagementRequest/confirm_change_request",

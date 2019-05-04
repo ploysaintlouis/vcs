@@ -786,6 +786,21 @@ class ChangeManagementRequest extends CI_Controller {
 		);
 		echo json_encode($data);
 	}
+	function testfunction(){
+		$param = array(
+			'projectId' 	  => "2" ,
+			'functionId' 	  => "25",
+			'functionNo' 	  => "OS_FR_03",
+			'functionVersion' => "1",
+			'changeRequestNo' => "CH01",
+			'userId'		  => "0001",
+			'type' 	 		  => 1, //1 = Change, 2 = Cancel
+			'fnDesc'		  => "Create Order List"
+		);
+		$ListChange = $this->callChangeRelate($param);
+		print_r($ListChange);
+	}
+
 	function confirm_change_request(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
