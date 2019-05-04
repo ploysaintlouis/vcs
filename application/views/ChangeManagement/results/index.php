@@ -5,11 +5,12 @@
     <!-- parameter for use in this page -->
     <input id="projectId_result" type="hidden" value='<?php echo $projectId; ?>'/>
     <input id="functionId_result" type="hidden" value='<?php echo $functionId; ?>'/>
-
+    
     <!--title_panel -->
     <input id="CHNO_result" type="hidden" value='<?php echo $title_panel['change_title']['CH_NO']; ?>'/>
     <input id="FR_Version_result" type="hidden" value='<?php echo $title_panel['change_title']['FR_Version']; ?>'/>
     <input id="FR_desc_result" type="hidden" value='<?php echo $title_panel['change_title']['FR_Description']; ?>'/>
+    <input id="funtionNo_result" type="hidden" value='<?php echo $title_panel['change_title']['FR_Request']; ?>'/>
 
     <?php
         $this->load->view("template/loading");
@@ -32,6 +33,7 @@
             // get param from this page or other page
             var projectId = $("#projectId_result").val();
             var functionId = $("#functionId_result").val();
+            var functionNo = $("#funtionNo_result").val();
             var CH_NO = $("#CHNO_result").val();
             var FR_Version = $("#FR_Version_result").val();
             var FR_Description = $("#FR_desc_result").val();
@@ -39,25 +41,34 @@
 
             //logic in javascript
             $("#loadingPage").modal('show');
-            setTimeout(() => {
+            
+            //setTimeout(() => {
                 $.ajax({
                     url: "<?php echo base_url(); ?>index.php/ChangeManagementRequest/confirm_change_request",
                     method: "POST",
-                    dataType:"json",
-                    data: {projectId : projectId , functionId : functionId, CH_NO : CH_NO, FR_Version : FR_Version, FR_Description : FR_Description},
+                    dataType:"text",
+                    data: { 
+                        projectId : projectId , 
+                        functionId : functionId, 
+                        functionNo : functionNo, 
+                        CH_NO : CH_NO, FR_Version : FR_Version, 
+                        FR_Description : FR_Description
+                    },
                     success: function(data){
-
+                        debugger
                     
                         if(data.success){
+                            alert(data.result);
                             //$("#loadingPage").modal('hide');
                             //alert(data.result);
-                            alert(data.FR_Description);
+                            //alert(data.FR_Description);
                             //alert(baseUrl);
-                            window.location  = baseUrl+"index.php/Dashboard";
+                            //window.location  = baseUrl+"index.php/Dashboard";
                         }
+                        $("#loadingPage").modal('hide');
                     }
                 });
-            },1000);
+            //},1000);
            
             
         });

@@ -774,48 +774,83 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 		return $param_schema;
 	}
-	
-	function confirm_change_request(){
+	function testscript(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
 		$CH_NO = $this->input->post('CH_NO');
 		$FR_Version = $this->input->post('FR_Version');
 		$FR_Description = $this->input->post('FR_Description');
-		//$userId = $this->session->userdata('userId');
-//echo $userId ;
-		/**1.SAVE Change*/// Loading หมุนๆๆๆ ไม่ยอมทำ
-	/*	if(!empty($_POST))
-		{
-			try{
-				$param = array(
-					'projectId' 	  => $prjId ,
-					'functionId' 	  => $funId,
-					'functionNo' 	  => $functionNo,
-					'functionVersion' => $FR_Version,
-					'changeRequestNo' => $CH_NO,
-					'userId'		  => $userId,
-					'type' 	 		  => 1, //1 = Change, 2 = Cancel
-					'fnDesc'		  => $FR_Description
-				);
-		print_r($param);
-				if (!isset($param)){
-					$ListChange = $this->callChangeRelate($param);
-					print_r($ListChange);
-					//$resultChange = $this->mVersion>saveChangeList($ListChange);
-				}
-			}catch (Exception $e){
-				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
-			}
-		}
-*/
-		//logic to confirm here
 		$data = array(
 			'success' => true,
-			'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO."  ".$FR_Version."  ".$FR_Description,
-			'FR_Description' => $FR_Description
+			'result'=> 'test',
 		);
-		
 		echo json_encode($data);
+	}
+	function confirm_change_request(){
+		$prjId = $this->input->post('projectId');
+		$funId = $this->input->post('functionId');
+		$funNo = $this->input->post('functionNo');
+		$CH_NO = $this->input->post('CH_NO');
+		$FR_Version = $this->input->post('FR_Version');
+		$FR_Description = $this->input->post('FR_Description');
+		$userId = $this->session->userdata('userId');
+//echo $userId ;
+		/**1.SAVE Change*/// Loading หมุนๆๆๆ ไม่ยอมทำ
+		
+	  if(!empty($_POST))
+		{
+				try{
+					$param = array(
+						'projectId' 	  => $prjId ,
+						'functionId' 	  => $funId,
+						'functionNo' 	  => $funNo,
+						'functionVersion' => $FR_Version,
+						'changeRequestNo' => $CH_NO,
+						'userId'		  => $userId,
+						'type' 	 		  => 1, //1 = Change, 2 = Cancel
+						'fnDesc'		  => $FR_Description
+					);
+					
+					//return;
+					//print_r($param);
+					//if (!isset($param)){
+
+					//มัน error ตรงนี้ ไม่แน่ใจมีค่าอะไรที่ยังไม่มี
+					//ปกติแล้วมันจะไม่ catch เพรวะว่า function callChangeRelate มันไม่ throw ex ออกมา 
+					//ถ้าต้องการดูว่า error อะไร  หน้า index.php javascript ทีเปน  ajax ใส่ dataType:"text",
+					//แล้ว debugger ดู data ตอนมันทำเสร็จ
+					//ถ้าไม่ error แล้วให้เปลี่ยน dataType:"json" แล้วไม่ต้อง print_r ออกไป
+					//ตอนนี้มันยัง error อยู่
+
+						$ListChange = $this->callChangeRelate($param);
+						print_r($ListChange);
+					
+						//$resultChange = $this->mVersion>saveChangeList($ListChange);
+					//}
+					$data = array(
+						'success' => true,
+						'result'=> $param,
+					);
+					echo json_encode($data);
+				}
+				catch (Exception $e){
+					
+					$output = 'error|'.$e;
+					$data = array(
+						'success'  => false,
+						'errorMsg' => $output,
+					);
+					echo json_encode($data);
+				}
+		}
+		//logic to confirm here
+		// $data = array(
+		// 	'success' => true,
+		// 	'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO."  ".$FR_Version."  ".$FR_Description,
+		// 	'FR_Description' => $FR_Description
+		// );
+		
+		// echo json_encode($data);
 	}
 }
 	
