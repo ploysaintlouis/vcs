@@ -56,10 +56,12 @@
 								<td>
 								<select name="inputDataType" class="form-control select2" style="width: 100%;" id="inputDataType" value="<?php echo $miscValue1 ?>">
 										<option value="">--Please Select--</option>
-	            						<?php if(null != $miscValue1) {  ?>
-	            								<option value="<?php echo $miscValue1; ?> ">
-	            									<?php echo $miscValue1; ?> 
+	            						<?php if(null != $dataTypeCombo) {  ?>
+											<?php foreach($dataTypeCombo as $value): ?>
+	            								<option value="<?php echo $value['miscValue1']; ?> ">
+	            									<?php echo $value['miscValue1']; ?> 
 	        									</option>
+											<?php endforeach; ?>
 	            						<?php } ?> 
 					            </select>
 								</td>
@@ -159,28 +161,30 @@
 
 				var newUnique = ($('#inputUnique').is(":checked"))? "Y": "N";
 				var newNotNull = ($('#inputNotNull').is(":checked"))? "Y": "N";
+/*
+					if(($('#inputDataType').val() != "int") || ($('#inputDataType').val() != "INT")
+					&& ($('#inputDataLength').val() == "")) {
+						alert("Please enter at DataType or DataLength field.");
+						return false;						
+					} */
 
-					if($('#inputDataType').val() == ""){
-						alert("Please enter at DataType field.");
-						return false;						
-					} 
-					if($('#inputDataLength').val() == ""){
-						alert("Please enter at DataLength field.");
-						return false;						
-					}
-					if($('#inputScale').val() == ""){
+					if(($('#inputDataType').val() == "")
+					&& ($('#inputDataLength').val() == "")
+					&& ($('#inputDataLength').val() == "")
+					&& ($('#inputScale').val() == "")
+					&& ($('#inputScale').val() == "")
+					&& (newUnique == $('#oldUniqueValue').val() )
+					&& (newNotNull == $('#oldNotNullValue').val() )){
 						alert("Please enter at least one field.");
 						return false;						
+					} else{
+						if($('#inputDataType').val() == "" || $('#dataName').val() == "" )
+						{
+						alert("Please enter all required fields.");
+						return false;
+						}
 					}
-					if(newUnique == $('#oldUniqueValue').val() ){
-						alert("Please enter at least one field.");
-						return false;						
-					}
-					if(newNotNull == $('#oldNotNullValue').val() ){
-						alert("Please enter at least one field.");
-						return false;							
-					}
-
+					
 				//Pass Validation
 				$.ajax({
 					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_edit/",

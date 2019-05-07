@@ -131,12 +131,9 @@ class ChangeManagementRequest extends CI_Controller {
 			$data['functionId'] = $functionId;
 			$data['functionVersion'] = $functionVersion;
 			$data['schemaVersionId'] = $schemaVersionId;
+			$data['dataTypeCombo'] = $this->mMisc->searchMiscellaneous('','');
 
 			$this->load->view('ChangeManagement/popup/add',$data);
-			$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
-			foreach ($dataTypeCombo as $value) {
-				$this->load->view('ChangeManagement/popup/add',$dataTypeCombo);
-			}
 
 		}
 		
@@ -182,11 +179,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$data["refTableName"] = $value['refTableName'];
 		$data["refColumnName"] = $value['refColumnName'];
 
-		$dataTypeCombo = $this->mMisc->searchMiscellaneous('','');
-		foreach ($dataTypeCombo as $value) {
-			//var_dump($value) ;			
-			$data['miscValue1'] = $value['miscValue1'];
-		}
+		$data['dataTypeCombo'] = $this->mMisc->searchMiscellaneous('','');
 
 		$this->load->view('ChangeManagement/popup/edit',$data);
     }

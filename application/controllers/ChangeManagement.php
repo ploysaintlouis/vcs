@@ -640,6 +640,90 @@ class ChangeManagement extends CI_Controller{
 			return $output;
 		}
 
+	function saveTempFRInput_add(){
+		$output = '';
+		$error_message = '';
+		
+		if(!empty($_POST))
+		{
+			try{
+				$changeType = $this->input->post('changeType');
+				//echo $changeType ;
+				$userId = $this->session->userdata('userId');
+				$functionId = $this->input->post('changeFunctionId');
+				$functionVersion = $this->input->post('changeFunction');
+				$dataId = $this->input->post('changedataId');
+				$typeData = $this->input->post('changetypeData');
+				$schemaVersionId = $this->input->post('changeSchemaVersionId');
+
+				$dataName = trim($this->input->post('dataName'));
+				$dataType = $this->input->post('inputDataType');
+				$dataLength = $this->input->post('inputDataLength');
+				$scalePoint = $this->input->post('inputScale');
+				$unique = $this->input->post('inputUnique');
+				$notNull = $this->input->post('inputNotNull');
+				$defaultValue = trim($this->input->post('inputDefault'));
+				$minValue = $this->input->post('inputMinValue');
+				$maxValue = $this->input->post('inputMaxValue');
+				$tableName = trim($this->input->post('inputTableName'));
+				$columnName = trim($this->input->post('inputColumnName'));
+
+				$unique = empty($unique)? "N": "Y";
+				$notNull = empty($notNull)? "N": "Y";
+
+				$user = $this->session->userdata('username');
+
+				$param = (object) array(
+					'userId' => $userId,
+					'functionId' => $functionId,
+					'functionVersion' => $functionVersion,
+					'typeData' => $typeData,
+					'dataId' => $dataId,
+					'dataName' => $dataName,
+					'schemaVersionId' => $schemaVersionId,
+					'dataType' => $dataType,
+					'dataLength' => $dataLength,
+					'scaleLength' => $scalePoint,
+					'unique' => $unique,
+					'notNull' => $notNull,
+					'default' => $defaultValue,
+					'min' => $minValue,
+					'max' => $maxValue,
+					'table' => $tableName,
+					'column' => $columnName,
+					'changeType' => '',
+					'user' => $user);
+
+					//*******Change Type: Add
+					//Validate
+			
+					$projectId = $this->input->post('changeProjectId');
+					$resultValidate = $this->validateNewFRInput($projectId, $param, $error_message);
+				
+					if($resultValidate){
+						
+						//Save
+						$param->changeType = CHANGE_TYPE_ADD;
+						$saveResult = $this->mChange->insertTempFRInputChange($param);
+						if($saveResult){
+							//refresh Change List
+							$output = $this->setInputChangeListData($userId, $functionId, $functionVersion);
+						}else{
+							$output = 'error|'.ER_MSG_013;
+						}
+						
+					}else{
+						$output = 'error|'.$error_message;
+					}
+
+			}catch (Exception $e){
+				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
+			}
+		}
+		//echo $output;
+		return false;
+	}
+
 	function saveTempFRInput_edit(){
 		$output = '';
 		$error_message = '';
@@ -695,32 +779,7 @@ class ChangeManagement extends CI_Controller{
 					'table' => $tableName,
 					'column' => $columnName,
 					'changeType' => '',
-					'user' => $user);
-
-				if(CHANGE_TYPE_ADD == $changeType){ 
-					//*******Change Type: Add
-					//Validate
-			
-					$projectId = $this->input->post('changeProjectId');
-					$resultValidate = $this->validateNewFRInput($projectId, $param, $error_message);
-				
-					if($resultValidate){
-						
-						//Save
-						$param->changeType = CHANGE_TYPE_ADD;
-						$saveResult = $this->mChange->insertTempFRInputChange($param);
-						if($saveResult){
-							//refresh Change List
-							$output = $this->setInputChangeListData($userId, $functionId, $functionVersion);
-						}else{
-							$output = 'error|'.ER_MSG_013;
-						}
-						
-					}else{
-						$output = 'error|'.$error_message;
-					}
-
-				}else{ 
+					'user' => $user); 
 					
 					//*******Change Type: Edit
 					//validate duplicate 
@@ -773,7 +832,6 @@ class ChangeManagement extends CI_Controller{
 						//Error already change
 						$output = 'error|'.ER_TRN_001;
 					}
-				}
 			}catch (Exception $e){
 				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
 			}

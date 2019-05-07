@@ -8,17 +8,17 @@
 					</h4>
 
                     <form method="post" id="changeInput_form" >
+					
 						<div class="modal-body" id="input_detail" align="center">
 							<input type="hidden" name="changeProjectId" id="changeProjectId" value=<?php echo $projectId ?> >
-							<input type="hidden" name="changeType" id="changeType" value=<?php echo "add" ?>>
 							<input type="hidden" name="changeFunctionId" id="changeFunctionId" value=<?php echo $functionId ?> >
 							<input type="hidden" name="changeFunction" id="changeFunction" value= <?php echo $functionVersion ?> >
-				
+							<input type="hidden" name="changeType" id="changeType" value="add">
 							<input type="hidden" name="changeSchemaVersionId" id="changeSchemaVersionId" value="1">
 				
 							<input type="hidden" name="userId" id="userId"  value="'.$_SESSION['userId'].'">
 							<input type="hidden" name="user" id="user"  value="'.$_SESSION['username'].'">
-								
+
 							<table style="width:100%">
 							<tr height="40">
 					
@@ -47,10 +47,12 @@
 								<td>
 								<select name="inputDataType" class="form-control select2" style="width: 100%;" id="inputDataType" value="<?php echo $miscValue1 ?>">
 										<option value="">--Please Select--</option>
-	            						<?php if(null != $miscValue1) {  ?>
-	            								<option value="<?php echo $miscValue1; ?> ">
-	            									<?php echo $miscValue1; ?> 
+	            						<?php if(null != $dataTypeCombo) {  ?>
+											<?php foreach($dataTypeCombo as $value): ?>
+	            								<option value="<?php echo $value['miscValue1']; ?> ">
+	            									<?php echo $value['miscValue1']; ?> 
 	        									</option>
+											<?php endforeach; ?>
 	            						<?php } ?> 
 					            </select>
 								</td>
@@ -144,7 +146,7 @@
 							</table>						
 						</div>
 							<div class="col-sm-1">
-							<button type="button" class="btn btn-primary" id="btnConfirmResult">
+							<button type="button" name="saveChange" id="saveChange" class="btn btn-primary">
 								<i class="fa fa-save"></i>Save
 							</button>
 							</div>
@@ -154,15 +156,15 @@
 	
 <script>
     $(function(){
-		$("#btnConfirmResult").on("click",function(){
+		$('#saveChange').on("click", function(event){
 
                 $.ajax({
-					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_edit/",
+					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_add/",
                     method: "POST",
 					data: $("#changeInput_form").serialize(),
 					success: function(data){
 						if(null != data){
-							//alert(data);
+							alert(data);
 							var result = data.split("|");
 							if("error" == result[0]){
 								alert(result[1]);
