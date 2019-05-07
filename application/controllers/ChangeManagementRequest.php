@@ -21,7 +21,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$this->load->model('FunctionalRequirement_model', 'mFR');
 		$this->load->model('Running_model', 'mRunning');
 		$this->load->model('User_model', 'mUser');
-		$this->load->model('Version_model', 'mVersion');
+		$this->load->model('VersionControl_model', 'mVersion');
 
 		$this->load->library('form_validation', null, 'FValidate');
 		$this->load->library('session');
@@ -538,7 +538,7 @@ class ChangeManagementRequest extends CI_Controller {
 	}
 	
 	function callChangeRelate($param){//แยก รายการ change ที่ realte
-	
+	//print_r($param);
 		//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
 		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
 		foreach ($RelateResultSCHEMA as $value) {
@@ -767,48 +767,258 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 		return $param_schema;
 	}
-	
-	function confirm_change_request(){
+	function testscript(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
 		$CH_NO = $this->input->post('CH_NO');
 		$FR_Version = $this->input->post('FR_Version');
 		$FR_Description = $this->input->post('FR_Description');
-		//$userId = $this->session->userdata('userId');
-//echo $userId ;
-		/**1.SAVE Change*/// Loading หมุนๆๆๆ ไม่ยอมทำ
-	/*	if(!empty($_POST))
-		{
-			try{
-				$param = array(
-					'projectId' 	  => $prjId ,
-					'functionId' 	  => $funId,
-					'functionNo' 	  => $functionNo,
-					'functionVersion' => $FR_Version,
-					'changeRequestNo' => $CH_NO,
-					'userId'		  => $userId,
-					'type' 	 		  => 1, //1 = Change, 2 = Cancel
-					'fnDesc'		  => $FR_Description
-				);
-		print_r($param);
-				if (!isset($param)){
-					$ListChange = $this->callChangeRelate($param);
-					print_r($ListChange);
-					//$resultChange = $this->mVersion>saveChangeList($ListChange);
-				}
-			}catch (Exception $e){
-				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
-			}
-		}
-*/
-		//logic to confirm here
 		$data = array(
 			'success' => true,
-			'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO."  ".$FR_Version."  ".$FR_Description,
-			'FR_Description' => $FR_Description
+			'result'=> 'test',
 		);
-		
 		echo json_encode($data);
+	}
+
+	function testfunction(){
+/*		$param = (object) array(
+			'projectId' 	  => "2" ,
+			'functionId' 	  => "25",
+			'functionNo' 	  => "OS_FR_03",
+			'functionVersion' => "1",
+			'changeRequestNo' => "CH01",
+			'userId'		  => "0001",
+			'type' 	 		  => 1, //1 = Change, 2 = Cancel
+			'fnDesc'		  => "Create Order List"
+		);*/
+		$prjId = $this->input->post('projectId');
+		$funId = $this->input->post('functionId');
+		$funNo = $this->input->post('functionNo');
+		$CH_NO = $this->input->post('CH_NO');
+		$FR_Version = $this->input->post('FR_Version');
+		$FR_Description = $this->input->post('FR_Description');
+		$userId = $this->session->userdata('userId');
+
+		$param = (object) array(
+			'projectId' 	  => $prjId ,
+			'functionId' 	  => $funId,
+			'functionNo' 	  => $funNo,
+			'functionVersion' => $FR_Version,
+			'changeRequestNo' => $CH_NO,
+			'type' 	 		  => 1, //1 = Change, 2 = Cancel
+			'userId'				=> 	$userId,
+			'fnDesc'		  => $FR_Description
+		);
+		$ListChange = $this->callChangeRelate($param);
+			print_r($ListChange);
+		
+	}
+
+	function aff_functionalrequirement($param){
+		$data = array();
+		$data['aff_fr_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+		$i = 1;
+		$frId = "";
+		$frVersion = "";
+		$change_title = "edit";
+
+		foreach($ListofAffectFRRelateSchema as $value){
+			//echo $change_title;
+
+			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
+				$row["no"] = $i++;
+				$row["frId"]= $value["functionId"];
+				$row["fr_no"] =$param->functionNo;
+				$changetype = $this->mChange->searchTempFRInputChangeList($param);
+				foreach($changetype as $new_type){
+					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
+						$change_title = $new_type['changeType'];
+					}
+					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
+							$change_title = "delete";
+					}										
+				}
+				$row["change_type"]= $change_title;
+				$row["version"]= $value['functionVersion'];
+				$frNo = $value["functionId"];
+				$frVersion = $value['functionVersion'];
+				array_push($data['aff_fr_list'],$row);
+			}
+		}
+		
+		$ListofAffectFRNotRelateSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
+		foreach($ListofAffectFRNotRelateSchema as $value){
+
+			//echo $change_title;
+
+			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
+				$row["no"] = $i++;
+				$row["frId"]= $value["functionId"];
+				$row["fr_no"]= $param->functionNo;
+				$changetype = $this->mChange->searchTempFRInputChangeList($param);
+				foreach($changetype as $new_type){
+					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
+						$change_title = $new_type['changeType'];
+					}
+					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
+							$change_title = "delete";
+					}										
+				}
+				$row["change_type"]= $change_title;
+				$row["version"]= $value['functionVersion'];
+				array_push($data['aff_fr_list'],$row);
+			}
+		}
+		return $data;
+
+}
+
+	function confirm_change_request(){
+		$prjId = $this->input->post('projectId');
+		$funId = $this->input->post('functionId');
+		$funNo = $this->input->post('functionNo');
+		$CH_NO = $this->input->post('CH_NO');
+		$FR_Version = $this->input->post('FR_Version');
+		$FR_Description = $this->input->post('FR_Description');
+		$userId = $this->session->userdata('userId');
+		$user = $this->session->userdata('username');
+
+		$param = (object) array(
+			'projectId' 	  => $prjId ,
+			'functionId' 	  => $funId,
+			'functionNo' 	  => $funNo,
+			'functionVersion' => $FR_Version,
+			'changeRequestNo' => $CH_NO,
+			'type' 	 		  => 1, //1 = Change, 2 = Cancel
+			'userId'				=> 	$userId,
+			'fnDesc'		  => $FR_Description,
+			'user'				=> $user
+		);
+		$newCurrentDate = date('Y-m-d H:i:s');
+
+		//1. save change request header.
+		$paramInsert = (object) array(
+			'changeRequestNo' => $param->changeRequestNo,
+			'changeUser' => $param->userId,
+			'changeDate' => $newCurrentDate,
+			'projectId' => $param->projectId,
+			'changeFunctionId' => $param->functionId,
+			'changeFunctionNo' => $param->functionNo,
+			'changeFunctionVersion' => $param->functionVersion,
+			'changeStatus' => $param->type,
+			'user' => $param->user,
+			'currentDate' => $newCurrentDate
+		);
+		$this->mChange->insertChangeRequestHeader($paramInsert);
+
+		//2. save change request details.
+		$i = 1;
+		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		foreach ($RelateResultSCHEMA as $value) {
+			$paramInsert = (object) array(
+				'changeRequestNo' => $param->changeRequestNo,
+				'sequenceNo' => $i++,
+				'changeType' => $value['changeType'],
+				'dataId' => $value['dataId'],
+				'dataName' => $value['dataName'], 
+				'schemaVersionId' => $value['schemaVersionId'],
+				'dataType' => $value['newDataType'],
+				'dataLength' => $value['newDataLength'],
+				'scale' => $value['newScaleLength'],
+				'unique' => $value['newUnique'],
+				'notNull' => $value['newNotNull'],
+				'default' => $value['newDefaultValue'],
+				'min' => $value['newMinValue'],
+				'max' => $value['newMaxValue'],
+				'tableName' => $value['tableName'],
+				'columnName' => $value['columnName']);
+			$this->mChange->insertChangeRequestDetail($paramInsert);		
+		}
+
+		$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+		foreach ($RelateResultNotSCHEMA as $value) {
+			$paramInsert = (object) array(
+				'changeRequestNo' => $param->changeRequestNo,
+				'sequenceNo' => $i++,
+				'changeType' => $value['changeType'],
+				'dataId' => $value['dataId'],
+				'dataName' => $value['dataName'], 
+				'schemaVersionId' => $value['schemaVersionId'],
+				'dataType' => $value['newDataType'],
+				'dataLength' => $value['newDataLength'],
+				'scale' => $value['newScaleLength'],
+				'unique' => $value['newUnique'],
+				'notNull' => $value['newNotNull'],
+				'default' => $value['newDefaultValue'],
+				'min' => $value['newMinValue'],
+				'max' => $value['newMaxValue'],
+				'tableName' => $value['tableName'],
+				'columnName' => $value['columnName']);
+			$this->mChange->insertChangeRequestDetail($paramInsert);				
+		}
+
+		//3. save change history requirement header
+		$this->mVersion->updateRequirementsHeader($param);
+
+		//3.1 save change history requirement detail
+		$this->mVersion->updateChange_RequirementsDetail($param);
+
+		//3. save change history requirement header
+		$data = $this->aff_functionalrequirement($param);
+		//print_r($data);
+		foreach($data as $value ){
+			$Change_FR_type = $value[0]['change_type'];
+		}
+
+		//$this->mVersion->InsertRequirementsHeader($param);
+
+		//3.1 save change history requirement detail
+		//$this->mVersion->InsertChange_RequirementsDetail($param);
+
+		/*
+		$affFrList = $this->bind_data_aff_functionalrequirement($param);
+		$affSchemalist = $this->bind_data_aff_schema($param);
+		$affTestCaseList = $this->bind_data_aff_testcase($param);
+
+		$param_new["functionId"] = $param->functionId;
+		$param_new["projectId"] = $param->projectId;
+
+		$param_new["aff_fr_panel"]=$affFrList;
+		$param_new["aff_testcase_panel"]=$affTestCaseList;
+		$param_new["aff_schema_panel"] = $affSchemalist;
+		*/
+		//print_r($title);
+
+					//return;
+					//print_r($param);
+					//if (!isset($param)){
+
+					//มัน error ตรงนี้ ไม่แน่ใจมีค่าอะไรที่ยังไม่มี
+					//ปกติแล้วมันจะไม่ catch เพรวะว่า function callChangeRelate มันไม่ throw ex ออกมา 
+					//ถ้าต้องการดูว่า error อะไร  หน้า index.php javascript ทีเปน  ajax ใส่ dataType:"text",
+					//แล้ว debugger ดู data ตอนมันทำเสร็จ
+					//ถ้าไม่ error แล้วให้เปลี่ยน dataType:"json" แล้วไม่ต้อง print_r ออกไป
+					//ตอนนี้มันยัง error อยู่
+					
+						//$resultChange = $this->mVersion>saveChangeList($ListChange);
+					//}
+		$data = array(
+			'success' => true,
+			'result'=> $param,
+		);
+		echo json_encode($data);
+
+		//logic to confirm here
+		// $data = array(
+		// 	'success' => true,
+		// 	'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO."  ".$FR_Version."  ".$FR_Description,
+		// 	'FR_Description' => $FR_Description
+		// );
+		
+		// echo json_encode($data);
 	}
 }
 	
