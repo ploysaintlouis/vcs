@@ -22,7 +22,9 @@
         $this->load->view('ChangeManagement/results/panel_affect_testcase',$aff_testcase_panel);
     ?>
     <div class="col-sm-11"></div><div class="col-sm-1"><button type="button" class="btn btn-success" id="btnConfirmResult">Confirm</button></div>
-    
+    <div id="divFunction">
+    </div>
+
     <button id="btnTestFunction">
         test function callChangeRelate
     </button>
@@ -33,10 +35,26 @@
 <script>
     $(function(){
         $("#btnTestFunction").on('click',function(){
+            // get param from this page or other page
+            var projectId = $("#projectId_result").val();
+            var functionId = $("#functionId_result").val();
+            var functionNo = $("#funtionNo_result").val();
+            var CH_NO = $("#CHNO_result").val();
+            var FR_Version = $("#FR_Version_result").val();
+            var FR_Description = $("#FR_desc_result").val();
+            var baseUrl = '<?php echo base_url(); ?>';
             $.ajax({
                 url: "<?php echo base_url(); ?>index.php/ChangeManagementRequest/testfunction",
                 method: "POST",
                 dataType:"text",
+                data: { 
+                        projectId : projectId, 
+                        functionId : functionId, 
+                        functionNo : functionNo, 
+                        CH_NO : CH_NO, 
+                        FR_Version : FR_Version, 
+                        FR_Description : FR_Description
+                    },
                 success: function(data){
                     $("#divTestFunction").html(data);
                 }
@@ -56,30 +74,31 @@
 
             //logic in javascript
             $("#loadingPage").modal('show');
-            debugger
+            //debugger
             //setTimeout(() => {
                 $.ajax({
                     url: "<?php echo base_url(); ?>index.php/ChangeManagementRequest/confirm_change_request",
                     method: "POST",
                     dataType:"text",
                     data: { 
-                        projectId : projectId , 
+                        projectId : projectId, 
                         functionId : functionId, 
                         functionNo : functionNo, 
-                        CH_NO : CH_NO, FR_Version : FR_Version, 
+                        CH_NO : CH_NO, 
+                        FR_Version : FR_Version, 
                         FR_Description : FR_Description
                     },
                     success: function(data){
                         debugger
-                    
-                        if(data.success){
-                            alert(data.result);
-                            //$("#loadingPage").modal('hide');
+                        //alert(data);
+                        //$("#loadingPage").modal(data);
+                    $("#divFunction").html(data);
+                
+                        //$("#loadingPage").modal(hide);
                             //alert(data.result);
                             //alert(data.FR_Description);
                             //alert(baseUrl);
-                            //window.location  = baseUrl+"index.php/Dashboard";
-                        }
+                        //window.location  = baseUrl+"index.php/Dashboard";
                         $("#loadingPage").modal('hide');
                     }
                 });
