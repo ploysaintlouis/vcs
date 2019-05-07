@@ -18,59 +18,64 @@ class VersionControl_model extends CI_Model{
 	}
 
 	function updateRequirementsHeader($param){
-        $this->db->trans_start(); //Starting Transaction
-		$this->db->trans_strict(FALSE);
 
-		$newCurrentDate = date('Y-m-d H:i:s');
+		$currentDateTime = date('Y-m-d H:i:s');
 
 		$sqlStr = "UPDATE M_FN_REQ_HAEDER
 			SET activeflag = '0',
-				createUser 	= '$newCurrentDate',
-				updateDate 	 = '$newCurrentDate',
+				createUser 	= '$currentDateTime',
+				updateDate 	 = '$currentDateTime',
 				updateUser 	 = '$param->user'
 			WHERE functionId = '$param->functionId'
-			AND functionNo = '$param->functionNo'
 			AND functionversion = '$param->functionVersion'
-			AND projectId = '$param->projectId' ";
+			AND projectid = '$param->projectId'
+            AND activeflag = '1' ";
 			
-        $this->db->query($sqlStr);
-        $this->db->trans_complete();
-        $trans_status = $this->db->trans_status();
-        if($trans_status == FALSE){
-            $this->db->trans_rollback();
-             return FALSE;
-        }else{
-            $this->db->trans_commit();
-            return TRUE;
-        }	
+            $result = $this->db->query($sqlStr);
+            return $this->db->affected_rows();
+    
     }
 
-	function InsertRequirementsHeader($param){
+	function InsertNewRequirementsHeader($param){
         
 		$currentDateTime = date('Y-m-d H:i:s');
         $FRMAXFuncNo = $this->searchFRMAXFuncNo();
+        $New_FRNO = substr($FRMAXFuncNo[0]['Max_FRNO'],0,7).(substr($FRMAXFuncNo[0]['Max_FRNO'],7,7)+1);
+        
+        $sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
+        createDate, createUser, updateDate, updateUser,functionversion,activeflag) 
+        VALUES ('{$New_FRNO}', '{$param->fnDesc}', {$param->projectId}, 
+        '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','1','1')";
 
-        if($param->functionVersionNo == null){
-            $sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
-            createDate, createUser, updateDate, updateUser,functionversion,activeflag) 
-            VALUES ('{$FRMAXFuncNo['Max_FRNO']}', '{$param->fnDesc}', {$param->projectId}, 
-            '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','1','1')";
-        }else{
-            $sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
-            createDate, createUser, updateDate, updateUser,functionversion,activeflag) 
-            VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
-            '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','{$param->functionVersionNo}','{$param->activeFlag}')";
+        $result = $this->db->query($sqlStr);
+        if($result){
+            $query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_HEADER");
+            $resultId = $query->result();
+            return $resultId[0]->last_id;
         }
-            $result = $this->db->query($sqlStr);
-            if($result){
-                $query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_HEADER");
-                $resultId = $query->result();
-                return $resultId[0]->last_id;
-            }
-            return NULL;
-        }
-
+        return NULL;
     }
+
+    function InsertRequirementsHeader($param){
+        
+		$currentDateTime = date('Y-m-d H:i:s');
+        $New_functionVersion = $param->functionVersion+1;
+
+         $sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
+         createDate, createUser, updateDate, updateUser,
+         functionversion,activeflag) 
+         VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
+         '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}',
+         '{$New_functionVersion}','1')";
+        
+        $result = $this->db->query($sqlStr);
+        if($result){
+            $query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_HEADER");
+            $resultId = $query->result();
+             return $resultId[0]->last_id;
+        }
+           return $resultId[0]->last_id;
+        }
 
     function searchFRMAXFuncNo() {
 
@@ -88,9 +93,10 @@ class VersionControl_model extends CI_Model{
                    FROM M_FN_REQ_HEADER 
                    WHERE functionNo = '$functionNo' ";
    
-      //echo $strsql;
-      return $strsql;
-    } 
+   $result = $this->db->query($strsql);
+   //echo $sqlStr ;
+   return $result->result_array();
+} 
 
 	function updateChange_RequirementsDetail($param) {
 		$currentDateTime = date('Y-m-d H:i:s');
@@ -100,13 +106,131 @@ class VersionControl_model extends CI_Model{
 				updateDate = '$currentDateTime',
 				updateUser = '$param->user',
 				activeFlag = '0'
-				WHERE b.functionVersion = '$param->functionVersion' 
-				AND b.functionNo = '$param->functionNo'
-				AND b.activeflag = '1' 
-				AND b.projectid = '$param->projectId' 
+				WHERE functionVersion = '$param->functionVersion' 
+				AND functionId = '$param->functionId'
+				AND activeflag = '1' 
+				AND projectid = '$param->projectId' 
 		";
-		//echo $strsql;
-		return $strsql ;
-	} 
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    } 
+
+    function InsertChange_RequirementsDetail($param,$New_param) {
+        $currentDateTime = date('Y-m-d H:i:s');
+
+        $strsql = "INSERT INTO M_FN_REQ_DETAIL 
+        SELECT *
+        FROM M_FN_REQ_DETAIL
+                WHERE functionVersion = '$param->functionVersion' 
+                AND functionId = '$param->functionId'
+                AND projectid = '$param->projectId' 
+        ";
+        print_r($strsql);
+        $result = $this->db->query($strsql);
+        if($result){
+            $query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_DETAIL");
+            $resultId = $query->result();
+            return $resultId[0]->last_id;
+        }
+		return NULL;
+    }     
+
+    function SearchRequirementsDetail($param,$New_FunctionId) {
+    
+        $strsql = "SELECT functionNo,functionVersion,functionId
+                FROM M_FN_REQ_HEADER
+                WHERE activeflag = '1' 
+                AND projectid = '$param->projectId' 
+                AND functionId = '$New_FunctionId'
+        ";
+       $result = $this->db->query($strsql);
+       //echo $sqlStr ;
+       return $result->result_array();
+    } 
+
+
+    function updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
+        $currentDateTime = date('Y-m-d H:i:s');
+        $fieldName = '';
+        if($paramUpdate->newDataType != null){
+            $fieldName = " dataType = '$paramUpdate->newDataType' ,";
+        }
+        if($paramUpdate->newDataLength != null){
+            $fieldName .= " dataLength = '$paramUpdate->newDataLength' ,";
+        }
+        if($paramUpdate->newScaleLength  != null){
+            $fieldName .= " decimalPoint = '$paramUpdate->newScaleLength' ,";
+        }
+        if($paramUpdate->newDefaultValue != null){
+            $fieldName .= " constrraintDefault = '$paramUpdate->newDefaultValue' ,";
+        }
+        if($paramUpdate->newMinValue != null){
+            $fieldName .= " ConstraintMinValue = '$paramUpdate->newMinValue' ,";
+        }	
+        if($paramUpdate->newMaxValue != null){
+            $fieldName .= " ConstraintMaxValue = '$paramUpdate->newMaxValue' ,";
+        }					
+        $condition = $fieldName;
+
+        $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
+        foreach($NewFR as $value){
+            $New_param = (object) array(
+                'New_FRNO' => $value['functionNo'],
+                'New_functionversion'   => $value['functionVersion']
+            );
+        }
+
+        $strsql = "UPDATE M_FN_REQ_DETAIL
+                set $condition 
+                constraintUnique = '$paramUpdate->newUnique',
+                constraintNull = '$paramUpdate->newNotNull'
+                WHERE functionVersion = '$New_param->functionVersion' 
+                AND functionId = '$New_FunctionId'
+                and activeflag = '1' 
+                AND dataName = '$paramUpdate->dataName'
+                and projectid = '$param->projectId' ";
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+     } 
+    
+    function deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
+                    
+        $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
+        foreach($NewFR as $value){
+            $New_param = (object) array(
+                'New_FRNO' => $value['functionNo'],
+                'New_functionversion'   => $value['functionVersion']
+            );
+        }
+
+        $strsql = "DELETE FROM M_FN_REQ_DETAIL
+                WHERE functionId = '$New_FunctionId' 
+                AND functionVersion = '$New_param->functionVersion' 
+                AND activeflag = '1' 
+                AND dataName = '$paramUpdate->dataName'
+                AND projectid = '$param->projectId' ";
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }   				
+
+    function addChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
+                    
+        $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
+        foreach($NewFR as $value){
+            $New_param = (object) array(
+                'New_FRNO' => $value['functionNo'],
+                'New_functionversion'   => $value['functionVersion']
+            );
+        }
+
+        $strsql = "DELETE FROM M_FN_REQ_DETAIL
+                WHERE functionId = '$New_FunctionId' 
+                AND functionVersion = '$New_param->functionVersion' 
+                AND activeflag = '1' 
+                AND dataName = '$paramUpdate->dataName'
+                AND projectid = '$param->projectId' ";
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }  
 }
 ?>

@@ -921,6 +921,7 @@ class ChangeManagementRequest extends CI_Controller {
 			$paramInsert = (object) array(
 				'changeRequestNo' => $param->changeRequestNo,
 				'sequenceNo' => $i++,
+				'typeData'	=> $value['typeData'],
 				'changeType' => $value['changeType'],
 				'dataId' => $value['dataId'],
 				'dataName' => $value['dataName'], 
@@ -944,6 +945,7 @@ class ChangeManagementRequest extends CI_Controller {
 				'changeRequestNo' => $param->changeRequestNo,
 				'sequenceNo' => $i++,
 				'changeType' => $value['changeType'],
+				'typeData'	=> $value['typeData'],
 				'dataId' => $value['dataId'],
 				'dataName' => $value['dataName'], 
 				'schemaVersionId' => $value['schemaVersionId'],
@@ -960,38 +962,95 @@ class ChangeManagementRequest extends CI_Controller {
 			$this->mChange->insertChangeRequestDetail($paramInsert);				
 		}
 
-		//3. save change history requirement header
-		$this->mVersion->updateRequirementsHeader($param);
+		//3. save change history requirement header  ไม่ได้
+//	print_r($param);
+//		$rowUpdate = $this->mVersion->updateRequirementsHeader($param);
+//		//print_r($rowUpdate);
 
 		//3.1 save change history requirement detail
-		$this->mVersion->updateChange_RequirementsDetail($param);
+		$rowUpdate = $this->mVersion->updateChange_RequirementsDetail($param);
 
-		//3. save change history requirement header
+		//3.2 save change New requirement header
 		$data = $this->aff_functionalrequirement($param);
 		//print_r($data);
 		foreach($data as $value ){
 			$Change_FR_type = $value[0]['change_type'];
 		}
+		//print_r($Change_FR_type);
+		if($Change_FR_type != 'edit'){
+			$New_FunctionId = $this->mVersion->InsertNewRequirementsHeader($param);
+		}else{
+			$New_FunctionId = $this->mVersion->InsertRequirementsHeader($param);
+		}
+		//print_r($New_FunctionId);
+		$NewFR = $this->mVersion->SearchRequirementsDetail($param,$New_FunctionId);
+		foreach($NewFR as $value){
+				$New_param = (object) array(
+						'FRNO' => $value['functionNo'],
+						'functionversion'   => $value['functionVersion'],
+						'functionId'	 => $value['functionId']
+				);
+		}
+		print_r($New_param);
+		//3.3 save change New requirement detail
+		$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param,$New_param);
+		//if(0 < $InsertNew){
+/*			print_r($InsertNew);
+			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+				foreach ($RelateResultSCHEMA as $value){
+					$paramUpdate = (object) array(
+						'changeType' => $value['changeType'],
+						'dataId' => $value['dataId'],
+						'dataName' => $value['dataName'], 
+						'dataType' => $value['newDataType'],
+						'dataLength' => $value['newDataLength'],
+						'scale' => $value['newScaleLength'],
+						'unique' => $value['newUnique'],
+						'notNull' => $value['newNotNull'],
+						'default' => $value['newDefaultValue'],
+						'min' => $value['newMinValue'],
+						'max' => $value['newMaxValue'],
+						'tableName' => $value['tableName'],
+						'columnName' => $value['columnName']);
 
-		//$this->mVersion->InsertRequirementsHeader($param);
+						if($Change_FR_type == 'edit'){
+							$recordUpdate = $this->mChange->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}else if($Change_FR_type == 'delete'){
+							$recordDelete = $this->mChange->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}else if($Change_FR_type == 'add'){
+							$recordAdd = $this->mChange->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}
+				
+				}
+		
+		$RelateResultNotSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+				foreach ($RelateResultNotSCHEMA as $value){
+					$paramUpdate = (object) array(
+						'changeType' => $value['changeType'],
+						'dataId' => $value['dataId'],
+						'dataName' => $value['dataName'], 
+						'dataType' => $value['newDataType'],
+						'dataLength' => $value['newDataLength'],
+						'scale' => $value['newScaleLength'],
+						'unique' => $value['newUnique'],
+						'notNull' => $value['newNotNull'],
+						'default' => $value['newDefaultValue'],
+						'min' => $value['newMinValue'],
+						'max' => $value['newMaxValue'],
+						'tableName' => $value['tableName'],
+						'columnName' => $value['columnName']);
 
-		//3.1 save change history requirement detail
-		//$this->mVersion->InsertChange_RequirementsDetail($param);
-
-		/*
-		$affFrList = $this->bind_data_aff_functionalrequirement($param);
-		$affSchemalist = $this->bind_data_aff_schema($param);
-		$affTestCaseList = $this->bind_data_aff_testcase($param);
-
-		$param_new["functionId"] = $param->functionId;
-		$param_new["projectId"] = $param->projectId;
-
-		$param_new["aff_fr_panel"]=$affFrList;
-		$param_new["aff_testcase_panel"]=$affTestCaseList;
-		$param_new["aff_schema_panel"] = $affSchemalist;
-		*/
-		//print_r($title);
-
+						if($Change_FR_type == 'edit'){
+							$recordUpdate = $this->mChange->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}else if($Change_FR_type == 'delete'){
+							$recordDelete = $this->mChange->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}else if($Change_FR_type == 'add'){
+							$recordAdd = $this->mChange->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}
+				
+				}
+		}
+*/
 					//return;
 					//print_r($param);
 					//if (!isset($param)){
