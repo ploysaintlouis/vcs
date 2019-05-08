@@ -799,6 +799,23 @@ echo $sqlStr;
 		//echo $sqlStr ;
 		return $result->result_array();
 	}	
+
+	function checkOtherFr($param){
+		
+		$sqlStr = " SELECT distinct b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO
+		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
+		WHERE a.confirmflag = 1 
+		AND a.tableName=b.refTableName 
+		AND a.columnName = b.refColumnName
+		AND a.functionId = '$param->functionId'
+		AND a.functionVersion ='$param->functionVersion'
+		AND a.functionId <> b.functionId
+		AND b.activeflag = '1'";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+		return $result->result_array();
+	}	
+
 	function checkChangeRequestNotRelateSchema($param){
 
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_existdb 
@@ -851,7 +868,7 @@ echo $sqlStr;
 	}		
 	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
 
-		if (!isset($ListofChangeSchemaOthFr)){
+		if (isset($ListofChangeSchemaOthFr)){
 			$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
 			$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
 			$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
@@ -860,7 +877,7 @@ echo $sqlStr;
 			$FROth_Id =  "";
 			$FROth_Version =  "";
 		}
-
+//echo $FROth_No ;
 		$sqlStr = "CREATE TEMPORARY TABLE tmp_RTM
 		(SELECT  testCaseId,testCaseversion,functionId,functionVersion,'' AS tctype
 		FROM M_RTM_VERSION
@@ -893,7 +910,7 @@ echo $sqlStr;
 		}
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
-
+//echo $sqlStr;
 		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
 		/*
 		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,c.tctype

@@ -21,7 +21,7 @@ class VersionControl_model extends CI_Model{
 
 		$currentDateTime = date('Y-m-d H:i:s');
 
-		$sqlStr = "UPDATE M_FN_REQ_HAEDER
+		$sqlStr = "UPDATE M_FN_REQ_HEADER
 			SET activeflag = '0',
 				createUser 	= '$currentDateTime',
 				updateDate 	 = '$currentDateTime',
@@ -30,7 +30,7 @@ class VersionControl_model extends CI_Model{
 			AND functionversion = '$param->functionVersion'
 			AND projectid = '$param->projectId'
             AND activeflag = '1' ";
-			
+			//print_r($sqlStr);
             $result = $this->db->query($sqlStr);
             return $this->db->affected_rows();
     
@@ -119,13 +119,20 @@ class VersionControl_model extends CI_Model{
         $currentDateTime = date('Y-m-d H:i:s');
 
         $strsql = "INSERT INTO M_FN_REQ_DETAIL 
-        SELECT *
+        (projectid, functionId, functionNo, functionVersion, typeData, dataName, 
+        schemaVersionId, refTableName, refColumnName, dataType, dataLength, decimalPoint, constraintPrimaryKey, constraintUnique, 
+        constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, effectiveStartDate, effectiveEndDate, activeFlag,
+        createDate, createUser, updateDate, updateUser)
+        SELECT '$param->projectId','$New_param->functionId','$New_param->FRNO','$New_param->functionversion',typeData,dataName,
+        schemaVersionId,refTableName,refColumnName,dataType,dataLength,decimalPoint,constraintPrimaryKey,
+        constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue,'$currentDateTime',
+        NULL,'1','$currentDateTime','$param->user','$currentDateTime','$param->user'
         FROM M_FN_REQ_DETAIL
                 WHERE functionVersion = '$param->functionVersion' 
                 AND functionId = '$param->functionId'
                 AND projectid = '$param->projectId' 
         ";
-        print_r($strsql);
+        //print_r($strsql);
         $result = $this->db->query($strsql);
         if($result){
             $query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_DETAIL");
@@ -189,7 +196,8 @@ class VersionControl_model extends CI_Model{
                 and activeflag = '1' 
                 AND dataName = '$paramUpdate->dataName'
                 and projectid = '$param->projectId' ";
-		$result = $this->db->query($strsql);
+        $result = $this->db->query($strsql);
+        print_r($strsql);
 		return $this->db->affected_rows();
      } 
     

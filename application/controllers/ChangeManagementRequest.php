@@ -373,10 +373,10 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['aff_testcase_list'] = array();
 		/// *** call model and bind data here.
 		$row=array();
-		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		$ListofChangeSchemaOthFr = $this->mChange->checkOtherFr($param);
+		//print_r($ListofChangeSchemaOthFr);
 		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
-			//	print_r($ListofTCAffected);
-
+		
 		$i = 1;
 		$testNo = "";
 		$testVersion = "";
@@ -536,7 +536,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['success_message'] = $success_message;
 		$data['error_message'] = $error_message;
 	}
-	
+	/*
 	function callChangeRelate($param){//แยก รายการ change ที่ realte
 	//print_r($param);
 		//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
@@ -767,6 +767,7 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 		return $param_schema;
 	}
+	*/
 	function testscript(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
@@ -810,7 +811,7 @@ class ChangeManagementRequest extends CI_Controller {
 			'fnDesc'		  => $FR_Description
 		);
 		$ListChange = $this->callChangeRelate($param);
-			print_r($ListChange);
+			//print_r($ListChange);
 		
 	}
 
@@ -963,9 +964,8 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 
 		//3. save change history requirement header  ไม่ได้
-//	print_r($param);
-//		$rowUpdate = $this->mVersion->updateRequirementsHeader($param);
-//		//print_r($rowUpdate);
+		$rowUpdate = $this->mVersion->updateRequirementsHeader($param);
+		//print_r($rowUpdate);
 
 		//3.1 save change history requirement detail
 		$rowUpdate = $this->mVersion->updateChange_RequirementsDetail($param);
@@ -991,38 +991,40 @@ class ChangeManagementRequest extends CI_Controller {
 						'functionId'	 => $value['functionId']
 				);
 		}
-		print_r($New_param);
+		//print_r($New_param);
 		//3.3 save change New requirement detail
 		$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param,$New_param);
-		//if(0 < $InsertNew){
-/*			print_r($InsertNew);
-			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-				foreach ($RelateResultSCHEMA as $value){
+		if(0 < count($InsertNew)){
+		//	print_r($InsertNew);
+		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		//print_r($RelateResultSCHEMA);
+					foreach ($RelateResultSCHEMA as $value){
 					$paramUpdate = (object) array(
 						'changeType' => $value['changeType'],
 						'dataId' => $value['dataId'],
 						'dataName' => $value['dataName'], 
-						'dataType' => $value['newDataType'],
-						'dataLength' => $value['newDataLength'],
-						'scale' => $value['newScaleLength'],
-						'unique' => $value['newUnique'],
-						'notNull' => $value['newNotNull'],
-						'default' => $value['newDefaultValue'],
-						'min' => $value['newMinValue'],
-						'max' => $value['newMaxValue'],
+						'newDataType' => $value['newDataType'],
+						'newDataLength' => $value['newDataLength'],
+						'newScaleLength' => $value['newScaleLength'],
+						'newUnique' => $value['newUnique'],
+						'newNotNull' => $value['newNotNull'],
+						'newDefaultValue' => $value['newDefaultValue'],
+						'newMinValue' => $value['newMinValue'],
+						'newMaxValue' => $value['newMaxValue'],
 						'tableName' => $value['tableName'],
 						'columnName' => $value['columnName']);
-
+//print_r($paramUpdate);
+						/*
 						if($Change_FR_type == 'edit'){
 							$recordUpdate = $this->mChange->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
 						}else if($Change_FR_type == 'delete'){
 							$recordDelete = $this->mChange->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
 						}else if($Change_FR_type == 'add'){
 							$recordAdd = $this->mChange->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}
+						}*/
 				
 				}
-		
+/*	
 		$RelateResultNotSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
 				foreach ($RelateResultNotSCHEMA as $value){
 					$paramUpdate = (object) array(
@@ -1049,8 +1051,8 @@ class ChangeManagementRequest extends CI_Controller {
 						}
 				
 				}
-		}
-*/
+			*/		}
+
 					//return;
 					//print_r($param);
 					//if (!isset($param)){
