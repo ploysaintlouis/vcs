@@ -877,6 +877,41 @@ class ChangeManagementRequest extends CI_Controller {
 
 }
 
+function aff_Oth_functionalrequirement($param){
+	$data = array();
+	$data['aff_fr_list'] = array();
+	/// *** call model and bind data here.
+	$row=array();
+	$i = 1;
+	$frId = "";
+	$frVersion = "";
+	$change_title = "edit";
+
+		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		$fr_title = $frId.$frVersion ;
+		$change_title = "edit";
+		foreach($ListofChangeSchemaOthFr as $value){
+			if($frId.$frVersion  != $value["FROth_Id"].$value["FROth_Version"] ){
+				if($change_title != $value['changeType']&& "edit" != $value['changeType']){
+					$change_title = $value['changeType'];
+				}
+				if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+						$change_title = "delete";
+				}			
+				$row['change_type'] = $change_title;
+				$row["no"] = $i++;
+				$row["fr_id"]= $value["FROth_Id"];
+				$row["fr_no"]= $value["FROth_NO"];
+				$row["version"]= $value['FROth_Version'];
+				$row["fnDesc"]= $value['FROth_Desc'];
+				array_push($data['aff_fr_list'],$row);
+				$frId = $value["FROth_Id"];
+			}
+		}
+
+		return $data;
+	}
+
 	function confirm_change_request(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
@@ -986,11 +1021,13 @@ class ChangeManagementRequest extends CI_Controller {
 		$NewFR = $this->mVersion->SearchRequirementsDetail($param,$New_FunctionId);
 		foreach($NewFR as $value){
 				$New_param = (object) array(
-						'FRNO' => $value['functionNo'],
+						'functionNo' => $value['functionNo'],
 						'functionversion'   => $value['functionVersion'],
 						'functionId'	 => $value['functionId']
 				);
 		}
+		$MAP_FR = $this->mVersion->MapFRVersion($param,$New_param);
+
 		//print_r($New_param);
 		//3.3 save change New requirement detail
 		$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param,$New_param);
@@ -1002,6 +1039,7 @@ class ChangeManagementRequest extends CI_Controller {
 					$paramUpdate = (object) array(
 						'changeType' => $value['changeType'],
 						'dataId' => $value['dataId'],
+						'typeData'	=> $value['typeData'],
 						'dataName' => $value['dataName'], 
 						'newDataType' => $value['newDataType'],
 						'newDataLength' => $value['newDataLength'],
@@ -1014,45 +1052,168 @@ class ChangeManagementRequest extends CI_Controller {
 						'tableName' => $value['tableName'],
 						'columnName' => $value['columnName']);
 //print_r($paramUpdate);
-						/*
-						if($Change_FR_type == 'edit'){
-							$recordUpdate = $this->mChange->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}else if($Change_FR_type == 'delete'){
-							$recordDelete = $this->mChange->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}else if($Change_FR_type == 'add'){
-							$recordAdd = $this->mChange->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}*/
+			//print_r($paramUpdate->changeType);		
+			
+						if($paramUpdate->changeType == 'edit'){
+							$recordUpdate = $this->mVersion->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+							}else if($paramUpdate->changeType == 'delete'){
+							$recordDelete = $this->mVersion->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}else if($paramUpdate->changeType == 'add'){
+							$recordAdd = $this->mVersion->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}
 				
 				}
-/*	
+	
 		$RelateResultNotSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
 				foreach ($RelateResultNotSCHEMA as $value){
 					$paramUpdate = (object) array(
 						'changeType' => $value['changeType'],
 						'dataId' => $value['dataId'],
+						'typeData'	=> $value['typeData'],
 						'dataName' => $value['dataName'], 
-						'dataType' => $value['newDataType'],
-						'dataLength' => $value['newDataLength'],
-						'scale' => $value['newScaleLength'],
-						'unique' => $value['newUnique'],
-						'notNull' => $value['newNotNull'],
-						'default' => $value['newDefaultValue'],
-						'min' => $value['newMinValue'],
-						'max' => $value['newMaxValue'],
+						'newDataType' => $value['newDataType'],
+						'newDataLength' => $value['newDataLength'],
+						'newScaleLength' => $value['newScaleLength'],
+						'newUnique' => $value['newUnique'],
+						'newNotNull' => $value['newNotNull'],
+						'newDefaultValue' => $value['newDefaultValue'],
+						'newMinValue' => $value['newMinValue'],
+						'newMaxValue' => $value['newMaxValue'],
 						'tableName' => $value['tableName'],
 						'columnName' => $value['columnName']);
+						//print_r($paramUpdate->changeType);		
 
-						if($Change_FR_type == 'edit'){
-							$recordUpdate = $this->mChange->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}else if($Change_FR_type == 'delete'){
-							$recordDelete = $this->mChange->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}else if($Change_FR_type == 'add'){
-							$recordAdd = $this->mChange->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						if($paramUpdate->changeType == 'edit'){
+							$recordUpdate = $this->mVersion->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+							}else if($paramUpdate->changeType == 'delete'){
+							$recordDelete = $this->mVersion->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+						}else if($paramUpdate->changeType == 'add'){
+							$recordAdd = $this->mVersion->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
 						}
 				
 				}
-			*/		}
 
+			}
+		
+		$data = $this->aff_Oth_functionalrequirement($param);
+		//print_r($data);
+	if(0 < count($data)){
+			foreach($data as $value){
+				$param_Oth = (object) array (
+					'projectId' 	  => $prjId ,
+					'functionId' 			=> $value[0]['fr_id'],
+					'functionVersion'	=> $value[0]['version'],
+					'functionNo'			=> $value[0]['fr_no'],
+					'changeRequestNo' => $CH_NO,
+					'type' 	 		  		=> 1, //1 = Change, 2 = Cancel
+					'userId'					=> $userId,
+					'user'						=> $user,
+					'fnDesc'		  		=> $value[0]['fnDesc'],
+					'Change_FR_type' 	=> $value[0]['change_type']
+					);
+			}
+			
+			//print_r($param_Oth);
+				//3.4 save change history requirement header  ของ Oth FR
+				$rowUpdate = $this->mVersion->updateRequirementsHeader($param_Oth);
+				//print_r($rowUpdate);
+
+				//3.5 save change history requirement detail ของ Oth FR
+				$rowUpdate = $this->mVersion->updateChange_RequirementsDetail($param_Oth);			
+
+				//print_r($Change_FR_type);
+				if($param_Oth->Change_FR_type != 'edit'){
+					$New_FunctionId = $this->mVersion->InsertNewRequirementsHeader($param_Oth);
+				}else{
+					$New_FunctionId = $this->mVersion->InsertRequirementsHeader($param_Oth);
+				}
+				//print_r($New_FunctionId);
+
+				$NewFR = $this->mVersion->SearchRequirementsDetail($param_Oth,$New_FunctionId);
+				foreach($NewFR as $value){
+						$New_param = (object) array(
+								'projectId' 	  => $prjId ,
+								'functionNo' => $value['functionNo'],
+								'functionversion'   => $value['functionVersion'],
+								'functionId'	 => $value['functionId'],
+								'fnDesc'		  => $value['functionDescription'],
+								'changeRequestNo' => $CH_NO,
+								'type' 	 		  		=> 1, //1 = Change, 2 = Cancel
+								'userId'					=> $userId,
+								'user'						=> $user			
+						);
+				}
+				$MAP_FR = $this->mVersion->MapFRVersion($param_Oth,$New_param);
+
+				//print_r($New_param);
+				//3.7 save change New requirement detail ของ Oth FR
+					$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param_Oth,$New_param);
+				if(0 < count($InsertNew)){
+					//print_r($InsertNew);
+			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+				//print_r($RelateResultSCHEMA);
+							foreach ($RelateResultSCHEMA as $value){
+							$paramUpdate = (object) array(
+								'changeType' => $value['changeType'],
+								'dataId' => $value['dataId'],
+								'typeData'	=> $value['typeData'],
+								'dataName' => $value['dataName'], 
+								'newDataType' => $value['newDataType'],
+								'newDataLength' => $value['newDataLength'],
+								'newScaleLength' => $value['newScaleLength'],
+								'newUnique' => $value['newUnique'],
+								'newNotNull' => $value['newNotNull'],
+								'newDefaultValue' => $value['newDefaultValue'],
+								'newMinValue' => $value['newMinValue'],
+								'newMaxValue' => $value['newMaxValue'],
+								'tableName' => $value['tableName'],
+								'columnName' => $value['columnName']);
+		//print_r($paramUpdate);
+					//print_r($paramUpdate->changeType);		
+					
+								if($paramUpdate->changeType == 'edit'){
+									$recordUpdate = $this->mVersion->updateChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
+									}else if($paramUpdate->changeType == 'delete'){
+									$recordDelete = $this->mVersion->deleteChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
+								}else if($paramUpdate->changeType == 'add'){
+									$recordAdd = $this->mVersion->addChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
+								}
+						
+						}
+			
+				$RelateResultNotSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param_Oth);
+						foreach ($RelateResultNotSCHEMA as $value){
+							$paramUpdate = (object) array(
+								'changeType' => $value['changeType'],
+								'dataId' => $value['dataId'],
+								'typeData'	=> $value['typeData'],
+								'dataName' => $value['dataName'], 
+								'newDataType' => $value['newDataType'],
+								'newDataLength' => $value['newDataLength'],
+								'newScaleLength' => $value['newScaleLength'],
+								'newUnique' => $value['newUnique'],
+								'newNotNull' => $value['newNotNull'],
+								'newDefaultValue' => $value['newDefaultValue'],
+								'newMinValue' => $value['newMinValue'],
+								'newMaxValue' => $value['newMaxValue'],
+								'tableName' => $value['tableName'],
+								'columnName' => $value['columnName']);
+								//print_r($paramUpdate->changeType);		
+
+								if($paramUpdate->changeType == 'edit'){
+									$recordUpdate = $this->mVersion->updateChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
+									}else if($paramUpdate->changeType == 'delete'){
+									$recordDelete = $this->mVersion->deleteChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
+								}else if($paramUpdate->changeType == 'add'){
+									$recordAdd = $this->mVersion->addChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
+								}
+						
+						}
+					}
+			}
+
+			//4.Control Version SCHEMA
+			
 					//return;
 					//print_r($param);
 					//if (!isset($param)){
@@ -1070,7 +1231,7 @@ class ChangeManagementRequest extends CI_Controller {
 			'success' => true,
 			'result'=> $param,
 		);
-		echo json_encode($data);
+		//echo json_encode($data);
 
 		//logic to confirm here
 		// $data = array(

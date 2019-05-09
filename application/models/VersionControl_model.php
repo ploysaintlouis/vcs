@@ -23,7 +23,6 @@ class VersionControl_model extends CI_Model{
 
 		$sqlStr = "UPDATE M_FN_REQ_HEADER
 			SET activeflag = '0',
-				createUser 	= '$currentDateTime',
 				updateDate 	 = '$currentDateTime',
 				updateUser 	 = '$param->user'
 			WHERE functionId = '$param->functionId'
@@ -64,7 +63,7 @@ class VersionControl_model extends CI_Model{
          $sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
          createDate, createUser, updateDate, updateUser,
          functionversion,activeflag) 
-         VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
+         VALUES ('{$param->functionNo}', '{$param->fnDesc}', {$param->projectId}, 
          '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}',
          '{$New_functionVersion}','1')";
         
@@ -123,7 +122,7 @@ class VersionControl_model extends CI_Model{
         schemaVersionId, refTableName, refColumnName, dataType, dataLength, decimalPoint, constraintPrimaryKey, constraintUnique, 
         constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, effectiveStartDate, effectiveEndDate, activeFlag,
         createDate, createUser, updateDate, updateUser)
-        SELECT '$param->projectId','$New_param->functionId','$New_param->FRNO','$New_param->functionversion',typeData,dataName,
+        SELECT '$param->projectId','$New_param->functionId','$New_param->functionNo','$New_param->functionversion',typeData,dataName,
         schemaVersionId,refTableName,refColumnName,dataType,dataLength,decimalPoint,constraintPrimaryKey,
         constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue,'$currentDateTime',
         NULL,'1','$currentDateTime','$param->user','$currentDateTime','$param->user'
@@ -144,7 +143,7 @@ class VersionControl_model extends CI_Model{
 
     function SearchRequirementsDetail($param,$New_FunctionId) {
     
-        $strsql = "SELECT functionNo,functionVersion,functionId
+        $strsql = "SELECT functionNo,functionVersion,functionId,functionDescription
                 FROM M_FN_REQ_HEADER
                 WHERE activeflag = '1' 
                 AND projectid = '$param->projectId' 
@@ -157,6 +156,10 @@ class VersionControl_model extends CI_Model{
 
 
     function updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
+
+        //print_r($New_FunctionId);
+        //print_r($paramUpdate);
+
         $currentDateTime = date('Y-m-d H:i:s');
         $fieldName = '';
         if($paramUpdate->newDataType != null){
@@ -182,22 +185,23 @@ class VersionControl_model extends CI_Model{
         $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
         foreach($NewFR as $value){
             $New_param = (object) array(
-                'New_FRNO' => $value['functionNo'],
-                'New_functionversion'   => $value['functionVersion']
+                'functionNo' => $value['functionNo'],
+                'functionversion'   => $value['functionVersion']
             );
         }
+        //print_r($NewFR);
 
         $strsql = "UPDATE M_FN_REQ_DETAIL
                 set $condition 
                 constraintUnique = '$paramUpdate->newUnique',
                 constraintNull = '$paramUpdate->newNotNull'
-                WHERE functionVersion = '$New_param->functionVersion' 
+                WHERE functionVersion = '$New_param->functionversion' 
                 AND functionId = '$New_FunctionId'
                 and activeflag = '1' 
                 AND dataName = '$paramUpdate->dataName'
                 and projectid = '$param->projectId' ";
         $result = $this->db->query($strsql);
-        print_r($strsql);
+        //print_r($strsql);
 		return $this->db->affected_rows();
      } 
     
@@ -206,14 +210,15 @@ class VersionControl_model extends CI_Model{
         $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
         foreach($NewFR as $value){
             $New_param = (object) array(
-                'New_FRNO' => $value['functionNo'],
-                'New_functionversion'   => $value['functionVersion']
+                'functionNo' => $value['functionNo'],
+                'functionversion'   => $value['functionVersion']
             );
         }
+        //print_r($NewFR);
 
         $strsql = "DELETE FROM M_FN_REQ_DETAIL
                 WHERE functionId = '$New_FunctionId' 
-                AND functionVersion = '$New_param->functionVersion' 
+                AND functionVersion = '$New_param->functionversion' 
                 AND activeflag = '1' 
                 AND dataName = '$paramUpdate->dataName'
                 AND projectid = '$param->projectId' ";
@@ -222,23 +227,46 @@ class VersionControl_model extends CI_Model{
     }   				
 
     function addChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
-                    
+        $currentDateTime = date('Y-m-d H:i:s');
+           
         $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
         foreach($NewFR as $value){
             $New_param = (object) array(
-                'New_FRNO' => $value['functionNo'],
-                'New_functionversion'   => $value['functionVersion']
+                'functionNo' => $value['functionNo'],
+                'functionversion'   => $value['functionVersion']
             );
         }
+        //print_r($NewFR);
 
-        $strsql = "DELETE FROM M_FN_REQ_DETAIL
-                WHERE functionId = '$New_FunctionId' 
-                AND functionVersion = '$New_param->functionVersion' 
-                AND activeflag = '1' 
-                AND dataName = '$paramUpdate->dataName'
-                AND projectid = '$param->projectId' ";
+        $strsql = "INSERT INTO M_FN_REQ_DETAIL 
+        (projectid, functionId, functionNo, functionVersion, typeData, dataName, 
+        schemaVersionId, refTableName, refColumnName, dataType, dataLength, decimalPoint, constraintPrimaryKey, constraintUnique, 
+        constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, effectiveStartDate, effectiveEndDate, activeFlag,
+        createDate, createUser, updateDate, updateUser)
+        VALUES('$param->projectId','$New_FunctionId','$New_param->functionNo','$New_param->functionversion',
+        '$paramUpdate->typeData','$paramUpdate->dataName',NULL,'$paramUpdate->tableName',
+        '$paramUpdate->columnName','$paramUpdate->newDataType','$paramUpdate->newDataLength',
+        '$paramUpdate->newScaleLength','N','$paramUpdate->newUnique','$paramUpdate->newDefaultValue',
+        '$paramUpdate->newNotNull','$paramUpdate->newMinValue','$paramUpdate->newMaxValue',
+        '$currentDateTime',NULL,'1','$currentDateTime','$param->user','$currentDateTime','$param->user')
+        ";
+
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
     }  
+
+
+    function MapFRVersion($param,$New_param) {
+        $currentDateTime = date('Y-m-d H:i:s');
+
+        $strsql = "INSERT INTO MAP_FR_VERSION 
+        (projectid, Old_FR_Id, Old_FR_Version, New_FR_Id, New_FR_Version)
+        VALUES('$param->projectId','$param->functionId','$param->functionVersion','$New_param->functionId',
+        '$New_param->functionversion')
+        ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }      
 }
 ?>

@@ -128,7 +128,7 @@ class ChangeManagement_model extends CI_Model{
 			FROM T_TEMP_CHANGE_LIST
 			WHERE $where_clause
 			ORDER BY lineNumber";
-			echo $sqlStr;
+			//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}
@@ -247,7 +247,7 @@ class ChangeManagement_model extends CI_Model{
 				'$param->dataId',
 				NULL,
 				NULL)";
-echo $sqlStr;
+//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result;
 	}
@@ -786,12 +786,15 @@ echo $sqlStr;
 	function checkChangeRequestrelateSCHEMAOtherFr($param){
 		
 		$sqlStr = " SELECT a.*,
-		b.dataName FR_NAME,b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO
-		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
+		b.dataName FR_NAME,b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO,c.functionDescription  FROth_Desc
+		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b,M_FN_REQ_HEADER c
 		WHERE a.confirmflag = 1 
 		AND a.tableName=b.refTableName 
 		AND a.columnName = b.refColumnName
+		AND b.functionId = c.functionId
+		AND b.functionVersion = c.functionversion
 		AND a.functionId = '$param->functionId'
+		AND c.functionDescription <> '$param->fnDesc'
 		AND a.functionVersion ='$param->functionVersion'
 		AND a.functionId <> b.functionId
 		AND b.activeflag = '1'";
