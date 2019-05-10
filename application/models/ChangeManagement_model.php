@@ -871,7 +871,7 @@ class ChangeManagement_model extends CI_Model{
 	}		
 	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
 
-		if (isset($ListofChangeSchemaOthFr)){
+		if (0 < count($ListofChangeSchemaOthFr)){
 			$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
 			$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
 			$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];

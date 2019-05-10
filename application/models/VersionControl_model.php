@@ -143,7 +143,7 @@ class VersionControl_model extends CI_Model{
 
     function SearchRequirementsDetail($param,$New_FunctionId) {
     
-        $strsql = "SELECT functionNo,functionVersion,functionId,functionDescription
+        $strsql = "SELECT projectId,functionNo,functionVersion,functionId,functionDescription
                 FROM M_FN_REQ_HEADER
                 WHERE activeflag = '1' 
                 AND projectid = '$param->projectId' 
@@ -267,6 +267,178 @@ class VersionControl_model extends CI_Model{
 
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
-    }      
+    }     
+    
+	function updateDatabaseSchemaVersion($param,$paramInsert){
+        $currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE M_DATABASE_SCHEMA_VERSION
+			SET effectiveEndDate = '$currentDateTime', 
+				activeFlag = '0', 
+				updateDate = '$currentDateTime', 
+				updateUser = '$param->user' 
+            WHERE projectId = '$param->projectId'
+            AND tableName = '$paramInsert->tableName'
+            AND activeflag = '1' ";
+//print_r($sqlStr);
+        $result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+    } 
+    
+	function updateDatabaseSchemaInfo($param,$paramInsert){
+
+		$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
+			SET activeflag = '0', 
+            WHERE projectId = '$param->projectId'
+            AND tableName = '$paramInsert->tableName'
+            AND activeflag = '1' ";
+print_r($sqlStr);
+        $result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+    } 
+
+    function insertDatabaseSchemaVersion($param, $paramInsert){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_VERSION 
+        (projectId, tableName, columnName, schemaVersionNumber, effectiveStartDate, effectiveEndDate, activeFlag, createDate, 
+        createUser, updateDate, updateUser) 
+        SELECT $param->projectId, tableName, 'columnName', schemaVersionNumber+1, '$currentDateTime',
+         NULL, '1', '$currentDateTime', '$param->user'', '$currentDateTime', '$param->user'
+        WHERE projectId = $param->projectId
+        AND tableName = $paramInsert->tableName
+        ";
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(schemaVersionId) as last_id FROM M_DATABASE_SCHEMA_VERSION");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    }   
+    
+    function SearchDatabaseSchemaDetail($param,$paramInsert) {
+    
+        $strsql = "SELECT tableName,columnName,schemaVersionNumber,schemaVersionId
+                FROM M_DATABASE_SCHEMA_VERSION
+                WHERE activeflag = '1' 
+                AND projectid = '$param->projectId' 
+                AND tableName = '$paramInsert->tableName'
+        ";
+       $result = $this->db->query($strsql);
+       //echo $sqlStr ;
+       return $result->result_array();
+    } 
+
+    function MapDBVersion($New_param,$New_param_Oth,$New_param_DB) {
+        $currentDateTime = date('Y-m-d H:i:s');
+
+        $strsql = "INSERT INTO MAP_SCHEMA_VERSION 
+        (projectid, FR_Id, FR_Version, TableName,Schema_Version)
+        VALUES('$New_param->projectId','$New_param->functionId','$New_param->functionVersion','$New_param_DB->tableName',
+        '$New_param_DB->schemaVersionNumber')
+        ";
+		$result = $this->db->query($strsql);
+        return $this->db->affected_rows();
+        
+        if (!empty(New_param_Oth)){
+            $strsql = "INSERT INTO MAP_SCHEMA_VERSION 
+            (projectid, FR_Id, FR_Version, TableName,Schema_Version)
+            VALUES('$New_param_Oth->projectId','$New_param_Oth->functionId','$New_param_Oth->functionVersion','$New_param_DB->tableName',
+            '$New_param_DB->schemaVersionNumber')
+            ";
+
+            $result = $this->db->query($strsql);
+            return $this->db->affected_rows();            
+        }
+
+
+    }    
+
+    function InsertDatabaseSchemaInfo($param, $paramInsert){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_INFO
+        (projectId, tableName, columnName, Version, effectiveStartDate, effectiveEndDate, activeFlag, createDate, 
+        createUser, updateDate, updateUser) 
+        SELECT $param->projectId, tableName, 'columnName','$paramInsert->Version',
+        dataType,dataLength,decimalPoint,constraintPrimaryKey,constraintUnique,constraintDefault,constraintNull,
+        constraintMinValue,constraintMaxValue,'1'
+        WHERE projectId = $param->projectId
+        AND tableName = $paramInsert->tableName
+        ";
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(schemaVersionId) as last_id FROM M_DATABASE_SCHEMA_VERSION");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    }  
+
+	function updateDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB,$New_SCHEMA_VERSION){
+        $currentDateTime = date('Y-m-d H:i:s');
+
+        $fieldName = '';
+        if($paramUpdate_DB->newDataType != null){
+            $fieldName = " dataType = '$paramUpdate_DB->newDataType' ,";
+        }
+        if($paramUpdate_DB->newDataLength != null){
+            $fieldName .= " dataLength = '$paramUpdate_DB->newDataLength' ,";
+        }
+        if($paramUpdate_DB->newScaleLength  != null){
+            $fieldName .= " decimalPoint = '$paramUpdate_DB->newScaleLength' ,";
+        }
+        if($paramUpdate_DB->newDefaultValue != null){
+            $fieldName .= " constrraintDefault = '$paramUpdate_DB->newDefaultValue' ,";
+        }
+        if($paramUpdate_DB->newMinValue != null){
+            $fieldName .= " ConstraintMinValue = '$paramUpdate_DB->newMinValue' ,";
+        }	
+        if($paramUpdate_DB->newMaxValue != null){
+            $fieldName .= " ConstraintMaxValue = '$paramUpdate_DB->newMaxValue' ,";
+        }					
+        $condition = $fieldName;
+
+        $strsql = "UPDATE M_DATABASE_SCHEMA_INFO
+                set $condition 
+                constraintUnique = '$paramUpdate_DB->newUnique',
+                constraintNull = '$paramUpdate_DB->newNotNull'
+                WHERE tableName = '$paramUpdate_DB->tableName' 
+                AND columnName = '$paramUpdate_DB->columnName' 
+                AND activeflag = '1'
+                AND Version = '$New_param_DB->schemaVersionNumber'
+             ";
+        $result = $this->db->query($strsql);
+        //print_r($strsql);
+		return $this->db->affected_rows();
+    } 
+
+    function deleteCDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB,$New_SCHEMA_VERSION){
+
+        $strsql = "DELETE FROM M_DATABASE_SCHEMA_INFO
+               WHERE tableName = '$paramUpdate_DB->tableName' 
+                AND columnName = '$paramUpdate_DB->columnName' 
+                AND activeflag = '1'
+                AND Version = '$New_param_DB->schemaVersionNumber' ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }   
+
+    function searchTablerelateSCHEMA($param){
+
+		$sqlStr = " SELECT distinct tableName
+		FROM T_TEMP_CHANGE_LIST
+		WHERE functionId = '$param->functionId'
+		AND functionversion ='$param->functionVersion'
+		AND tableName is NOT NULL
+		AND columnName is NOT  NULL ";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+		return $result->result_array();
+	}
 }
 ?>

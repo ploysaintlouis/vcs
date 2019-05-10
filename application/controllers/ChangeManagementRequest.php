@@ -1021,6 +1021,7 @@ function aff_Oth_functionalrequirement($param){
 		$NewFR = $this->mVersion->SearchRequirementsDetail($param,$New_FunctionId);
 		foreach($NewFR as $value){
 				$New_param = (object) array(
+					'projectId'		=> $value['projectId'],
 						'functionNo' => $value['functionNo'],
 						'functionversion'   => $value['functionVersion'],
 						'functionId'	 => $value['functionId']
@@ -1131,23 +1132,23 @@ function aff_Oth_functionalrequirement($param){
 
 				$NewFR = $this->mVersion->SearchRequirementsDetail($param_Oth,$New_FunctionId);
 				foreach($NewFR as $value){
-						$New_param = (object) array(
-								'projectId' 	  => $prjId ,
-								'functionNo' => $value['functionNo'],
+						$New_param_Oth = (object) array(
+								'projectId' 	  		=> $prjId ,
+								'functionNo' 				=> $value['functionNo'],
 								'functionversion'   => $value['functionVersion'],
-								'functionId'	 => $value['functionId'],
-								'fnDesc'		  => $value['functionDescription'],
-								'changeRequestNo' => $CH_NO,
-								'type' 	 		  		=> 1, //1 = Change, 2 = Cancel
-								'userId'					=> $userId,
-								'user'						=> $user			
+								'functionId'	 			=> $value['functionId'],
+								'fnDesc'		  			=> $value['functionDescription'],
+								'changeRequestNo' 	=> $CH_NO,
+								'type' 	 		  			=> 1, //1 = Change, 2 = Cancel
+								'userId'						=> $userId,
+								'user'							=> $user			
 						);
 				}
-				$MAP_FR = $this->mVersion->MapFRVersion($param_Oth,$New_param);
+				$MAP_FR = $this->mVersion->MapFRVersion($param_Oth,$New_param_Oth);
 
 				//print_r($New_param);
 				//3.7 save change New requirement detail ของ Oth FR
-					$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param_Oth,$New_param);
+					$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param_Oth,$New_param_Oth);
 				if(0 < count($InsertNew)){
 					//print_r($InsertNew);
 			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
@@ -1213,7 +1214,69 @@ function aff_Oth_functionalrequirement($param){
 			}
 
 			//4.Control Version SCHEMA
-			
+			$RelateResultSCHEMA = $this->mVersion->searchTablerelateSCHEMA($param);
+			//print_r($RelateResultSCHEMA);
+			foreach ($RelateResultSCHEMA as $value) {
+				$paramInsert = (object) array(
+					'tableName' => $value['tableName']
+				);
+				//print_r($paramInsert);
+			//$recordUpdate  = $this->mVersion->updateDatabaseSchemaVersion($param,$paramInsert);
+			$recordUpdate1 = $this->mVersion->updateDatabaseSchemaInfo($param,$paramInsert);		
+			//$recordUpdate2 =	$this->mVersion->insertDatabaseSchemaVersion($param,$paramInsert);
+			}
+			//print_r($rowUpdate);
+	
+	/*		//3.1 save change history requirement detail
+	
+			//3.2 save change New requirement header
+
+			//print_r($New_FunctionId);
+			$NewDB = $this->mVersion->SearchDatabaseSchemaDetail($param,$paramInsert);
+			foreach($NewDB as $value){
+					$New_param_DB = (object) array(
+						'tableName'			=> $value['tableName'],
+						'columnName'						=> $value['columnName'],
+							'schemaVersionNumber' => $value['schemaVersionNumber'],
+							'schemaVersionId'   => $value['schemaVersionId']
+					);
+			}
+			$MAP_FR = $this->mVersion->MapDBVersion($New_param,$New_param_Oth,$New_param_DB);
+	
+			//print_r($New_param);
+			//3.3 save change New requirement detail
+			$InsertNew = $this->mVersion->InsertDatabaseSchemaInfo($param,$New_param_DB);
+			if(0 < count($InsertNew)){			
+			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+			//print_r($RelateResultSCHEMA);
+						foreach ($RelateResultSCHEMA as $value){
+						$paramUpdate_DB = (object) array(
+							'changeType' => $value['changeType'],
+							'dataId' => $value['dataId'],
+							'typeData'	=> $value['typeData'],
+							'dataName' => $value['dataName'], 
+							'newDataType' => $value['newDataType'],
+							'newDataLength' => $value['newDataLength'],
+							'newScaleLength' => $value['newScaleLength'],
+							'newUnique' => $value['newUnique'],
+							'newNotNull' => $value['newNotNull'],
+							'newDefaultValue' => $value['newDefaultValue'],
+							'newMinValue' => $value['newMinValue'],
+							'newMaxValue' => $value['newMaxValue'],
+							'tableName' => $value['tableName'],
+							'columnName' => $value['columnName']);
+	//print_r($paramUpdate);
+				//print_r($paramUpdate->changeType);		
+				
+							if($paramUpdate->changeType == 'edit'){
+								$recordUpdate = $this->mVersion->updateDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB,$New_SCHEMA_VERSION);		
+								}else if($paramUpdate->changeType == 'delete'){
+								$recordDelete = $this->mVersion->deleteCDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB,$New_SCHEMA_VERSION);		
+							}
+					
+					}
+				}
+				*/
 					//return;
 					//print_r($param);
 					//if (!isset($param)){
@@ -1233,14 +1296,6 @@ function aff_Oth_functionalrequirement($param){
 		);
 		//echo json_encode($data);
 
-		//logic to confirm here
-		// $data = array(
-		// 	'success' => true,
-		// 	'result' => "Done !!! ".$prjId."  ".$funId."  ".$CH_NO."  ".$FR_Version."  ".$FR_Description,
-		// 	'FR_Description' => $FR_Description
-		// );
-		
-		// echo json_encode($data);
 	}
 }
 	

@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.8.3
+-- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 09, 2019 at 08:35 PM
--- Server version: 10.1.16-MariaDB
--- PHP Version: 5.6.24
+-- Generation Time: May 10, 2019 at 09:51 AM
+-- Server version: 10.1.36-MariaDB
+-- PHP Version: 5.6.38
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -47,9 +49,18 @@ CREATE TABLE `map_schema_version` (
   `FR_Id` int(11) NOT NULL,
   `FR_Version` int(11) NOT NULL,
   `TableName` varchar(20) NOT NULL,
-  `ColumnName` varchar(20) NOT NULL,
   `Schema_Version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `map_schema_version`
+--
+
+INSERT INTO `map_schema_version` (`id`, `projectId`, `FR_Id`, `FR_Version`, `TableName`, `Schema_Version`) VALUES
+(1, 2, 25, 1, 'ORDER_DETAILS', 1),
+(2, 2, 36, 1, 'ORDER_DETAILS', 1),
+(5, 2, 26, 1, 'PRODUCTS', 1),
+(6, 2, 27, 1, 'ORDERS', 1);
 
 -- --------------------------------------------------------
 
@@ -71,38 +82,39 @@ CREATE TABLE `m_database_schema_info` (
   `constraintDefault` char(10) DEFAULT NULL,
   `constraintNull` char(1) DEFAULT NULL,
   `constraintMinValue` char(10) DEFAULT NULL,
-  `constraintMaxValue` char(10) DEFAULT NULL
+  `constraintMaxValue` char(10) DEFAULT NULL,
+  `activeflag` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_database_schema_info`
 --
 
-INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `schemaVersionId`, `Version`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`) VALUES
-(2, 'PRODUCTS', 'PRODUCT_ID', 25, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'PRODUCTS', 'PRODUCT_NAME', 26, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'PRODUCTS', 'CATEGORY_ID', 27, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'PRODUCTS', 'QUANLITY_PER_UNIT', 28, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'PRODUCTS', 'UNIT_PRICE', 29, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL),
-(2, 'PRODUCTS', 'UNIT_INSTOCK', 30, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'PRODUCTS', 'UNIT_ONORDER', 31, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CATEGORIES', 'CATEGORY_ID', 32, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CATEGORIES', 'CATEGORY_NAME', 33, 1, 'varchar', '100', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CATEGORIES', 'DESCRIPTION', 34, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CUSTOMERS', 'CUSTORMER_ID', 35, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CUSTOMERS', 'COMPANY_NAME', 36, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CUSTOMERS', 'CONTACT_NAME', 37, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CUSTOMERS', 'CONTACT_TITLE', 38, 1, 'char', '2', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'CUSTOMERS', 'PHONE_NO', 39, 1, 'varchar', '10', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDERS', 'ORDER_ID', 40, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDERS', 'CUSTOMER_ID', 41, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDERS', 'ORDER_DATE', 42, 1, 'date', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDERS', 'SHIP_ADDRESS', 43, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDER_DETAILS', 'ORDER_ID', 44, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDER_DETAILS', 'PRODUCT_ID', 45, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDER_DETAILS', 'UNIT_PRICE', 46, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDER_DETAILS', 'QUANLITY', 47, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL),
-(2, 'ORDER_DETAILS', 'DISCOUNT', 48, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL);
+INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `schemaVersionId`, `Version`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `activeflag`) VALUES
+(2, 'PRODUCTS', 'PRODUCT_ID', 25, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'PRODUCT_NAME', 26, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'CATEGORY_ID', 27, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'QUANLITY_PER_UNIT', 28, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'UNIT_PRICE', 29, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'UNIT_INSTOCK', 30, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'UNIT_ONORDER', 31, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CATEGORIES', 'CATEGORY_ID', 32, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CATEGORIES', 'CATEGORY_NAME', 33, 1, 'varchar', '100', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CATEGORIES', 'DESCRIPTION', 34, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'CUSTORMER_ID', 35, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'COMPANY_NAME', 36, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'CONTACT_NAME', 37, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'CONTACT_TITLE', 38, 1, 'char', '2', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'PHONE_NO', 39, 1, 'varchar', '10', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'ORDER_ID', 40, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'CUSTOMER_ID', 41, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'ORDER_DATE', 42, 1, 'date', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'SHIP_ADDRESS', 43, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'ORDER_ID', 44, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'PRODUCT_ID', 45, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'UNIT_PRICE', 46, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'QUANLITY', 47, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'DISCOUNT', 48, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -655,41 +667,50 @@ ALTER TABLE `m_testcase_header`
 --
 ALTER TABLE `map_fr_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
 --
 -- AUTO_INCREMENT for table `map_schema_version`
 --
 ALTER TABLE `map_schema_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
   MODIFY `schemaVersionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
 ALTER TABLE `m_fn_req_detail`
   MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+
 --
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
   MODIFY `functionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
 --
 -- AUTO_INCREMENT for table `m_project`
 --
 ALTER TABLE `m_project`
   MODIFY `projectId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- AUTO_INCREMENT for table `m_testcase_detail`
 --
 ALTER TABLE `m_testcase_detail`
   MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
 --
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
   MODIFY `testCaseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
