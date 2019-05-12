@@ -255,6 +255,30 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
     }  
 
+    function insertlogAffSchema($schema_list_aff) {
+
+        $strsql = "INSERT INTO AFF_SCHEMA 
+        (ChangeRequestNo,tableName,columnName,Version,changeType)
+        VALUES('$schema_list_aff->changeRequestNo','$schema_list_aff->tableName',
+        '$schema_list_aff->columnName','$schema_list_aff->version',
+        '$schema_list_aff->changeType')
+        ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }    
+
+    function insertlogAffTestcase($test_list_aff) {
+
+        $strsql = "INSERT INTO AFF_TESTCASE
+        (ChangeRequestNo,testcaseNo,testcaseVersion,changeType)
+        VALUES('$test_list_aff->changeRequestNo','$test_list_aff->testcaseNo',
+        '$test_list_aff->testcaseVersion','$test_list_aff->changeType')
+        ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }  
 
     function MapFRVersion($param,$New_param) {
         $currentDateTime = date('Y-m-d H:i:s');
@@ -288,25 +312,30 @@ class VersionControl_model extends CI_Model{
 	function updateDatabaseSchemaInfo($param,$paramInsert){
 
 		$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
-			SET activeflag = '0', 
+			SET activeflag = '0'
             WHERE projectId = '$param->projectId'
             AND tableName = '$paramInsert->tableName'
             AND activeflag = '1' ";
-print_r($sqlStr);
+//print_r($sqlStr);
         $result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
     } 
 
     function insertDatabaseSchemaVersion($param, $paramInsert){
 		$currentDateTime = date('Y-m-d H:i:s');
+        $Max_DBVersion = $this->searchMaxSchemaVersion($param, $paramInsert);
+        $New_DBVer = $Max_DBVersion[0]['Max_DBVersion']+1;
+        $Old_DBVer =$Max_DBVersion[0]['Max_DBVersion'];
 
 		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_VERSION 
         (projectId, tableName, columnName, schemaVersionNumber, effectiveStartDate, effectiveEndDate, activeFlag, createDate, 
         createUser, updateDate, updateUser) 
-        SELECT $param->projectId, tableName, 'columnName', schemaVersionNumber+1, '$currentDateTime',
-         NULL, '1', '$currentDateTime', '$param->user'', '$currentDateTime', '$param->user'
-        WHERE projectId = $param->projectId
-        AND tableName = $paramInsert->tableName
+        SELECT projectId, tableName, columnName, '$New_DBVer', '$currentDateTime',
+         NULL, '1', '$currentDateTime', '$param->user', '$currentDateTime', '$param->user'
+         FROM M_DATABASE_SCHEMA_VERSION
+        WHERE projectId = '$param->projectId'
+        AND tableName = '$paramInsert->tableName'
+        AND schemaVersionNumber = '$Old_DBVer'
         ";
 
 		$result = $this->db->query($sqlStr);
@@ -317,10 +346,62 @@ print_r($sqlStr);
 		}
 		return NULL;
     }   
+  
+    function insertDatabaseSchemaInfo($param, $paramInsert){
+        $Max_DBVersion = $this->searchMaxSchemaInfo($param,$paramInsert);
+        $New_DBVer = $Max_DBVersion[0]['Max_DBVersion']+1;
+        $Old_DBVer = $Max_DBVersion[0]['Max_DBVersion'];
+
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_INFO 
+        (projectId, tableName, columnName, Version, dataType, dataLength, decimalPoint, 
+        constraintPrimaryKey, constraintUnique, constraintDefault,constraintNull,
+        constraintMinValue,constraintMaxValue,activeflag) 
+        SELECT projectId, tableName, columnName, '$New_DBVer',dataType, dataLength, decimalPoint, 
+        constraintPrimaryKey, constraintUnique, constraintDefault,constraintNull,
+        constraintMinValue,constraintMaxValue,'1'
+         FROM M_DATABASE_SCHEMA_INFO
+        WHERE projectId = '$param->projectId'
+        AND tableName = '$paramInsert->tableName'
+        AND Version = '$Old_DBVer'
+        ";
+//print_r($sqlStr);
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(Version) as last_id FROM M_DATABASE_SCHEMA_INFO");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    }   
+
+    function searchMaxSchemaVersion($param,$paramInsert) {
+   
+        $strsql = " SELECT MAX(schemaVersionNumber) AS Max_DBVersion
+                      FROM M_DATABASE_SCHEMA_VERSION 
+                     WHERE projectId = '$param->projectId'
+                       AND tableName = '$paramInsert->tableName' ";
     
+    $result = $this->db->query($strsql);
+    //echo $sqlStr ;
+    return $result->result_array();
+    }
+
+    function searchMaxSchemaInfo($param,$paramInsert) {
+   
+        $strsql = " SELECT MAX(Version) AS Max_DBVersion
+                      FROM M_DATABASE_SCHEMA_INFO 
+                     WHERE projectId = '$param->projectId'
+                       AND tableName = '$paramInsert->tableName' ";
+    
+    $result = $this->db->query($strsql);
+    //echo $sqlStr ;
+    return $result->result_array();
+    }
+
     function SearchDatabaseSchemaDetail($param,$paramInsert) {
     
-        $strsql = "SELECT tableName,columnName,schemaVersionNumber,schemaVersionId
+        $strsql = "SELECT DISTINCT tableName,schemaVersionNumber
                 FROM M_DATABASE_SCHEMA_VERSION
                 WHERE activeflag = '1' 
                 AND projectid = '$param->projectId' 
@@ -331,31 +412,19 @@ print_r($sqlStr);
        return $result->result_array();
     } 
 
-    function MapDBVersion($New_param,$New_param_Oth,$New_param_DB) {
+    function MapDBVersion($New_param,$New_param_DB) {
         $currentDateTime = date('Y-m-d H:i:s');
 
         $strsql = "INSERT INTO MAP_SCHEMA_VERSION 
         (projectid, FR_Id, FR_Version, TableName,Schema_Version)
-        VALUES('$New_param->projectId','$New_param->functionId','$New_param->functionVersion','$New_param_DB->tableName',
+        VALUES('$New_param->projectId','$New_param->functionId','$New_param->functionversion','$New_param_DB->tableName',
         '$New_param_DB->schemaVersionNumber')
         ";
 		$result = $this->db->query($strsql);
         return $this->db->affected_rows();
-        
-        if (!empty(New_param_Oth)){
-            $strsql = "INSERT INTO MAP_SCHEMA_VERSION 
-            (projectid, FR_Id, FR_Version, TableName,Schema_Version)
-            VALUES('$New_param_Oth->projectId','$New_param_Oth->functionId','$New_param_Oth->functionVersion','$New_param_DB->tableName',
-            '$New_param_DB->schemaVersionNumber')
-            ";
-
-            $result = $this->db->query($strsql);
-            return $this->db->affected_rows();            
-        }
-
 
     }    
-
+/*
     function InsertDatabaseSchemaInfo($param, $paramInsert){
 		$currentDateTime = date('Y-m-d H:i:s');
 
@@ -377,8 +446,8 @@ print_r($sqlStr);
 		}
 		return NULL;
     }  
-
-	function updateDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB,$New_SCHEMA_VERSION){
+*/
+	function updateDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB){
         $currentDateTime = date('Y-m-d H:i:s');
 
         $fieldName = '';
@@ -416,7 +485,7 @@ print_r($sqlStr);
 		return $this->db->affected_rows();
     } 
 
-    function deleteCDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB,$New_SCHEMA_VERSION){
+    function deleteCDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB){
 
         $strsql = "DELETE FROM M_DATABASE_SCHEMA_INFO
                WHERE tableName = '$paramUpdate_DB->tableName' 
@@ -427,6 +496,18 @@ print_r($sqlStr);
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
     }   
+
+    function deleteCDatabaseSchemaVersionDetail($New_param_DB,$paramUpdate_DB){
+
+        $strsql = "DELETE FROM M_DATABASE_SCHEMA_VERSION
+               WHERE tableName = '$paramUpdate_DB->tableName' 
+                AND columnName = '$paramUpdate_DB->columnName' 
+                AND activeflag = '1'
+                AND schemaVersionNumber = '$New_param_DB->schemaVersionNumber' ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    }
 
     function searchTablerelateSCHEMA($param){
 
@@ -439,6 +520,37 @@ print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 		return $result->result_array();
-	}
+    }
+    
+	function updateTestcaseHeader($param,$test_list_aff){
+        $currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE M_TESTCASE_HEADER
+            SET activeFlag = '0', 
+				updateDate = '$currentDateTime', 
+				updateUser = '$param->user' 
+            WHERE projectId = '$param->projectId'
+            AND testCaseNo = '$test_list_aff->testcaseNo'
+            AND testcaseVersion = '$test_list_aff->testcaseVersion' ";
+//print_r($sqlStr);
+        $result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+    } 
+     
+    function updateTestcaseDetail($param,$test_list_aff){
+        $currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE M_TESTCASE_DETAIL
+			SET effectiveEndDate = '$currentDateTime', 
+				activeFlag = '0', 
+				updateDate = '$currentDateTime', 
+				updateUser = '$param->user' 
+            WHERE projectId = '$param->projectId'
+            AND testCaseNo = '$test_list_aff->testcaseNo'
+            AND testcaseVersion = '$test_list_aff->testcaseVersion' ";
+//print_r($sqlStr);
+        $result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+    } 
 }
 ?>

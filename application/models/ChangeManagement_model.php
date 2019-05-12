@@ -913,7 +913,7 @@ class ChangeManagement_model extends CI_Model{
 		}
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
-//echo $sqlStr;
+echo $sqlStr;
 		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
 		/*
 		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,c.tctype

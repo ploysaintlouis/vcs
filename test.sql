@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
--- https://www.phpmyadmin.net/
+-- version 4.5.1
+-- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2019 at 09:51 AM
--- Server version: 10.1.36-MariaDB
--- PHP Version: 5.6.38
+-- Generation Time: May 12, 2019 at 08:06 PM
+-- Server version: 10.1.16-MariaDB
+-- PHP Version: 5.6.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -21,6 +19,49 @@ SET time_zone = "+00:00";
 --
 -- Database: `test`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `aff_fr`
+--
+
+CREATE TABLE `aff_fr` (
+  `id` int(11) NOT NULL,
+  `ChangeRequestNo` varchar(10) NOT NULL,
+  `FR_Id` int(11) NOT NULL,
+  `FR_Version` int(11) NOT NULL,
+  `changeType` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `aff_schema`
+--
+
+CREATE TABLE `aff_schema` (
+  `id` int(11) NOT NULL,
+  `ChangeRequestNo` varchar(10) NOT NULL,
+  `tableName` varchar(20) NOT NULL,
+  `columnName` varchar(20) NOT NULL,
+  `Version` int(11) NOT NULL,
+  `changeType` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `aff_testcase`
+--
+
+CREATE TABLE `aff_testcase` (
+  `id` int(11) NOT NULL,
+  `ChangeRequestNo` varchar(10) NOT NULL,
+  `testcaseId` int(11) NOT NULL,
+  `testcaseVersion` int(11) NOT NULL,
+  `changeType` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -599,6 +640,24 @@ INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functio
 --
 
 --
+-- Indexes for table `aff_fr`
+--
+ALTER TABLE `aff_fr`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `aff_schema`
+--
+ALTER TABLE `aff_schema`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `aff_testcase`
+--
+ALTER TABLE `aff_testcase`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `map_fr_version`
 --
 ALTER TABLE `map_fr_version`
@@ -663,54 +722,65 @@ ALTER TABLE `m_testcase_header`
 --
 
 --
+-- AUTO_INCREMENT for table `aff_fr`
+--
+ALTER TABLE `aff_fr`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `aff_schema`
+--
+ALTER TABLE `aff_schema`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `aff_testcase`
+--
+ALTER TABLE `aff_testcase`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `map_fr_version`
 --
 ALTER TABLE `map_fr_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `map_schema_version`
 --
 ALTER TABLE `map_schema_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
+--
+-- AUTO_INCREMENT for table `m_database_schema_info`
+--
+ALTER TABLE `m_database_schema_info`
+  MODIFY `schemaVersionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
   MODIFY `schemaVersionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
-
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
 ALTER TABLE `m_fn_req_detail`
   MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
-
 --
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
   MODIFY `functionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
-
 --
 -- AUTO_INCREMENT for table `m_project`
 --
 ALTER TABLE `m_project`
   MODIFY `projectId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
 --
 -- AUTO_INCREMENT for table `m_testcase_detail`
 --
 ALTER TABLE `m_testcase_detail`
   MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
-
 --
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
   MODIFY `testCaseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
-COMMIT;
-
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
