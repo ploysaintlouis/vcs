@@ -118,8 +118,8 @@
 		        			</a>
 		        		</li>
 		        		<li id="trns002">
-		        			<a href="<?php echo base_url(); ?>index.php/Cancellation/">
-		        				<i class="fa fa-circle-o"></i> Cancellation
+		        			<a href="<?php echo base_url(); ?>index.php/Rollback/">
+		        				<i class="fa fa-circle-o"></i> Rollback
 		        			</a>
 		        		</li>
 		        	</ul>

@@ -1024,7 +1024,7 @@ function aff_Oth_functionalrequirement($param){
 				}
 
 				if($test_list_aff->changeType != 'edit'){
-					$New_testcaseVersion = '1'
+					$New_testcaseVersion = '1';
 				}
 			}		
 		}
