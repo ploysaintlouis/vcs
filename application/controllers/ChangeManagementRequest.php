@@ -1023,9 +1023,48 @@ function aff_Oth_functionalrequirement($param){
 					$recordUpdate1 = $this->mVersion->updateTestcaseDetail($param,$test_list_aff);		
 				}
 
-				if($test_list_aff->changeType != 'edit'){
-					$New_testcaseVersion = '1';
+				$record_TC  = $this->mVersion->SearchTestcaseHeader($param,$test_list_aff);	
+				if(0 < count($record_TC)){
+					foreach($record_TC as $value){
+						$data_list = (object) array(
+							'testCaseId'						=> $value['testCaseId'],
+							'testCaseNo'						=> $value['testCaseNo'],
+							'testcaseVersion'				=> $value['testcaseVersion'],
+							'testCaseDescription'		=> $value['testCaseDescription'],
+							'expectedResult'				=> $value['expectedResult']
+						);
+					}					
 				}
+
+				if($test_list_aff->changeType != 'edit'){				
+					$New_TCId =	$this->mVersion->InsertNewTestCaseHeader($param,$data_list);
+				}else{
+					$New_TCId =	$this->mVersion->InsertNewTestCaseHeader($param,$data_list);
+				}
+				$TC_Header =	$this->mVersion->SearchNewTestCaseHeader($param,$New_TCId);
+				if(0 < count($TC_Header)){
+					foreach($TC_Header as $value){
+						$New_TC_HEADER = (object) array(
+							'testCaseId'						=> $value['testCaseId'],
+							'testCaseNo'						=> $value['testCaseNo'],
+							'testcaseVersion'				=> $value['testcaseVersion'],				
+						);
+					}
+				}
+
+				$detail_TC  = $this->mVersion->InsertTestcaseDetail($param,$New_TC_HEADER);	
+				if(0 < count($detail_TC)){
+					foreach($detail_TC as $value){
+						$data_list = (object) array(
+							'testCaseId'						=> $value['testCaseId'],
+							'testCaseNo'						=> $value['testCaseNo'],
+							'testcaseVersion'				=> $value['testcaseVersion'],
+							'testCaseDescription'		=> $value['testCaseDescription'],
+							'expectedResult'				=> $value['expectedResult']
+						);
+					}					
+				}
+
 			}		
 		}
 		

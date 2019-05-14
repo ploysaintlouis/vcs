@@ -552,5 +552,108 @@ class VersionControl_model extends CI_Model{
         $result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
     } 
+
+    function SearchTestcaseHeader($param,$test_list_aff) {
+    
+        $strsql = "SELECT testCaseId,testCaseNo,testcaseVersion,testCaseDescription,expectedResult
+                FROM M_TESTCASE_HEADER
+                WHERE  projectid = '$param->projectId' 
+                AND testcaseNo = '$test_list_aff->testcaseNo'
+                AND testcaseVersion = '$test_list_aff->testcaseVersion'
+        ";
+       $result = $this->db->query($strsql);
+       //echo $sqlStr ;
+       return $result->result_array();
+    } 
+
+	function InsertNewTestCaseHeader($param,$data_list){
+        
+		$currentDateTime = date('Y-m-d H:i:s');
+        $MAXTCNo = $this->searchTCMaxNo($param);
+        $New_TCNO = substr($MAXTCNo[0]['Max_TCNO'],0,7).(substr($MAXTCNo[0]['Max_TCNO'],7,7)+1);
+        
+        $sqlStr = "INSERT INTO M_TESTCASE_HEADER (projectId,testCaseNo,testcaseVersion,testCaseDescription,
+        expectedResult,createDate, createUser, updateDate, updateUser,activeflag) 
+        VALUES ('{$param->projectId}','{$New_TCNO}','1','{$data_list->testCaseDescription}',
+        '{$data_list->expectedResult}','$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','1','1')";
+
+        $result = $this->db->query($sqlStr);
+        if($result){
+            $query = $this->db->query("SELECT MAX(testCaseId) AS last_id FROM M_TESTCASE_HEADER");
+            $resultId = $query->result();
+            return $resultId[0]->last_id;
+        }
+        return NULL;
+    }    
+
+	function InsertTestCaseHeader($param,$data_list){
+        
+		$currentDateTime = date('Y-m-d H:i:s');
+        $New_TCVer = $data_list->testcaseVersion+1;
+        
+        $sqlStr = "INSERT INTO M_TESTCASE_HEADER (projectId,testCaseNo,testcaseVersion,testCaseDescription,
+        expectedResult,createDate, createUser, updateDate, updateUser,activeflag) 
+        VALUES ('{$param->projectId}','{$data_list->testCaseNo}','$New_TCVer','{$data_list->testCaseDescription}',
+        '{$data_list->expectedResult}','$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','1','1')";
+
+        $result = $this->db->query($sqlStr);
+        if($result){
+            $query = $this->db->query("SELECT MAX(testCaseId) AS last_id FROM M_TESTCASE_HEADER");
+            $resultId = $query->result();
+            return $resultId[0]->last_id;
+        }
+        return NULL;
+    }    
+
+    function searchTCMaxNo($param) {
+   
+        $strsql = " SELECT MAX(testCaseNo) AS Max_TCNO
+                      FROM M_TESTCASE_HEADER 
+                     WHERE projectId = '$param->projectId'
+                     ";
+    
+    $result = $this->db->query($strsql);
+    //echo $sqlStr ;
+    return $result->result_array();
+    }    
+
+    function SearchNewTestCaseHeader($param,$New_TCId){
+   
+        $strsql = " SELECT testCaseId,testCaseNo,testcaseVersion
+                      FROM M_TESTCASE_HEADER 
+                     WHERE projectId = '$New_TCId[0]->last_id'
+                     ";
+    
+    $result = $this->db->query($strsql);
+    //echo $sqlStr ;
+    return $result->result_array();
+    }  
+
+    function InsertTestcaseDetail($param,$New_TC_HEADER) {
+        $currentDateTime = date('Y-m-d H:i:s');
+
+        $strsql = "INSERT INTO M_TESTCASE_DETAIL
+        (projectid, functionId, functionNo, functionVersion, typeData, dataName, 
+        schemaVersionId, refTableName, refColumnName, dataType, dataLength, decimalPoint, constraintPrimaryKey, constraintUnique, 
+        constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, effectiveStartDate, effectiveEndDate, activeFlag,
+        createDate, createUser, updateDate, updateUser)
+        SELECT '$param->projectId','$New_param->functionId','$New_param->functionNo','$New_param->functionversion',typeData,dataName,
+        schemaVersionId,refTableName,refColumnName,dataType,dataLength,decimalPoint,constraintPrimaryKey,
+        constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue,'$currentDateTime',
+        NULL,'1','$currentDateTime','$param->user','$currentDateTime','$param->user'
+        FROM M_FN_REQ_DETAIL
+                WHERE functionVersion = '$param->functionVersion' 
+                AND functionId = '$param->functionId'
+                AND projectid = '$param->projectId' 
+        ";
+        //print_r($strsql);
+        $result = $this->db->query($strsql);
+        if($result){
+            $query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_DETAIL");
+            $resultId = $query->result();
+            return $resultId[0]->last_id;
+        }
+		return NULL;
+    }     
 }
 ?>
