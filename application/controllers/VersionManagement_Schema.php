@@ -77,7 +77,7 @@ class VersionManagement_Schema extends CI_Controller{
 
 			$output .= "<option value=''>".PLEASE_SELECT."</option>";
 			foreach($versionList as $value){
-				$output .= "<option value='".$value['schemaVersionId']."'>"."Version ".$value['schemaVersionNumber']."</option>";
+				$output .= "<option value='".$value['schemaVersionNumber']."'>"."Version ".$value['schemaVersionNumber']."</option>";
 			}
 		}
 		echo $output;
@@ -89,21 +89,21 @@ class VersionManagement_Schema extends CI_Controller{
 		$projectId = $this->input->post('inputProjectName');
 		$tableName = $this->input->post('inputTable');
 		$columnName = $this->input->post('inputColumn');
-		$schemaVersionId = $this->input->post('inputVersion');
+		$schemaVersionNumber = $this->input->post('inputVersion');
 
 		$this->FValidate->set_rules('inputProjectName', null, 'required');
 		$this->FValidate->set_rules('inputTable', null, 'required');
 		if($this->FValidate->run()){
 			$criteria = (object) array(
 				'projectId' => $projectId, 'tableName' => $tableName,
-				'columnName' => $columnName, 'schemaVersionId' => $schemaVersionId);
+				'columnName' => $columnName, 'schemaVersionNumber' => $schemaVersionNumber);
 			$resultList = $this->mVerMng->searchDatabaseSchemaDetailByVersion($criteria);
 		}
 
 		$data['projectId'] = $projectId;
 		$data['tableName'] = $tableName;
 		$data['columnName'] = $columnName;
-		$data['schemaVersionId'] = $schemaVersionId;
+		$data['schemaVersionNumber'] = $schemaVersionNumber;
 
 		$this->initialComboBox($projectId, $tableName, $columnName, $data);
 		$data['resultList'] = $resultList;

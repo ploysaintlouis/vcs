@@ -23,7 +23,7 @@
 				</div>
 				<form class="form-horizontal" action="<?php echo base_url() ?>index.php/VersionManagement_RTM/search/" method="post">
 					<input type="hidden" id="selectedProjectId" value="<?php echo $projectId; ?>">
-					<!-- <input type="hidden" id="selectedVersionId" value="<?php echo $rtmVersionId; ?>"> -->
+				<!--	 <input type="hidden" id="selectedVersionId" value="<?php echo $activeflag; ?>"> -->
 					<div class="box-body">
 						<div class="form-group">
 							<label for="inputProjectName" class="col-sm-2 control-label">
@@ -43,25 +43,17 @@
 	    						</select>
 	    						<?php echo form_error('inputProjectName', '<font color="red">','</font><br>'); ?>
         					</div>
-        				<!--	<label for="inputVersion" class="col-sm-2 control-label">
- 								Version
-        						<span style="color:red;">*</span>:
+        					<label for="inputStatus" class="col-sm-2 control-label">
+ 								Status
         					</label> 
         					<div class="col-sm-3">
-        						<select id="rtmVersionCombo" name="inputVersion" class="form-control select2" style="width: 100%;" value="<?php echo $rtmVersionId; ?>">
+        						<select id="inputStatus" name="inputStatus" class="form-control select2" style="width: 100%;">
             						<option value="">--Please Select--</option>
-            						<?php 
-            						if(isset($rtmVersionCombo) && 0 < count($rtmVersionCombo)){
-            							foreach($rtmVersionCombo as $value){ ?>
-            								<option value="<?php echo $value['rtmVersionId']; ?>" <?php echo set_select('inputVersion', $value['rtmVersionId'], (!empty($rtmVersionId) && $rtmVersionId == $value['rtmVersionId']? TRUE : FALSE )); ?>>
-	            								<?php echo 'Version '.$value['rtmVersionNumber']; ?>
-	        								</option>
-            						<?php 
-            							} 
-            						} ?>
+            						<option value="1">--Active--</option>
+            						<option value="0">--Inactive--</option>
             					</select>
-            					<?php echo form_error('inputVersion', '<font color="red">','</font><br>'); ?>
-        					</div> -->
+            					<?php echo form_error('inputStatus', '<font color="red">','</font><br>'); ?>
+        					</div> 
 						</div>
 						<div class="form-group">
 							<div class="col-md-12" align="right">

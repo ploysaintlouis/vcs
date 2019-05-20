@@ -12,25 +12,24 @@ class VersionManagement_model extends CI_Model{
 	}
 
 	public function searchRelatedFunctionalRequirements($param){
-		$sqlStr = "SELECT * 
-			FROM M_FN_REQ_HEADER fh
-			WHERE fh.projectId = $param->projectId";
+		$sqlStr = "SELECT DISTINCT functionId,functionNo,functionDescription
+			FROM M_FN_REQ_HEADER
+			WHERE projectId = '$param->projectId'
+			ORDER BY functionNo ";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
 	public function searchRelatedFunctionalRequirementVersion($param){
 		$sqlStr = "SELECT 
-				fh.functionId, 
-				fh.functionNo, 
-				fv.functionVersion
+				functionId, 
+				functionNo, 
+				Id,
+				functionversion
 			FROM M_FN_REQ_HEADER fh
-			INNER JOIN M_FN_REQ_DETAIL fv
-			ON fh.functionId = fv.functionId
-			AND fh.functionVersion = fv.functionVersion
-			WHERE fh.projectId = $param->projectId
-			AND fh.functionId = $param->functionId
-			ORDER BY fv.functionVersion";
+			WHERE projectId = $param->projectId
+			AND functionId = $param->functionId
+			ORDER BY functionversion";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -71,28 +70,26 @@ class VersionManagement_model extends CI_Model{
 			fd.dataId,
 			fd.dataName,
 			fd.schemaVersionId,
-			fd.refTableName AS tableName,
-			fd.refColumnName AS columnName,
-			fd.dataType, 
-			fd.dataLength,
-			fd.decimalPoint,
-			fd.constraintUnique, 
-			fd.constraintNull,
-			fd.constraintDefault,
-			fd.constraintPrimaryKey,
-			fd.constraintMinValue, 
-			fd.constraintMaxValue
+			ds.tableName, ds.columnName,
+			ds.dataType, ds.dataLength,
+			ds.decimalPoint,
+			ds.constraintUnique, ds.constraintNull,
+			ds.constraintDefault, ds.constraintPrimaryKey,
+			ds.constraintMinValue, ds.constraintMaxValue
 		FROM M_FN_REQ_HEADER fh
 		INNER JOIN M_FN_REQ_DETAIL fd
 		ON fh.functionId = fd.functionId
+		INNER JOIN M_DATABASE_SCHEMA_INFO ds
+		ON ds.tableName = fd.refTableName
+		AND ds.columnName = fd.refColumnName
+		AND ds.schemaVersionId = fd.schemaVersionId
 		WHERE fh.projectId = $param->projectId
 		AND fh.functionId = $param->functionId
 		AND  fd.effectiveStartDate <= '$param->targetDate'
 		AND ('$param->targetDate' <= fd.effectiveEndDate OR fd.effectiveEndDate is null)
-		AND (fd.effectiveEndDate != '$param->targetDate' OR fd.effectiveEndDate is null)
-		" ;
+		AND (fd.effectiveEndDate != '$param->targetDate' OR fd.effectiveEndDate is null)" ;
 
-		
+		print_r(	$sqlStr );
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -172,23 +169,23 @@ class VersionManagement_model extends CI_Model{
 	}
 
 	public function searchRelatedTestCases($param){
-		$sqlStr = "SELECT th.*
-			FROM M_TESTCASE_HEADER th
-			WHERE th.projectId = $param->projectId";
+		$sqlStr = "SELECT DISTINCT testCaseId,testCaseNo,testCaseDescription
+			FROM M_TESTCASE_HEADER 
+			WHERE projectId = '$param->projectId'
+			ORDER BY testCaseNo ";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
 	public function searchRelatedTestCaseVersion($param){
 		$sqlStr = "SELECT 
-				th.testCaseId,
-				th.testCaseNo,
-				tv.testCaseVersion
-			FROM M_TESTCASE_HEADER th
-			INNER JOIN M_TESTCASE_DETAIL tv
-			ON th.testCaseId = tv.testCaseId
-			WHERE th.testCaseId = $param->testCaseId
-			ORDER BY tv.testCaseVersion";
+				testCaseId,
+				testCaseNo,
+				testcaseVersion
+			FROM M_TESTCASE_HEADER
+			WHERE testCaseId = '$param->testCaseId'
+			ORDER BY testcaseVersion";
+			//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -204,12 +201,14 @@ class VersionManagement_model extends CI_Model{
 				td.typeData
 			FROM M_TESTCASE_HEADER th
 			INNER JOIN M_TESTCASE_DETAIL td
-			on th.testCaseId = td.testCaseId
+			ON th.testCaseId = td.testCaseId
 			WHERE th.testCaseId = $param->testCaseId
+			AND th.testCaseVersion = td.testCaseVersion
 			AND td.effectiveStartDate <= '$param->targetDate'
 			AND (td.effectiveEndDate  >= '$param->targetDate' OR td.effectiveEndDate is null)
 			AND (td.effectiveEndDate  != '$param->targetDate' OR td.effectiveEndDate is null)
 			ORDER BY td.sequenceNo";
+			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -305,8 +304,11 @@ class VersionManagement_model extends CI_Model{
 		if(isset($param->columnName) && !empty($param->columnName)){
 			$where[] = "i.columnName = '$param->columnName'";
 		}
-		if(isset($param->schemaVersionId) && !empty($param->schemaVersionId)){
+		/*if(isset($param->schemaVersionId) && !empty($param->schemaVersionId)){
 			$where[] = "v.schemaVersionId = $param->schemaVersionId";
+		}*/
+		if(isset($param->schemaVersionNumber) && !empty($param->schemaVersionNumber)){
+			$where[] = "v.schemaVersionNumber = $param->schemaVersionNumber";
 		}
 		$where_condition = implode(" AND ", $where);
 		
@@ -316,17 +318,24 @@ class VersionManagement_model extends CI_Model{
 			ON i.tableName = v.tableName
 			AND i.columnName = v.columnName
 			AND i.schemaVersionId = v.schemaVersionId
+			AND i.Version = v.schemaVersionNumber
 			WHERE $where_condition
-			ORDER BY tableName, i.constraintPrimaryKey desc, columnName, schemaVersionNumber";
-
+			ORDER BY tableName, i.constraintPrimaryKey ,schemaVersionNumber desc, columnName";
+//print($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
 	public function searchRelatedRTMVersion($projectId){
+		/*$sqlStr = "SELECT * 
+			FROM M_RTM_VERSION 
+			WHERE projectId = $projectId 
+			ORDER BY rtmVersionNumber"; */
 		  $sqlStr = "SELECT * 
-			FROM M_RTM_VERSION a
-			where a.projectId = $projectId";
+			FROM M_RTM_VERSION
+			where projectId = '$projectId' 
+			ORDER BY functionId,activeflag
+			";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -334,7 +343,7 @@ class VersionManagement_model extends CI_Model{
 
 	public function searchRTMDetailByVersion($param){
 		$sqlStr = "SELECT r.*, fh.functionNo, th.testCaseNo
-			FROM M_RTM_VERSION r
+			FROM M_RTM r
 			INNER JOIN M_FN_REQ_HEADER fh
 			ON r.functionId = fh.functionId
 			INNER JOIN M_TESTCASE_HEADER th

@@ -51,6 +51,7 @@ class ChangeManagementRequest extends CI_Controller {
 				'functionNo' => $resultList[0]['functionNo'],
 				'functionDescription' => $resultList[0]['functionDescription'],
 				'functionVersion' => $resultList[0]['functionVersion'],
+				'Id' => $resultList[0]['Id'],
 				'schemaVersionId' => $resultList[0]['schemaVersionId']);
 
 				$functionVersion = (!empty($functionVersion)? $functionVersion : $resultList[0]['functionVersion']);
@@ -186,7 +187,7 @@ class ChangeManagementRequest extends CI_Controller {
     function delete_detail($id){
 		$data = array();
 		$data['keyid'] = $id;
-		echo $id;
+	//	echo $id;
 		if(null !== $id && !empty($id)){
 			//echo $keyId;
 			$keyList = explode("%7C", $id);
@@ -357,7 +358,7 @@ class ChangeManagementRequest extends CI_Controller {
 				}			
 				$row['change_type'] = $change_title;
 				$row["no"] = $i++;
-				$row["fr_id"]= $value["FROth_Id"];
+				$row["frId"]= $value["FROth_Id"];
 				$row["fr_no"]= $value["FROth_NO"];
 				$row["version"]= $value['FROth_Version'];
 				array_push($data['aff_fr_list'],$row);
@@ -386,6 +387,7 @@ class ChangeManagementRequest extends CI_Controller {
 			if($test_title != $value["testCaseNo"].$value['testcaseVersion'] ){
 				if($value["testCaseNo"] != ""){
 					$row["no"] = $i++;
+					$testNo = $row["test_id"]= $value["testCaseId"];
 					$testNo = $row["test_no"]= $value["testCaseNo"];
 					$testVersion = $row["version"]= $value['testcaseVersion'];
 					if($value["tctype"] == 'Oth'){
@@ -434,12 +436,70 @@ class ChangeManagementRequest extends CI_Controller {
 		{
 			//for($i=1;$i<3;$i++){
 			$row["no"] = $i++;
+			$row["schemaVersionId"]= $value["schemaVersionId"];
 			$row["table_name"]= $value["tableName"];
 			$row["column_name"]= $value["columnName"];
 			$row["change_type"]= $value["changeType"];
 			$row["version"]= $value["schemaVersionNumber"];
 
 			array_push($data['aff_schema_list'],$row);
+		}
+		return $data;
+	}
+	
+	function bind_data_aff_rtm($param){
+		$data = array();
+		$data['aff_rtm_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		$ListofChangeSchemaOthFr = $this->mChange->checkOtherFr($param);
+		//print_r($ListofChangeSchemaOthFr);
+		$ListofRTMAffected= $this->mVersion->checkRTMAffected($param,$ListofChangeSchemaOthFr);
+		//print_r($ListofTCAffected);
+		$i = 1;
+		$testNo = "";
+		$testVersion = "";
+		foreach($ListofRTMAffected as $value)
+		{
+			$test_title = $testNo.$testVersion;
+			if($test_title != $value["testCaseNo"].$value['testcaseVersion'] ){
+				if($value["testCaseNo"] != ""){
+					$row["no"] = $i++;
+					$testId = $row["test_id"]= $value["testCaseId"];
+					$testNo = $row["test_no"]= $value["testCaseNo"];
+					$testVersion = $row["version"]= $value['testcaseVersion'];
+					$testId = $row["fr_id"]= $value["functionId"];
+					$testNo = $row["fr_no"]= $value["functionNo"];
+					$testVersion = $row["fr_version"]= $value['functionVersion'];
+					if($value["tctype"] == 'Oth'){
+						$changetype = "edit";
+						$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+						foreach($ListofAffectFRRelateSchema as $value){
+							if($changetype != $value["changeType"] ){
+								$changetype = $value['changeType'];
+							}
+						}					
+					}else{
+						$changetype = "edit";
+						$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+						foreach($RelateResultSCHEMA as $value){
+							if($changetype  != $value["changeType"] ){
+								if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+									$changetype = "delete";
+								}
+							}
+						}
+						$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+						foreach($RelateResultNotSCHEMA as $value){
+							if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+								$changetype = "delete";
+							}
+						}
+					}
+					$row['change_type'] = $changetype;
+					array_push($data['aff_rtm_list'],$row);
+				}
+			}
 		}
 		return $data;
 	}
@@ -507,6 +567,7 @@ class ChangeManagementRequest extends CI_Controller {
 			$affFrList = $this->bind_data_aff_functionalrequirement($param);
 			$affSchemalist = $this->bind_data_aff_schema($param);
 			$affTestCaseList = $this->bind_data_aff_testcase($param);
+			$affRTMList = $this->bind_data_aff_rtm($param);
 
 			$dataForPage["functionId"] = $param->functionId;
 			$dataForPage["projectId"] = $param->projectId;
@@ -517,6 +578,7 @@ class ChangeManagementRequest extends CI_Controller {
 			$dataForPage["aff_fr_panel"]=$affFrList;
 			$dataForPage["aff_testcase_panel"]=$affTestCaseList;
 			$dataForPage["aff_schema_panel"] = $affSchemalist;
+			$dataForPage["aff_rtm_panel"] = $affRTMList;
 
 			$this->load->view('template/header');
 			$data = array();
@@ -531,244 +593,13 @@ class ChangeManagementRequest extends CI_Controller {
 
 		}catch(Exception $e){
 			$errorFlag = true;
-			$error_message = $e;
+			$error_message ='';
 		}
 
 		$data['success_message'] = $success_message;
 		$data['error_message'] = $error_message;
 	}
-	/*
-	function callChangeRelate($param){//แยก รายการ change ที่ realte
-	//print_r($param);
-		//กรองรายการ change ที่สัมพันธ์กับ SCHEMA
-		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-		foreach ($RelateResultSCHEMA as $value) {
-			$param_schema = (object) array(
-				'lineNumber' 	  	=> $value['lineNumber'],
-				'userId' 	  		=> $value['userId'],
-				'functionId' 	  	=> $value['functionId'],
-				'functionVersion' 	=> $value['functionVersion'],
-				'typeData' 			=> $value['typeData'],
-				'dataName'		  	=> $value['dataName'],
-				'schemaVersionId' 	=> $value['schemaVersionId'],
-				'newDataType' 	  	=> $value['newDataType'],
-				'newDataLength'  	=> $value['newDataLength'],
-				'newScaleLength' 	=> $value['newScaleLength'],
-				'newUnique' 		=> $value['newUnique'],
-				'newNotNull'		=> $value['newNotNull'],
-				'newDefaultValue' 	=> $value['newDefaultValue'],
-				'newMinValue' 	  	=> $value['newMinValue'],
-				'newMaxValue' 		=> $value['newMaxValue'],
-				'tableName' 		=> $value['tableName'],
-				'columnName'		=> $value['columnName'],
-				'changeType' 	 	=> $value['changeType'],
-				'createUser'		=> $value['createUser'],
-				'createDate' 	  	=> $value['createDate'],
-				'dataId' 	  		=> $value['dataId'],
-				'confirmflag' 		=> $value['confirmflag'],
-				'approveflag' 		=> $value['approveflag']
-				);	
-		}
-		return $param_schema;
-	}
-	function callChangenotRelate($param){//แยก รายการ change ที่ไม่ relate
-		//กรองรายการ change ที่ไม่สัมพันธ์กับ SCHEMA
-		$NotRelateResultSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
-		foreach ($NotRelateResultSCHEMA as $value) {
-			$param_notschema = (object) array(
-				'lineNumber' 	  	=> $value['lineNumber'],
-				'userId' 	  		=> $value['userId'],
-				'functionId' 	  	=> $value['functionId'],
-				'functionVersion' 	=> $value['functionVersion'],
-				'typeData' 			=> $value['typeData'],
-				'dataName'		  	=> $value['dataName'],
-				'schemaVersionId' 	=> $value['schemaVersionId'],
-				'newDataType' 	  	=> $value['newDataType'],
-				'newDataLength'  	=> $value['newDataLength'],
-				'newScaleLength' 	=> $value['newScaleLength'],
-				'newUnique' 		=> $value['newUnique'],
-				'newNotNull'		=> $value['newNotNull'],
-				'newDefaultValue' 	=> $value['newDefaultValue'],
-				'newMinValue' 	  	=> $value['newMinValue'],
-				'newMaxValue' 		=> $value['newMaxValue'],
-				'tableName' 		=> $value['tableName'],
-				'columnName'		=> $value['columnName'],
-				'changeType' 	 	=> $value['changeType'],
-				'createUser'		=> $value['createUser'],
-				'createDate' 	  	=> $value['createDate'],
-				'dataId' 	  		=> $value['dataId'],
-				'confirmflag' 		=> $value['confirmflag'],
-				'approveflag' 		=> $value['approveflag']
-				);	
-		}
-		return $param_notschema;
-	}
-		#======START FUNCTIONAL REQUIREMENT=======
-	function callImpactFunctionRelate($param){
-		//เช็ครายการเปลี่ยนแปลง โดยมีชื่อ tableName กับ tablecolumn เหมือนกัน สัมพันธ์กับ SCHEMA
-		$ListofFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-			foreach ($ListofFRRelateSchema as $value) {
-				$param_Fr_relate = (object) array(
-					'lineNumber' 	  	=> $value['lineNumber'],
-					'userId' 	  		=> $value['userId'],
-					'functionId' 	  	=> $value['functionId'],
-					'functionVersion' 	=> $value['functionVersion'],
-					'typeData' 			=> $value['typeData'],
-					'dataName'		  	=> $value['dataName'],
-					'schemaVersionId' 	=> $value['schemaVersionId'],
-					'newDataType' 	  	=> $value['newDataType'],
-					'newDataLength'  	=> $value['newDataLength'],
-					'newScaleLength' 	=> $value['newScaleLength'],
-					'newUnique' 		=> $value['newUnique'],
-					'newNotNull'		=> $value['newNotNull'],
-					'newDefaultValue' 	=> $value['newDefaultValue'],
-					'newMinValue' 	  	=> $value['newMinValue'],
-					'newMaxValue' 		=> $value['newMaxValue'],
-					'tableName' 		=> $value['tableName'],
-					'columnName'		=> $value['columnName'],
-					'changeType' 	 	=> $value['changeType'],
-					'createUser'		=> $value['createUser'],
-					'createDate' 	  	=> $value['createDate'],
-					'dataId' 	  		=> $value['dataId'],
-					'confirmflag' 		=> $value['confirmflag'],
-					'approveflag' 		=> $value['approveflag'],
-					'FR_NAME'			=> $value['FR_NAME']
-					);		
-				}
-			return $param_Fr_relate;
-	}
 
-
-	function callImpactFunctionNotRelate($param){
-		//รายการเปลี่ยนแปลงที่ไม่ relate กับ schema
-		$ListofChangeNotSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
-		if(0 < count($ListofChangeNotSchema)){
-			foreach ($ListofChangeNotSchema as $value) {
-				$param_Fr_Notrelate = (object) array(
-					'lineNumber' 	  	=> $value['lineNumber'],
-					'userId' 	  		=> $value['userId'],
-					'functionId' 	  	=> $value['functionId'],
-					'functionVersion' 	=> $value['functionVersion'],
-					'typeData' 			=> $value['typeData'],
-					'dataName'		  	=> $value['dataName'],
-					'schemaVersionId' 	=> $value['schemaVersionId'],
-					'newDataType' 	  	=> $value['newDataType'],
-					'newDataLength'  	=> $value['newDataLength'],
-					'newScaleLength' 	=> $value['newScaleLength'],
-					'newUnique' 		=> $value['newUnique'],
-					'newNotNull'		=> $value['newNotNull'],
-					'newDefaultValue' 	=> $value['newDefaultValue'],
-					'newMinValue' 	  	=> $value['newMinValue'],
-					'newMaxValue' 		=> $value['newMaxValue'],
-					'tableName' 		=> $value['tableName'],
-					'columnName'		=> $value['columnName'],
-					'changeType' 	 	=> $value['changeType'],
-					'createUser'		=> $value['createUser'],
-					'createDate' 	  	=> $value['createDate'],
-					'dataId' 	  		=> $value['dataId'],
-					'confirmflag' 		=> $value['confirmflag'],
-					'approveflag' 		=> $value['approveflag'],
-					'FR_NAME'			=> $value['FR_NAME']
-					);
-				}	
-		}else{
-			$param_Fr_Notrelate = null;
-		}
-		return $param_Fr_Notrelate;
-	}
-	
-	function callImpactOthFunction($param){
-		// รายการเปลี่ยนแปลงที่กระทบกับ FR อื่นๆ ที่มี SCHEMA เดียวกัน
-		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
-		if(0 < count($ListofChangeSchemaOthFr)){
-			foreach ($ListofChangeSchemaOthFr as $value) {
-				$param_OthFr = (object) array(
-					'lineNumber' 	  	=> $value['lineNumber'],
-					'userId' 	  		=> $value['userId'],
-					'functionId' 	  	=> $value['functionId'],
-					'functionVersion' 	=> $value['functionVersion'],
-					'typeData' 			=> $value['typeData'],
-					'dataName'		  	=> $value['dataName'],
-					'schemaVersionId' 	=> $value['schemaVersionId'],
-					'newDataType' 	  	=> $value['newDataType'],
-					'newDataLength'  	=> $value['newDataLength'],
-					'newScaleLength' 	=> $value['newScaleLength'],
-					'newUnique' 		=> $value['newUnique'],
-					'newNotNull'		=> $value['newNotNull'],
-					'newDefaultValue' 	=> $value['newDefaultValue'],
-					'newMinValue' 	  	=> $value['newMinValue'],
-					'newMaxValue' 		=> $value['newMaxValue'],
-					'tableName' 		=> $value['tableName'],
-					'columnName'		=> $value['columnName'],
-					'changeType' 	 	=> $value['changeType'],
-					'createUser'		=> $value['createUser'],
-					'createDate' 	  	=> $value['createDate'],
-					'dataId' 	  		=> $value['dataId'],
-					'confirmflag' 		=> $value['confirmflag'],
-					'approveflag' 		=> $value['approveflag'],
-					'FR_NAME'			=> $value['FR_NAME'],
-					'FROth_Id'		=> $value['FROth_Id'],
-					'FROth_Version'	 => $value['FROth_Version'],
-					'FROth_functionNo'	=> $value['FROth_NO']
-					);
-			}		
-		}else{
-			$param_OthFr = null;
-		}
-		return $param_OthFr;
-	}
-	
-		#========START TESTCASE AFFECTED====
-	function callImpactTestCase($param,$ListofChangeSchemaOthFr){
-		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
-		if(0 < count($ListofTCAffected)){
-			foreach ($ListofTCAffected as $value) {
-				$param_TC = (object) array(
-					'testCaseId' 	  		=> $value['testCaseId'],
-					'testCaseNo' 	  		=> $value['testCaseNo'],
-					'testcaseVersion' 	  	=> $value['testcaseVersion'],
-					'typeData' 				=> $value['typeData'],
-					'TC_NAME' 				=> $value['TC_NAME'],
-					'testData'		  		=> $value['testData'],
-					'CH_NAME' 	  			=> $value['CH_NAME'],
-					'changeType' 	  		=> $value['changeType'],
-					'newdataType' 	  		=> $value['newdataType'],
-					'newDataLength' 		=> $value['newDataLength'],
-					'newScaleLength' 		=> $value['newScaleLength'],
-					'newUnique'		  		=> $value['newUnique'],
-					'newDefaultValue' 	  	=> $value['newDefaultValue'],
-					'newMinValue' 	  		=> $value['newMinValue'],
-					'newMaxValue' 			=> $value['newMaxValue']
-					);		
-			}			
-		}else{
-			$param_TC = null;
-		}
-		return $param_TC;
-	}
-		#========START SCHEMA AFFECTED======
-	function callImpactSchema($param){
-		//เก้บ SCHEMA ที่ได้รับผลกระทบ
-		$ListofSchemaAffected= $this->mChange->checkSchemaAffted($param);
-		if(0 < count($ListofSchemaAffected)){
-			foreach ($ListofSchemaAffected as $value) {
-				$param_schema = (object) array(
-					'functionId' 	  		=> $value['functionId'],
-					'functionversion' 	  	=> $value['functionversion'],
-					'changeType'				=> $value['changeType'],
-					'projectId' 	  		=> $value['projectId'],
-					'schemaVersionId'		=> $value['schemaVersionId'],
-					'schemaVersionNumber'		=> $value['schemaVersionNumber'],
-					'tableName' 			=> $value['tableName'],
-					'columnName' 			=> $value['columnName']
-					);				
-				}
-		}else{
-			$param_schema = null;
-		}
-		return $param_schema;
-	}
-	*/
 	function testscript(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
@@ -816,157 +647,6 @@ class ChangeManagementRequest extends CI_Controller {
 		
 	}
 
-	function aff_functionalrequirement($param){
-		$data = array();
-		$data['aff_fr_list'] = array();
-		/// *** call model and bind data here.
-		$row=array();
-		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-		$i = 1;
-		$frId = "";
-		$frVersion = "";
-		$change_title = "edit";
-
-		foreach($ListofAffectFRRelateSchema as $value){
-			//echo $change_title;
-
-			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
-				$row["no"] = $i++;
-				$row["frId"]= $value["functionId"];
-				$row["fr_no"] =$param->functionNo;
-				$changetype = $this->mChange->searchTempFRInputChangeList($param);
-				foreach($changetype as $new_type){
-					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
-						$change_title = $new_type['changeType'];
-					}
-					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
-							$change_title = "delete";
-					}										
-				}
-				$row["change_type"]= $change_title;
-				$row["version"]= $value['functionVersion'];
-				$frNo = $value["functionId"];
-				$frVersion = $value['functionVersion'];
-				array_push($data['aff_fr_list'],$row);
-			}
-		}
-		
-		$ListofAffectFRNotRelateSchema = $this->mChange->checkChangeRequestNotRelateSchema($param);
-		foreach($ListofAffectFRNotRelateSchema as $value){
-
-			//echo $change_title;
-
-			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
-				$row["no"] = $i++;
-				$row["frId"]= $value["functionId"];
-				$row["fr_no"]= $param->functionNo;
-				$changetype = $this->mChange->searchTempFRInputChangeList($param);
-				foreach($changetype as $new_type){
-					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
-						$change_title = $new_type['changeType'];
-					}
-					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
-							$change_title = "delete";
-					}										
-				}
-				$row["change_type"]= $change_title;
-				$row["version"]= $value['functionVersion'];
-				array_push($data['aff_fr_list'],$row);
-			}
-		}
-		return $data;
-
-}
-
-function aff_Oth_functionalrequirement($param){
-	$data = array();
-	$data['aff_fr_list'] = array();
-	/// *** call model and bind data here.
-	$row=array();
-	$i = 1;
-	$frId = "";
-	$frVersion = "";
-	$change_title = "edit";
-
-		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
-		$fr_title = $frId.$frVersion ;
-		$change_title = "edit";
-		foreach($ListofChangeSchemaOthFr as $value){
-			if($frId.$frVersion  != $value["FROth_Id"].$value["FROth_Version"] ){
-				if($change_title != $value['changeType']&& "edit" != $value['changeType']){
-					$change_title = $value['changeType'];
-				}
-				if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
-						$change_title = "delete";
-				}			
-				$row['change_type'] = $change_title;
-				$row["no"] = $i++;
-				$row["fr_id"]= $value["FROth_Id"];
-				$row["fr_no"]= $value["FROth_NO"];
-				$row["version"]= $value['FROth_Version'];
-				$row["fnDesc"]= $value['FROth_Desc'];
-				array_push($data['aff_fr_list'],$row);
-				$frId = $value["FROth_Id"];
-			}
-		}
-
-		return $data;
-	}
-
-	function aff_testcase($param){
-		$data = array();
-		$data['aff_testcase_list'] = array();
-		/// *** call model and bind data here.
-		$row=array();
-		$ListofChangeSchemaOthFr = $this->mChange->checkOtherFr($param);
-		//print_r($ListofChangeSchemaOthFr);
-		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
-		//print_r($ListofTCAffected);
-		$i = 1;
-		$testNo = "";
-		$testVersion = "";
-		foreach($ListofTCAffected as $value)
-		{
-			$test_title = $testNo.$testVersion;
-			if($test_title != $value["testCaseNo"].$value['testcaseVersion'] ){
-				if($value["testCaseNo"] != ""){
-					$row["no"] = $i++;
-					$testNo = $row["test_no"]= $value["testCaseNo"];
-					$testVersion = $row["version"]= $value['testcaseVersion'];
-					if($value["tctype"] == 'Oth'){
-						$changetype = "edit";
-						$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
-						foreach($ListofAffectFRRelateSchema as $value){
-							if($changetype != $value["changeType"] ){
-								$changetype = $value['changeType'];
-							}
-						}					
-					}else{
-						$changetype = "edit";
-						$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-						foreach($RelateResultSCHEMA as $value){
-							if($changetype  != $value["changeType"] ){
-								if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
-									$changetype = "delete";
-								}
-							}
-						}
-						$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
-						foreach($RelateResultNotSCHEMA as $value){
-							if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
-								$changetype = "delete";
-							}
-						}
-					}
-					$row['change_type'] = $changetype;
-					array_push($data['aff_testcase_list'],$row);
-				}
-			}
-		}
-//print_r($data);
-		return $data;
-	}
-
 	function confirm_change_request(){
 		$prjId = $this->input->post('projectId');
 		$funId = $this->input->post('functionId');
@@ -976,6 +656,7 @@ function aff_Oth_functionalrequirement($param){
 		$FR_Description = $this->input->post('FR_Description');
 		$userId = $this->session->userdata('userId');
 		$user = $this->session->userdata('username');
+		$rowResult = $this->mRunning->Update_Running_ch();
 
 		$param = (object) array(
 			'projectId' 	  => $prjId ,
@@ -989,88 +670,8 @@ function aff_Oth_functionalrequirement($param){
 			'user'				=> $user
 		);
 
-	//	$affFrList = $this->bind_data_aff_functionalrequirement($param);
-		$affSchemalist = $this->bind_data_aff_schema($param);
-		foreach($affSchemalist as $land => $data){
-			foreach($data as $detail => $value)
-			{
-				$schema_list_aff = (object) array(
-					'changeRequestNo' 		=> $CH_NO,
-					'tableName'						=> $value['table_name'],
-					'columnName'					=> $value['column_name'],
-					'changeType'					=> $value['change_type'],
-					'version'							=> $value['version']					
-				);	
-				$this->mVersion->insertlogAffSchema($schema_list_aff);
-			}		
-		}			
-
-		$affTestCaseList = $this->bind_data_aff_testcase($param);
-		foreach($affTestCaseList as $land => $data){
-			foreach($data as $detail => $value)
-			{
-				$test_list_aff = (object) array(
-					'changeRequestNo' 		=> $CH_NO,
-					'testcaseNo'					=> $value['test_no'],
-					'testcaseVersion'			=> $value['version'],
-					'changeType'					=> $value['change_type']
-				);
-				//print_r($test_list_aff);
-				$this->mVersion->insertlogAffTestcase($test_list_aff);
-					//5.Control Version TESTCASE
-				if(0 < count($test_list_aff)){
-					$recordUpdate  = $this->mVersion->updateTestcaseHeader($param,$test_list_aff);
-					$recordUpdate1 = $this->mVersion->updateTestcaseDetail($param,$test_list_aff);		
-				}
-
-				$record_TC  = $this->mVersion->SearchTestcaseHeader($param,$test_list_aff);	
-				if(0 < count($record_TC)){
-					foreach($record_TC as $value){
-						$data_list = (object) array(
-							'testCaseId'						=> $value['testCaseId'],
-							'testCaseNo'						=> $value['testCaseNo'],
-							'testcaseVersion'				=> $value['testcaseVersion'],
-							'testCaseDescription'		=> $value['testCaseDescription'],
-							'expectedResult'				=> $value['expectedResult']
-						);
-					}					
-				}
-
-				if($test_list_aff->changeType != 'edit'){				
-					$New_TCId =	$this->mVersion->InsertNewTestCaseHeader($param,$data_list);
-				}else{
-					$New_TCId =	$this->mVersion->InsertNewTestCaseHeader($param,$data_list);
-				}
-				$TC_Header =	$this->mVersion->SearchNewTestCaseHeader($param,$New_TCId);
-				if(0 < count($TC_Header)){
-					foreach($TC_Header as $value){
-						$New_TC_HEADER = (object) array(
-							'testCaseId'						=> $value['testCaseId'],
-							'testCaseNo'						=> $value['testCaseNo'],
-							'testcaseVersion'				=> $value['testcaseVersion'],				
-						);
-					}
-				}
-
-				$detail_TC  = $this->mVersion->InsertTestcaseDetail($param,$New_TC_HEADER);	
-				if(0 < count($detail_TC)){
-					foreach($detail_TC as $value){
-						$data_list = (object) array(
-							'testCaseId'						=> $value['testCaseId'],
-							'testCaseNo'						=> $value['testCaseNo'],
-							'testcaseVersion'				=> $value['testcaseVersion'],
-							'testCaseDescription'		=> $value['testCaseDescription'],
-							'expectedResult'				=> $value['expectedResult']
-						);
-					}					
-				}
-
-			}		
-		}
-		
 		$newCurrentDate = date('Y-m-d H:i:s');
-
-		//1. save change request header.
+		//** save change request header.
 		$paramInsert = (object) array(
 			'changeRequestNo' => $param->changeRequestNo,
 			'changeUser' => $param->userId,
@@ -1096,6 +697,7 @@ function aff_Oth_functionalrequirement($param){
 				'changeType' => $value['changeType'],
 				'dataId' => $value['dataId'],
 				'dataName' => $value['dataName'], 
+				'schemaId' => $value['schemaId'],
 				'schemaVersionId' => $value['schemaVersionId'],
 				'dataType' => $value['newDataType'],
 				'dataLength' => $value['newDataLength'],
@@ -1133,192 +735,218 @@ function aff_Oth_functionalrequirement($param){
 			$this->mChange->insertChangeRequestDetail($paramInsert);				
 		}
 
-		//3. save change history requirement header
-		$rowUpdate = $this->mVersion->updateRequirementsHeader($param);
-		//print_r($rowUpdate);
-
-		//3.1 save change history requirement detail
-		$rowUpdate = $this->mVersion->updateChange_RequirementsDetail($param);
-
-		//3.2 save change New requirement header
-		$data = $this->aff_functionalrequirement($param);
-		//print_r($data);
-		foreach($data as $value ){
-			$Change_FR_type = $value[0]['change_type'];
+		//** MAP RTM */
+		$affRTMList = $this->bind_data_aff_rtm($param);
+		foreach($affRTMList as $land => $data){
+			foreach($data as $detail => $value)
+			{
+				$rtm_list_aff = (object) array(
+					'projectId' 	  			=> $prjId,
+					'changeRequestNo' 		=> $CH_NO,
+					'functionId'					=> $value['fr_id'],
+					'functionNo'					=> $value['fr_no'],
+					'functionVersion'			=> $value['fr_version'],	
+					'testcaseId'					=> $value['test_id'],	
+					'testcaseNo'					=> $value['test_no'],
+					'testcaseVersion'			=> $value['version'],			
+					'user'								=> $user
+				);	
+				//print_r($rtm_list_aff);
+				$this->mVersion->insertlogAffRTM($rtm_list_aff);
+			}
 		}
-		//print_r($Change_FR_type);
-		if($Change_FR_type != 'edit'){
-			$New_FunctionId = $this->mVersion->InsertNewRequirementsHeader($param);
-		}else{
-			$New_FunctionId = $this->mVersion->InsertRequirementsHeader($param);
-		}
-		//print_r($New_FunctionId);
-		$NewFR = $this->mVersion->SearchRequirementsDetail($param,$New_FunctionId);
-		foreach($NewFR as $value){
-				$New_param = (object) array(
-					'projectId'		=> $value['projectId'],
-						'functionNo' => $value['functionNo'],
-						'functionversion'   => $value['functionVersion'],
-						'functionId'	 => $value['functionId']
+
+		//** Control Version TESTCASE
+		$affTestCaseList = $this->bind_data_aff_testcase($param);
+		foreach($affTestCaseList as $land => $data){
+			foreach($data as $detail => $value)
+			{
+				$test_list_aff = (object) array(
+					'projectId' 	  			=> $prjId ,
+					'changeRequestNo' 		=> $CH_NO,
+					'testCaseId'					=> $value['test_id'],
+					'testcaseNo'					=> $value['test_no'],
+					'testcaseVersion'			=> $value['version'],
+					'changeType'					=> $value['change_type']
 				);
-		}
-		$MAP_FR = $this->mVersion->MapFRVersion($param,$New_param);
-
-		//print_r($New_param);
-		//3.3 save change New requirement detail
-		$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param,$New_param);
-		if(0 < count($InsertNew)){
-		//	print_r($InsertNew);
-		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-		//print_r($RelateResultSCHEMA);
-					foreach ($RelateResultSCHEMA as $value){
-					$paramUpdate = (object) array(
-						'changeType' => $value['changeType'],
-						'dataId' => $value['dataId'],
-						'typeData'	=> $value['typeData'],
-						'dataName' => $value['dataName'], 
-						'newDataType' => $value['newDataType'],
-						'newDataLength' => $value['newDataLength'],
-						'newScaleLength' => $value['newScaleLength'],
-						'newUnique' => $value['newUnique'],
-						'newNotNull' => $value['newNotNull'],
-						'newDefaultValue' => $value['newDefaultValue'],
-						'newMinValue' => $value['newMinValue'],
-						'newMaxValue' => $value['newMaxValue'],
-						'tableName' => $value['tableName'],
-						'columnName' => $value['columnName']);
-//print_r($paramUpdate);
-			//print_r($paramUpdate->changeType);		
-			
-						if($paramUpdate->changeType == 'edit'){
-							$recordUpdate = $this->mVersion->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-							}else if($paramUpdate->changeType == 'delete'){
-							$recordDelete = $this->mVersion->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}else if($paramUpdate->changeType == 'add'){
-							$recordAdd = $this->mVersion->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}
-				
-				}
-	
-		$RelateResultNotSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
-				foreach ($RelateResultNotSCHEMA as $value){
-					$paramUpdate = (object) array(
-						'changeType' => $value['changeType'],
-						'dataId' => $value['dataId'],
-						'typeData'	=> $value['typeData'],
-						'dataName' => $value['dataName'], 
-						'newDataType' => $value['newDataType'],
-						'newDataLength' => $value['newDataLength'],
-						'newScaleLength' => $value['newScaleLength'],
-						'newUnique' => $value['newUnique'],
-						'newNotNull' => $value['newNotNull'],
-						'newDefaultValue' => $value['newDefaultValue'],
-						'newMinValue' => $value['newMinValue'],
-						'newMaxValue' => $value['newMaxValue'],
-						'tableName' => $value['tableName'],
-						'columnName' => $value['columnName']);
-						//print_r($paramUpdate->changeType);		
-
-						if($paramUpdate->changeType == 'edit'){
-							$recordUpdate = $this->mVersion->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-							}else if($paramUpdate->changeType == 'delete'){
-							$recordDelete = $this->mVersion->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}else if($paramUpdate->changeType == 'add'){
-							$recordAdd = $this->mVersion->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
-						}
-				
+				//print_r($test_list_aff);
+				$this->mVersion->insertlogAffTestcase($test_list_aff);
+					//5.Control Version TESTCASE
+				if(0 < count($test_list_aff)){
+					$recordUpdate  = $this->mVersion->updateTestcaseHeader($param,$test_list_aff);
+					$recordUpdate1 = $this->mVersion->updateTestcaseDetail($param,$test_list_aff);		
 				}
 
-			}
-		
-		$data = $this->aff_Oth_functionalrequirement($param);
-		//print_r($data);
-	if(0 < count($data)){
-			foreach($data as $value){
-				$param_Oth = (object) array (
-					'projectId' 	  => $prjId ,
-					'functionId' 			=> $value[0]['fr_id'],
-					'functionVersion'	=> $value[0]['version'],
-					'functionNo'			=> $value[0]['fr_no'],
-					'changeRequestNo' => $CH_NO,
-					'type' 	 		  		=> 1, //1 = Change, 2 = Cancel
-					'userId'					=> $userId,
-					'user'						=> $user,
-					'fnDesc'		  		=> $value[0]['fnDesc'],
-					'Change_FR_type' 	=> $value[0]['change_type']
-					);
-			}
-			
-			//print_r($param_Oth);
-				//3.4 save change history requirement header  ของ Oth FR
-				$rowUpdate = $this->mVersion->updateRequirementsHeader($param_Oth);
-				//print_r($rowUpdate);
-
-				//3.5 save change history requirement detail ของ Oth FR
-				$rowUpdate = $this->mVersion->updateChange_RequirementsDetail($param_Oth);			
-
-				//print_r($Change_FR_type);
-				if($param_Oth->Change_FR_type != 'edit'){
-					$New_FunctionId = $this->mVersion->InsertNewRequirementsHeader($param_Oth);
-				}else{
-					$New_FunctionId = $this->mVersion->InsertRequirementsHeader($param_Oth);
-				}
-				//print_r($New_FunctionId);
-
-				$NewFR = $this->mVersion->SearchRequirementsDetail($param_Oth,$New_FunctionId);
-				foreach($NewFR as $value){
-						$New_param_Oth = (object) array(
-								'projectId' 	  		=> $prjId ,
-								'functionNo' 				=> $value['functionNo'],
-								'functionversion'   => $value['functionVersion'],
-								'functionId'	 			=> $value['functionId'],
-								'fnDesc'		  			=> $value['functionDescription'],
-								'changeRequestNo' 	=> $CH_NO,
-								'type' 	 		  			=> 1, //1 = Change, 2 = Cancel
-								'userId'						=> $userId,
-								'user'							=> $user			
+				$record_TC  = $this->mVersion->SearchTestcaseHeader($param,$test_list_aff);	
+				if(0 < count($record_TC)){
+					foreach($record_TC as $value){
+						$data_list = (object) array(
+							'testCaseId'						=> $value['testCaseId'],
+							'testCaseNo'						=> $value['testCaseNo'],
+							'testcaseVersion'				=> $value['testcaseVersion'],
+							'testCaseDescription'		=> $value['testCaseDescription'],
+							'expectedResult'				=> $value['expectedResult']
 						);
+					}					
 				}
-				$MAP_FR = $this->mVersion->MapFRVersion($param_Oth,$New_param_Oth);
-
-				//print_r($New_param);
-				//3.7 save change New requirement detail ของ Oth FR
-					$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($param_Oth,$New_param_Oth);
-				if(0 < count($InsertNew)){
-					//print_r($InsertNew);
-			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-				//print_r($RelateResultSCHEMA);
-							foreach ($RelateResultSCHEMA as $value){
-							$paramUpdate = (object) array(
-								'changeType' => $value['changeType'],
-								'dataId' => $value['dataId'],
-								'typeData'	=> $value['typeData'],
-								'dataName' => $value['dataName'], 
-								'newDataType' => $value['newDataType'],
-								'newDataLength' => $value['newDataLength'],
-								'newScaleLength' => $value['newScaleLength'],
-								'newUnique' => $value['newUnique'],
-								'newNotNull' => $value['newNotNull'],
-								'newDefaultValue' => $value['newDefaultValue'],
-								'newMinValue' => $value['newMinValue'],
-								'newMaxValue' => $value['newMaxValue'],
-								'tableName' => $value['tableName'],
-								'columnName' => $value['columnName']);
-		//print_r($paramUpdate);
-					//print_r($paramUpdate->changeType);		
-					
-								if($paramUpdate->changeType == 'edit'){
-									$recordUpdate = $this->mVersion->updateChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
-									}else if($paramUpdate->changeType == 'delete'){
-									$recordDelete = $this->mVersion->deleteChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
-								}else if($paramUpdate->changeType == 'add'){
-									$recordAdd = $this->mVersion->addChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
-								}
-						
-						}
+//rint_r($data_list->testcaseVersion);
+				if($test_list_aff->changeType != 'edit'){				
+					$New_TCId =	$this->mVersion->InsertNewTestCaseHeader($param,$data_list);
+				}else{
+					$New_TCId =	$this->mVersion->InsertTestCaseHeader($param,$data_list);
+				}
+				//echo $New_TCId;
 			
-				$RelateResultNotSCHEMA = $this->mChange->searchChangeRequestNotrelateSCHEMA($param_Oth);
-						foreach ($RelateResultNotSCHEMA as $value){
+				$TC_Header =	$this->mVersion->SearchNewTestCaseHeader($param,$New_TCId);
+				if(0 < count($TC_Header)){
+					foreach($TC_Header as $value){
+						$New_TC_HEADER = (object) array(
+							'testCaseId'						=> $value['testCaseId'],
+							'testCaseNo'						=> $value['testCaseNo'],
+							'testcaseVersion'				=> $value['testcaseVersion'],				
+						);
+					}
+				}
+				$MAP_TC = $this->mVersion->MapTCVersion($test_list_aff,$New_TC_HEADER);
+
+				//print_r($New_TC_HEADER);
+				$detail_TC  = $this->mVersion->InsertTestcaseDetail($param,$New_TC_HEADER,$data_list);	
+				//print_r($detail_TC);
+				if(0 < count($detail_TC)){
+					$ListChange = $this->mVersion->searchChangeRequestList($param);
+					//print_r($ListChange);
+								foreach ($ListChange as $value){
+								$param_update_tc = (object) array(
+									'changeType' => $value['changeType'],
+									'dataId' => $value['dataId'],
+									'typeData'	=> $value['typeData'],
+									'dataName' => $value['dataName'], 
+									'newDataType' => $value['newDataType'],
+									'newDataLength' => $value['newDataLength'],
+									'newScaleLength' => $value['newScaleLength'],
+									'newUnique' => $value['newUnique'],
+									'newNotNull' => $value['newNotNull'],
+									'newDefaultValue' => $value['newDefaultValue'],
+									'newMinValue' => $value['newMinValue'],
+									'newMaxValue' => $value['newMaxValue'],
+									'tableName' => $value['tableName'],
+									'columnName' => $value['columnName']
+								);
+			//print_r($param_update_tc);
+						//print_r($param_update_tc->changeType);		
+						if ($param_update_tc->changeType != 'delete'){
+								$new_testdata = '';
+								if (isset($param_update_tc->newMaxValue) or ($param_update_tc->newMaxValue == null )){
+									$param_update_tc->newMaxValue = '100';
+								}
+								if (isset($param_update_tc->newMinValue) or ($param_update_tc->newMinValue == null )){
+									$param_update_tc->newMinValue = '0';
+								}
+								$new_testdata = rand($param_update_tc->newMinValue,$param_update_tc->newMaxValue);
+	
+									//print_r($param_update_tc->newDataLength);
+								if (($param_update_tc->newDataType == 'decimal') || ($param_update_tc->newDataType == 'DECIMAL')
+								|| ($param_update_tc->newDataType == 'float') || ($param_update_tc->newDataType == 'FLOAT')
+								|| ($param_update_tc->newDataType == 'double') || ($param_update_tc->newDataType == 'DOUBLE'))
+								{
+									if(($new_testdata == null) || ($new_testdata < $param_update_tc->newMaxValue) || ($new_testdata > $param_update_tc->newMinValue)){
+											$chars = "0123456789";
+											$ret_char = "";
+											$num = strlen($chars);
+											for($i = 0; $i < $param_update_tc->newDataLength ; $i++) {
+												$ret_char.= $chars[rand()%$num];
+												$ret_char.= ""; 
+											}
+											$first_num = $ret_char;
+
+											$ret_char = "";
+											$chars = "0123456789";
+											$ret_char = "";
+											$num = strlen($chars);
+											for($i = 0; $i < $param_update_tc->newScaleLength ; $i++) {
+												$ret_char.= $chars[rand()%$num];
+												$ret_char.= ""; 
+											}
+											$round = $ret_char;
+										$new_testdata = $first_num.".".$round;
+										//echo $new_testdata;
+									}
+								}	
+							if(($param_update_tc->newDataType == 'date') || ($param_update_tc->newDataType == 'DATE') ){
+									$new_testdata = '';
+								}
+				
+								if (($param_update_tc->newDataType == 'char') || ($param_update_tc->newDataType == 'CHAR')
+								|| ($param_update_tc->newDataType == 'varchar') || ($param_update_tc->newDataType == 'VARCHAR')){
+									$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+									$value = '';
+									for ( $i = 0; $i < $param_update_tc->newDataLength; $i++ )
+										 $value .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+									$new_testdata = $value;
+								}			
+//echo $new_testdata;
+						}
+								if($param_update_tc->changeType == 'edit'){
+										$recordUpdate = $this->mVersion->updateChangeTestCaseDetail($param,$param_update_tc,$New_TC_HEADER,$new_testdata);		
+								}else if(($param_update_tc->changeType == 'delete') && ($test_list_aff->changeType == 'delete')) {
+										$recordDelete = $this->mVersion->deleteChangeTestCaseDetail($param,$param_update_tc,$New_TC_HEADER);		
+								}else if(($param_update_tc->changeType == 'add') && ($test_list_aff->changeType == 'delete')){
+										$recordAdd = $this->mVersion->addChangeTestCaseDetail($param,$param_update_tc,$New_TC_HEADER,$new_testdata);		
+								}
+							
+						}	
+				}
+			}		
+		}
+
+		//** Control Version requirement */
+		$affFrList = $this->bind_data_aff_functionalrequirement($param);
+		foreach($affFrList as $land => $data){
+			foreach($data as $detail => $value)
+			{
+				$fr_list_aff = (object) array(
+					'projectId' 	  			=> $prjId,
+					'changeRequestNo' 		=> $CH_NO,
+					'functionId' 				  => $value['frId'],
+					'functionNo'					=> $value['fr_no'],
+					'functionVersion'			=> $value['version'],				
+					'changeType'					=> $value['change_type'],
+					'fnDesc'		  				=> '',
+					'user'								=> $user
+				);	
+				//print_r($fr_list_aff);
+				$this->mVersion->insertlogAffFr($fr_list_aff);
+				//** 3. save change history requirement header
+				$rowUpdate = $this->mVersion->updateRequirementsHeader($fr_list_aff);
+
+				//** 3.1 save change history requirement detail
+				$rowUpdate = $this->mVersion->updateChange_RequirementsDetail($fr_list_aff);
+
+				//** 3.2 save change New requirement header
+				if($fr_list_aff->changeType != 'edit'){
+					$New_FunctionId = $this->mVersion->InsertNewRequirementsHeader($fr_list_aff);
+				}else{
+					$New_FunctionId = $this->mVersion->InsertRequirementsHeader($fr_list_aff);
+				}
+				 
+				$NewFR = $this->mVersion->SearchRequirementsDetail($fr_list_aff,$New_FunctionId);
+				foreach($NewFR as $value){
+						$New_param = (object) array(
+							'projectId'		=> $value['projectId'],
+								'functionNo' => $value['functionNo'],
+								'functionversion'   => $value['functionVersion'],
+								'functionId'	 => $value['functionId']
+						);	
+				}
+				$MAP_FR = $this->mVersion->MapFRVersion($fr_list_aff,$New_param);
+
+				//** save change New requirement detail
+				$InsertNew = $this->mVersion->InsertChange_RequirementsDetail($fr_list_aff,$New_param);
+				//print_r($InsertNew);
+				if(0 < count($InsertNew)){
+					$Result = $this->mVersion->searchChangeRequestList($param);
+					//print_r($Result);
+						foreach ($Result as $value){
 							$paramUpdate = (object) array(
 								'changeType' => $value['changeType'],
 								'dataId' => $value['dataId'],
@@ -1334,102 +962,153 @@ function aff_Oth_functionalrequirement($param){
 								'newMaxValue' => $value['newMaxValue'],
 								'tableName' => $value['tableName'],
 								'columnName' => $value['columnName']);
-								//print_r($paramUpdate->changeType);		
-
-								if($paramUpdate->changeType == 'edit'){
-									$recordUpdate = $this->mVersion->updateChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
-									}else if($paramUpdate->changeType == 'delete'){
-									$recordDelete = $this->mVersion->deleteChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
-								}else if($paramUpdate->changeType == 'add'){
-									$recordAdd = $this->mVersion->addChangeRequestDetail($param_Oth,$paramUpdate,$New_FunctionId);		
-								}
+			//print_r($paramUpdate);
+						//print_r($paramUpdate->changeType);		
 						
+								if($paramUpdate->changeType == 'edit'){
+									$recordUpdate = $this->mVersion->updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+									}else if(($paramUpdate->changeType == 'delete') && ($fr_list_aff->changeType == 'delete')){
+									$recordDelete = $this->mVersion->deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+								}else if(($paramUpdate->changeType == 'add') && ($fr_list_aff->changeType == 'delete')){
+									$recordAdd = $this->mVersion->addChangeRequestDetail($param,$paramUpdate,$New_FunctionId);		
+								}					
+							}
 						}
-					}
 			}
+		}	
 
-			//4.Control Version SCHEMA
-			$RelateResultSCHEMA = $this->mVersion->searchTablerelateSCHEMA($param);
-			//print_r($RelateResultSCHEMA);
-			foreach ($RelateResultSCHEMA as $value) {
-				$paramInsert = (object) array(
-					'tableName' => $value['tableName']
-				);
-				//print_r($paramInsert);
-			$recordUpdate  = $this->mVersion->updateDatabaseSchemaVersion($param,$paramInsert);
-			$recordUpdate1 = $this->mVersion->updateDatabaseSchemaInfo($param,$paramInsert);		
-			$recordUpdate2 =	$this->mVersion->insertDatabaseSchemaVersion($param,$paramInsert);
-			$recordUpdate3 =	$this->mVersion->insertDatabaseSchemaInfo($param,$paramInsert);
+		//** Control Version SCHEMA
+		$affSchemalist = $this->bind_data_aff_schema($param);
+	foreach($affSchemalist as $land => $data){
+			foreach($data as $detail => $value)
+			{
+				$schema_list_aff = (object) array(
+					'projectId' 	  			=> $prjId,
+					'changeRequestNo' 		=> $CH_NO,
+					'schemaVersionId'			=> $value['schemaVersionId'],
+					'tableName'						=> $value['table_name'],
+					'columnName'					=> $value['column_name'],
+					'changeType'					=> $value['change_type'],
+					'version'							=> $value['version'],
+					'user'								=> $user
+				);	
+				$this->mVersion->insertlogAffSchema($schema_list_aff);
 			}
-			//print_r($rowUpdate);
-	
-	//4.1 save MAP DB
-			$NewDB = $this->mVersion->SearchDatabaseSchemaDetail($param,$paramInsert);
-			foreach($NewDB as $value){
+					$RelateResultSCHEMA = $this->mVersion->searchTablerelateSCHEMA($param);
+				if (0< count($RelateResultSCHEMA)){
+					foreach ($RelateResultSCHEMA as $value) {
+						$paramInsert = (object) array(
+							'tableName'				  => $value['tableName'],
+							'schemaVersionId'		=> $value['schemaVersionId']
+						);
+					//	print_r($paramInsert);
+					$recordUpdate  = $this->mVersion->updateDatabaseSchemaVersion($param,$paramInsert);
+					$recordUpdate1 = $this->mVersion->updateDatabaseSchemaInfo($param,$paramInsert);		
+					$recordUpdate2 =	$this->mVersion->insertDatabaseSchemaVersion($param,$paramInsert);
+					$recordUpdate3 =	$this->mVersion->insertDatabaseSchemaInfo($param,$paramInsert);
+					}
+				}
+				//** save MAP DB
+				$NewDB = $this->mVersion->SearchDatabaseSchemaDetail($param,$paramInsert);
+				foreach($NewDB as $value){
 					$New_param_DB = (object) array(
 						'tableName'			=> $value['tableName'],
-							'schemaVersionNumber' => $value['schemaVersionNumber']
-						);
-			}
-			if(0 < count($New_param)){
-				$MAP_FR = $this->mVersion->MapDBVersion($New_param,$New_param_DB);
-			}
-			if(0 < count($New_param_Oth)){
-				$MAP_FR = $this->mVersion->MapDBVersion($New_param_Oth,$New_param_DB);
-			}
-		
-			//4.2 save change history DB detail		
-			$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
-			//print_r($RelateResultSCHEMA);
-			if(0 < count($RelateResultSCHEMA)){
-				foreach ($RelateResultSCHEMA as $value){
-					$paramUpdate_DB = (object) array(
-						'changeType' => $value['changeType'],
-						'dataId' => $value['dataId'],
-						'typeData'	=> $value['typeData'],
-						'dataName' => $value['dataName'], 
-						'newDataType' => $value['newDataType'],
-						'newDataLength' => $value['newDataLength'],
-						'newScaleLength' => $value['newScaleLength'],
-						'newUnique' => $value['newUnique'],
-						'newNotNull' => $value['newNotNull'],
-						'newDefaultValue' => $value['newDefaultValue'],
-						'newMinValue' => $value['newMinValue'],
-						'newMaxValue' => $value['newMaxValue'],
-						'tableName' => $value['tableName'],
-						'columnName' => $value['columnName']
+						'schemaVersionNumber' => $value['schemaVersionNumber'],
+						'schemaVersionId'			=> $value['schemaVersionId']
 					);
-	//print_r($paramUpdate);				
-						if($paramUpdate->changeType == 'edit'){
+				}
+				//print_r($New_param_DB);
+				if(0 < count($New_param)){
+					$MAP_FR = $this->mVersion->MapDBVersion($New_param,$New_param_DB);
+				}
+
+				//** save change history DB detail		
+				$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+				//print_r($RelateResultSCHEMA);
+				if(0 < count($RelateResultSCHEMA)){
+					foreach ($RelateResultSCHEMA as $value){
+						$paramUpdate_DB = (object) array(
+							'changeType' => $value['changeType'],
+							'dataId' => $value['dataId'],
+							'typeData'	=> $value['typeData'],
+							'dataName' => $value['dataName'], 
+							'newDataType' => $value['newDataType'],
+							'newDataLength' => $value['newDataLength'],
+							'newScaleLength' => $value['newScaleLength'],
+							'newUnique' => $value['newUnique'],
+							'newNotNull' => $value['newNotNull'],
+							'newDefaultValue' => $value['newDefaultValue'],
+							'newMinValue' => $value['newMinValue'],
+							'newMaxValue' => $value['newMaxValue'],
+							'tableName' => $value['tableName'],
+							'columnName' => $value['columnName']
+					);
+		//print_r($paramUpdate);				
+						if($schema_list_aff->changeType == 'edit'){
 							$recordUpdate = $this->mVersion->updateDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB);		
-						}else if($paramUpdate->changeType == 'delete'){
+						}else if($schema_list_aff->changeType == 'delete'){
 							$recordDelete = $this->mVersion->deleteCDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB);		
 							$recordDelete1 = $this->mVersion->deleteCDatabaseSchemaVersionDetail($New_param_DB,$paramUpdate_DB);
 						}
+					}
+			}	
+		}		
+
+		//** Control Version RTM */
+		$Map_RTM = $this->mVersion->searchAffRTM($param);
+		if (0 < count($Map_RTM)){
+			echo "0";
+			foreach($Map_RTM as $value){
+				$rtm_relate = (object) array(
+					'projectId' 	  	=> $prjId,
+					'functionId'			=> $value['functionId'],
+					'functionNo'			=> $value['functionNo'],
+					'functionVersion'	=> $value['functionVersion'],
+					'testcaseId'			=> $value['testcaseId'],
+					'testcaseNo'			=> $value['testcaseNo'],
+					'testcaseVersion'	=> $value['testcaseVersion'],
+					'user'						=> $user			
+				);			
+			//	echo "1";
+			//	print_r($rtm_relate);
+				$FrList = $this->mVersion->searchNewFR($rtm_relate);
+				if(0 < count($FrList)){
+					foreach($FrList as $value){
+						$relate_new_fr = (object) array(
+							'projectId' 	  	=> $prjId,
+							'functionId'			=> $value['New_FR_Id'],
+							'functionNo'			=> $value['New_FR_No'],
+							'functionVersion'	=> $value['New_FR_Version'],
+							'user'						=> $user
+						);
+					}
 				}
+				//print_r($relate_new_fr);
+
+				$TCList = $this->mVersion->searchNewTC($rtm_relate);
+				if(0 < count($TCList)){
+					foreach($TCList as $value){
+						$relate_new_tc = (object) array(
+							'projectId' 	  	=> $prjId,
+							'testcaseId'			=> $value['New_TC_Id'],
+							'testcaseNo'			=> $value['New_TC_No'],
+							'testcaseVersion'	=> $value['New_TC_Version']
+						);
+					}
+				}
+				//print_r($relate_new_fr);
+				//print_r($relate_new_tc);
+				//echo "2";
+				$updateRTM = $this->mVersion->updateRTMVersion($rtm_relate);
+				$Complete = $this->mVersion->insertRTMVersion($relate_new_fr,$relate_new_tc);
 			}
+		}		
 
-
-
-					//return;
-					//print_r($param);
-					//if (!isset($param)){
-
-					//มัน error ตรงนี้ ไม่แน่ใจมีค่าอะไรที่ยังไม่มี
-					//ปกติแล้วมันจะไม่ catch เพรวะว่า function callChangeRelate มันไม่ throw ex ออกมา 
-					//ถ้าต้องการดูว่า error อะไร  หน้า index.php javascript ทีเปน  ajax ใส่ dataType:"text",
-					//แล้ว debugger ดู data ตอนมันทำเสร็จ
-					//ถ้าไม่ error แล้วให้เปลี่ยน dataType:"json" แล้วไม่ต้อง print_r ออกไป
-					//ตอนนี้มันยัง error อยู่
-					
-						//$resultChange = $this->mVersion>saveChangeList($ListChange);
-					//}
 		$data = array(
 			'success' => true,
-			'result'=> $param,
+			'result'=> $param
 		);
 		//echo json_encode($data);
-
 	}
 }
 	

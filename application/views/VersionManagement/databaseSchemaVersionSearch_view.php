@@ -88,7 +88,7 @@
             						<?php 
             						if(isset($schemaVersionCombo) && 0 < count($schemaVersionCombo)){
             							foreach($schemaVersionCombo as $value){ ?>
-            								<option value="<?php echo $value['schemaVersionId']; ?>" <?php echo set_select('inputVersion', $value['schemaVersionId'], (!empty($schemaVersionId) && $schemaVersionId == $value['schemaVersionId']? TRUE : FALSE )); ?>>
+            								<option value="<?php echo $value['schemaVersionNumber']; ?>" <?php echo set_select('inputVersion', $value['schemaVersionNumber'], (!empty($schemaVersionId) && $schemaVersionId == $value['schemaVersionNumber']? TRUE : FALSE )); ?>>
 	            								<?php echo 'Version '.$value['schemaVersionNumber']; ?>
 	        								</option>
             						<?php 

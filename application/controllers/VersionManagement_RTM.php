@@ -43,14 +43,13 @@ class VersionManagement_RTM extends CI_Controller{
 		$resultList = array();
 
 		$projectId = $this->input->post('inputProjectName');
-	//	$rtmVersionId = $this->input->post('inputVersion');
-
+		$activeflag = $this->input->post('inputStatus');
 		$this->FValidate->set_rules('inputProjectName', null, 'required');
 	//	$this->FValidate->set_rules('inputVersion', null, 'required');
 
 		if($this->FValidate->run()){
-			//$criteria = (object) array('projectId' => $projectId, 'rtmVersionId' => $rtmVersionId);
-			$criteria = (object) array('projectId' => $projectId);
+			$criteria = (object) array('projectId' => $projectId, 'activeflag' => $activeflag);
+			//$criteria = (object) array('projectId' => $projectId);
 			//$versionInfo = $this->mRTM->searchRTMVersionInfo($criteria);
 /*
 			if(null != $versionInfo && 0 < count($versionInfo)){
@@ -63,19 +62,20 @@ class VersionManagement_RTM extends CI_Controller{
 			}
 */
 				$param = (object) array(
-					'projectId' => $projectId);
+					'projectId' => $projectId,
+					'activeflag'=> $activeflag);
+					//print_r($param->activeflag);
 
 				//$resultList = $this->mVerMng->searchRTMDetailByVersion($param);
 
 				$resultList = $this->mRTM->searchRTMVersionInfoByCriteria($param);
-				
+				//print_r($resultList );
 				//$data['resultVersionInfo'] = $versionInfo;
 			
 		}
 		$data['projectId'] = $projectId;
-	//	$data['rtmVersionId'] = $rtmVersionId;
-		
-
+		$data['activeflag'] = $activeflag;
+		//print_r($activeflag);
 		$this->initialComboBox($projectId, $data);
 
 		$data['resultList'] = $resultList;

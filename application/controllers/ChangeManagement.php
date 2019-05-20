@@ -655,6 +655,7 @@ class ChangeManagement extends CI_Controller{
 				$dataId = $this->input->post('changedataId');
 				$typeData = $this->input->post('changetypeData');
 				$schemaVersionId = $this->input->post('changeSchemaVersionId');
+				$Id = $this->input->post('changeId');
 
 				$dataName = trim($this->input->post('dataName'));
 				$dataType = $this->input->post('inputDataType');
@@ -680,6 +681,7 @@ class ChangeManagement extends CI_Controller{
 					'typeData' => $typeData,
 					'dataId' => $dataId,
 					'dataName' => $dataName,
+					'Id' => $Id,
 					'schemaVersionId' => $schemaVersionId,
 					'dataType' => $dataType,
 					'dataLength' => $dataLength,
@@ -852,6 +854,7 @@ class ChangeManagement extends CI_Controller{
 			$dataId = $keyList[1];
 			$typeData = $keyList[4];
 			$schemaVersionId = $keyList[2];
+			$Id = $keyList[5];
 			//$functionId = $keyList[3];
 
 			$user = $this->session->userdata('username');
@@ -869,7 +872,8 @@ class ChangeManagement extends CI_Controller{
 				'functionVersion' => $functionVersion,
 				'dataId' => $dataId,
 				'typeData' => $typeData,
-				'schemaVersionId' => $schemaVersionId);
+				'schemaVersionId' => $schemaVersionId,
+				'Id' => $Id);
 			$records = $this->mChange->searchTempFRInputChangeList($criteria);
 			if(0 == count($records)){
 				$inputInfo = $this->mFR->searchFRInputDetailByCriteria($criteria);

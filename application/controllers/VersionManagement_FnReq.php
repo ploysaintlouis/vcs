@@ -74,7 +74,7 @@ class VersionManagement_FnReq extends CI_Controller{
 
 		if($this->FValidate->run()){
 			$criteria = (object) array(
-				'functionId' => $fnReqId, 'functionVersionId' => $fnReqVersionId);
+				'functionId' => $fnReqId, 'Id' => $fnReqVersionId);
 			$versionInfo = $this->mFR->searchFunctionalRequirementVersionByCriteria($criteria);
 
 			if(null != $versionInfo && 0 < count($versionInfo)){

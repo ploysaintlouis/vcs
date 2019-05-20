@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: May 12, 2019 at 08:06 PM
+-- Generation Time: May 19, 2019 at 02:41 PM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -28,10 +28,29 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `aff_fr` (
   `id` int(11) NOT NULL,
+  `projectId` int(11) NOT NULL,
   `ChangeRequestNo` varchar(10) NOT NULL,
-  `FR_Id` int(11) NOT NULL,
+  `FR_Id` int(10) NOT NULL,
+  `FR_No` char(10) NOT NULL,
   `FR_Version` int(11) NOT NULL,
   `changeType` varchar(10) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `aff_rtm`
+--
+
+CREATE TABLE `aff_rtm` (
+  `id` int(11) NOT NULL,
+  `ChangeRequestNo` char(10) NOT NULL,
+  `functionId` int(10) NOT NULL,
+  `functionNo` char(10) NOT NULL,
+  `functionVersion` int(11) NOT NULL,
+  `testcaseId` int(10) NOT NULL,
+  `testcaseNo` char(10) NOT NULL,
+  `testcaseVersion` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
@@ -43,6 +62,7 @@ CREATE TABLE `aff_fr` (
 CREATE TABLE `aff_schema` (
   `id` int(11) NOT NULL,
   `ChangeRequestNo` varchar(10) NOT NULL,
+  `schemaVersionId` int(10) NOT NULL,
   `tableName` varchar(20) NOT NULL,
   `columnName` varchar(20) NOT NULL,
   `Version` int(11) NOT NULL,
@@ -58,7 +78,8 @@ CREATE TABLE `aff_schema` (
 CREATE TABLE `aff_testcase` (
   `id` int(11) NOT NULL,
   `ChangeRequestNo` varchar(10) NOT NULL,
-  `testcaseId` int(11) NOT NULL,
+  `testcaseId` int(10) NOT NULL,
+  `testcaseNo` varchar(10) NOT NULL,
   `testcaseVersion` int(11) NOT NULL,
   `changeType` varchar(10) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -72,9 +93,11 @@ CREATE TABLE `aff_testcase` (
 CREATE TABLE `map_fr_version` (
   `id` int(11) NOT NULL,
   `projectId` int(11) NOT NULL,
-  `Old_FR_Id` varchar(20) NOT NULL,
+  `Old_FR_Id` int(10) NOT NULL,
+  `Old_FR_No` char(20) NOT NULL,
   `Old_FR_Version` int(11) NOT NULL,
-  `New_FR_Id` varchar(20) NOT NULL,
+  `New_FR_Id` int(10) NOT NULL,
+  `New_FR_No` char(20) NOT NULL,
   `New_FR_Version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -89,6 +112,7 @@ CREATE TABLE `map_schema_version` (
   `projectId` int(11) NOT NULL,
   `FR_Id` int(11) NOT NULL,
   `FR_Version` int(11) NOT NULL,
+  `schemaVersionId` int(10) NOT NULL,
   `TableName` varchar(20) NOT NULL,
   `Schema_Version` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -97,11 +121,28 @@ CREATE TABLE `map_schema_version` (
 -- Dumping data for table `map_schema_version`
 --
 
-INSERT INTO `map_schema_version` (`id`, `projectId`, `FR_Id`, `FR_Version`, `TableName`, `Schema_Version`) VALUES
-(1, 2, 25, 1, 'ORDER_DETAILS', 1),
-(2, 2, 36, 1, 'ORDER_DETAILS', 1),
-(5, 2, 26, 1, 'PRODUCTS', 1),
-(6, 2, 27, 1, 'ORDERS', 1);
+INSERT INTO `map_schema_version` (`id`, `projectId`, `FR_Id`, `FR_Version`, `schemaVersionId`, `TableName`, `Schema_Version`) VALUES
+(1, 2, 25, 1, 5, 'ORDER_DETAILS', 1),
+(2, 2, 36, 1, 5, 'ORDER_DETAILS', 1),
+(5, 2, 26, 1, 1, 'PRODUCTS', 1),
+(6, 2, 27, 1, 4, 'ORDERS', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `map_tc_version`
+--
+
+CREATE TABLE `map_tc_version` (
+  `id` int(11) NOT NULL,
+  `projectId` int(11) NOT NULL,
+  `Old_TC_Id` int(10) NOT NULL,
+  `Old_TC_No` char(10) NOT NULL,
+  `Old_TC_Version` int(11) NOT NULL,
+  `New_TC_Id` int(11) NOT NULL,
+  `New_TC_No` char(10) NOT NULL,
+  `New_TC_Version` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -110,10 +151,11 @@ INSERT INTO `map_schema_version` (`id`, `projectId`, `FR_Id`, `FR_Version`, `Tab
 --
 
 CREATE TABLE `m_database_schema_info` (
-  `projectId` int(11) NOT NULL,
+  `projectId` int(10) NOT NULL,
   `tableName` char(50) NOT NULL,
   `columnName` char(50) NOT NULL,
-  `schemaVersionId` int(11) NOT NULL,
+  `Id` int(10) NOT NULL,
+  `schemaVersionId` int(10) NOT NULL,
   `Version` int(11) NOT NULL,
   `dataType` char(20) NOT NULL,
   `dataLength` char(10) DEFAULT NULL,
@@ -124,38 +166,38 @@ CREATE TABLE `m_database_schema_info` (
   `constraintNull` char(1) DEFAULT NULL,
   `constraintMinValue` char(10) DEFAULT NULL,
   `constraintMaxValue` char(10) DEFAULT NULL,
-  `activeflag` int(11) NOT NULL
+  `activeflag` smallint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_database_schema_info`
 --
 
-INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `schemaVersionId`, `Version`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `activeflag`) VALUES
-(2, 'PRODUCTS', 'PRODUCT_ID', 25, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'PRODUCTS', 'PRODUCT_NAME', 26, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'PRODUCTS', 'CATEGORY_ID', 27, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'PRODUCTS', 'QUANLITY_PER_UNIT', 28, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'PRODUCTS', 'UNIT_PRICE', 29, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'PRODUCTS', 'UNIT_INSTOCK', 30, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'PRODUCTS', 'UNIT_ONORDER', 31, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CATEGORIES', 'CATEGORY_ID', 32, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CATEGORIES', 'CATEGORY_NAME', 33, 1, 'varchar', '100', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CATEGORIES', 'DESCRIPTION', 34, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CUSTOMERS', 'CUSTORMER_ID', 35, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CUSTOMERS', 'COMPANY_NAME', 36, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CUSTOMERS', 'CONTACT_NAME', 37, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CUSTOMERS', 'CONTACT_TITLE', 38, 1, 'char', '2', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'CUSTOMERS', 'PHONE_NO', 39, 1, 'varchar', '10', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDERS', 'ORDER_ID', 40, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDERS', 'CUSTOMER_ID', 41, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDERS', 'ORDER_DATE', 42, 1, 'date', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDERS', 'SHIP_ADDRESS', 43, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDER_DETAILS', 'ORDER_ID', 44, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDER_DETAILS', 'PRODUCT_ID', 45, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDER_DETAILS', 'UNIT_PRICE', 46, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDER_DETAILS', 'QUANLITY', 47, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
-(2, 'ORDER_DETAILS', 'DISCOUNT', 48, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1);
+INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `Id`, `schemaVersionId`, `Version`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `activeflag`) VALUES
+(2, 'PRODUCTS', 'PRODUCT_ID', 25, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'PRODUCT_NAME', 26, 1, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'CATEGORY_ID', 27, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'QUANLITY_PER_UNIT', 28, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'UNIT_PRICE', 29, 1, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'UNIT_INSTOCK', 30, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'PRODUCTS', 'UNIT_ONORDER', 31, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CATEGORIES', 'CATEGORY_ID', 32, 2, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CATEGORIES', 'CATEGORY_NAME', 33, 2, 1, 'varchar', '100', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CATEGORIES', 'DESCRIPTION', 34, 2, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'CUSTORMER_ID', 35, 3, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'COMPANY_NAME', 36, 3, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'CONTACT_NAME', 37, 3, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'CONTACT_TITLE', 38, 3, 1, 'char', '2', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'CUSTOMERS', 'PHONE_NO', 39, 3, 1, 'varchar', '10', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'ORDER_ID', 40, 4, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'CUSTOMER_ID', 41, 4, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'ORDER_DATE', 42, 4, 1, 'date', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDERS', 'SHIP_ADDRESS', 43, 4, 1, 'varchar', '255', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'ORDER_ID', 44, 5, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'PRODUCT_ID', 45, 5, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'UNIT_PRICE', 46, 5, 1, 'decimal', '18', '6', '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'QUANLITY', 47, 5, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
+(2, 'ORDER_DETAILS', 'DISCOUNT', 48, 5, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -165,8 +207,9 @@ INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `s
 
 CREATE TABLE `m_database_schema_version` (
   `projectId` int(11) NOT NULL,
-  `schemaVersionId` int(11) NOT NULL,
-  `schemaVersionNumber` char(10) DEFAULT NULL,
+  `Id` int(10) NOT NULL,
+  `schemaVersionId` int(10) NOT NULL,
+  `schemaVersionNumber` char(10) NOT NULL,
   `tableName` varchar(50) NOT NULL,
   `columnName` varchar(50) NOT NULL,
   `effectiveStartDate` date NOT NULL,
@@ -175,38 +218,38 @@ CREATE TABLE `m_database_schema_version` (
   `createUser` varchar(50) NOT NULL,
   `updateDate` date DEFAULT NULL,
   `updateUser` char(10) DEFAULT NULL,
-  `activeFlag` smallint(6) DEFAULT NULL
+  `activeFlag` smallint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_database_schema_version`
 --
 
-INSERT INTO `m_database_schema_version` (`projectId`, `schemaVersionId`, `schemaVersionNumber`, `tableName`, `columnName`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
-(2, 25, '1', 'PRODUCTS', 'PRODUCT_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 26, '1', 'PRODUCTS', 'PRODUCT_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 27, '1', 'PRODUCTS', 'CATEGORY_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 28, '1', 'PRODUCTS', 'QUANLITY_PER_UNIT', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 29, '1', 'PRODUCTS', 'UNIT_PRICE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 30, '1', 'PRODUCTS', 'UNIT_INSTOCK', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 31, '1', 'PRODUCTS', 'UNIT_ONORDER', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 32, '1', 'CATEGORIES', 'CATEGORY_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 33, '1', 'CATEGORIES', 'CATEGORY_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 34, '1', 'CATEGORIES', 'DESCRIPTIO', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 35, '1', 'CUSTOMERS', 'CUSTORMER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 36, '1', 'CUSTOMERS', 'COMPANY_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 37, '1', 'CUSTOMERS', 'CONTACT_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 38, '1', 'CUSTOMERS', 'CONTACT_TITLE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 39, '1', 'CUSTOMERS', 'PHONE_NO', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 40, '1', 'ORDERS', 'ORDER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 41, '1', 'ORDERS', 'CUSTOMER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 42, '1', 'ORDERS', 'ORDER_DATE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 43, '1', 'ORDERS', 'SHIP_ADDRESS', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 44, '1', 'ORDER_DETAILS', 'ORDER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 45, '1', 'ORDER_DETAILS', 'PRODUCT_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 46, '1', 'ORDER_DETAILS', 'UNIT_PRICE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 47, '1', 'ORDER_DETAILS', 'QUANLITY', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 48, '1', 'ORDER_DETAILS', 'DISCOUNT', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1);
+INSERT INTO `m_database_schema_version` (`projectId`, `Id`, `schemaVersionId`, `schemaVersionNumber`, `tableName`, `columnName`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
+(2, 25, 1, '1', 'PRODUCTS', 'PRODUCT_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 26, 1, '1', 'PRODUCTS', 'PRODUCT_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 27, 1, '1', 'PRODUCTS', 'CATEGORY_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 28, 1, '1', 'PRODUCTS', 'QUANLITY_PER_UNIT', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 29, 1, '1', 'PRODUCTS', 'UNIT_PRICE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 30, 1, '1', 'PRODUCTS', 'UNIT_INSTOCK', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 31, 1, '1', 'PRODUCTS', 'UNIT_ONORDER', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 32, 2, '1', 'CATEGORIES', 'CATEGORY_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 33, 2, '1', 'CATEGORIES', 'CATEGORY_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 34, 2, '1', 'CATEGORIES', 'DESCRIPTIO', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 35, 3, '1', 'CUSTOMERS', 'CUSTORMER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 36, 3, '1', 'CUSTOMERS', 'COMPANY_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 37, 3, '1', 'CUSTOMERS', 'CONTACT_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 38, 3, '1', 'CUSTOMERS', 'CONTACT_TITLE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 39, 3, '1', 'CUSTOMERS', 'PHONE_NO', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 40, 4, '1', 'ORDERS', 'ORDER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 41, 4, '1', 'ORDERS', 'CUSTOMER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 42, 4, '1', 'ORDERS', 'ORDER_DATE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 43, 4, '1', 'ORDERS', 'SHIP_ADDRESS', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 44, 5, '1', 'ORDER_DETAILS', 'ORDER_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 45, 5, '1', 'ORDER_DETAILS', 'PRODUCT_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 46, 5, '1', 'ORDER_DETAILS', 'UNIT_PRICE', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 47, 5, '1', 'ORDER_DETAILS', 'QUANLITY', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 48, 5, '1', 'ORDER_DETAILS', 'DISCOUNT', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -215,10 +258,10 @@ INSERT INTO `m_database_schema_version` (`projectId`, `schemaVersionId`, `schema
 --
 
 CREATE TABLE `m_fn_req_detail` (
-  `projectid` int(11) DEFAULT NULL,
+  `projectid` int(11) NOT NULL,
   `functionId` int(11) NOT NULL,
   `functionNo` char(10) NOT NULL,
-  `functionVersion` int(11) DEFAULT NULL,
+  `functionVersion` int(11) NOT NULL,
   `typeData` char(10) NOT NULL,
   `dataId` int(11) NOT NULL,
   `dataName` char(20) NOT NULL,
@@ -277,6 +320,7 @@ INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functio
 --
 
 CREATE TABLE `m_fn_req_header` (
+  `Id` int(11) NOT NULL,
   `functionId` int(11) NOT NULL,
   `functionNo` char(10) NOT NULL,
   `functionversion` char(10) DEFAULT NULL,
@@ -293,11 +337,11 @@ CREATE TABLE `m_fn_req_header` (
 -- Dumping data for table `m_fn_req_header`
 --
 
-INSERT INTO `m_fn_req_header` (`functionId`, `functionNo`, `functionversion`, `functionDescription`, `createDate`, `createUser`, `updateDate`, `updateUser`, `projectid`, `activeflag`) VALUES
-(25, 'OS_FR_03', '1', 'Create Order List', '2019-01-07', 'ploy', '2019-04-20', 'ploy', 2, 1),
-(26, 'OS_FR_01', '1', 'Add A New Product Information', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 2, 1),
-(27, 'OS_FR_02', '1', 'Create a New Order', '2019-01-07', 'ploy', '2019-04-15', 'ploy', 2, 1),
-(36, 'OS_FR_04', '1', 'Create Order Discount', '2019-04-30', 'ploy', '2019-04-30', 'ploy', 2, 1);
+INSERT INTO `m_fn_req_header` (`Id`, `functionId`, `functionNo`, `functionversion`, `functionDescription`, `createDate`, `createUser`, `updateDate`, `updateUser`, `projectid`, `activeflag`) VALUES
+(1, 25, 'OS_FR_03', '1', 'Create Order List', '2019-01-07', 'ploy', '2019-04-20', 'ploy', 2, 1),
+(2, 26, 'OS_FR_01', '1', 'Add A New Product Information', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 2, 1),
+(3, 27, 'OS_FR_02', '1', 'Create a New Order', '2019-01-07', 'ploy', '2019-04-15', 'ploy', 2, 1),
+(4, 36, 'OS_FR_04', '1', 'Create Order Discount', '2019-04-30', 'ploy', '2019-04-30', 'ploy', 2, 1);
 
 -- --------------------------------------------------------
 
@@ -344,8 +388,8 @@ CREATE TABLE `m_project` (
   `port` varchar(50) DEFAULT NULL,
   `username` varchar(50) NOT NULL,
   `password` char(10) NOT NULL,
-  `startFlag` smallint(6) DEFAULT NULL,
-  `activeFlag` smallint(6) DEFAULT NULL,
+  `startFlag` smallint(6) NOT NULL,
+  `activeFlag` smallint(1) DEFAULT NULL,
   `createDate` datetime DEFAULT NULL,
   `createUser` char(10) DEFAULT NULL,
   `updateDate` datetime NOT NULL,
@@ -480,28 +524,29 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 --
 
 CREATE TABLE `m_testcase_header` (
-  `projectId` int(11) DEFAULT NULL,
+  `projectId` int(10) NOT NULL,
+  `Id` int(11) NOT NULL,
   `testCaseId` int(11) NOT NULL,
-  `testCaseNo` char(10) DEFAULT NULL,
-  `testcaseVersion` char(10) DEFAULT NULL,
+  `testCaseNo` char(10) NOT NULL,
+  `testcaseVersion` char(10) NOT NULL,
   `testCaseDescription` varchar(50) DEFAULT NULL,
-  `expectedResult` varchar(50) DEFAULT NULL,
+  `expectedResult` varchar(50) NOT NULL,
   `createDate` date DEFAULT NULL,
   `createUser` char(10) DEFAULT NULL,
   `updateDate` date DEFAULT NULL,
   `updateUser` char(10) DEFAULT NULL,
-  `activeflag` int(11) DEFAULT NULL
+  `activeflag` smallint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `m_testcase_header`
 --
 
-INSERT INTO `m_testcase_header` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `testCaseDescription`, `expectedResult`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeflag`) VALUES
-(2, 16, 'OS_TC_03', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-04-17', 'ploy', 1),
-(2, 17, 'OS_TC_01', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 18, 'OS_TC_02', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
-(2, 23, 'OS_TC_04', '1', '', 'Valid', '2019-04-30', 'ploy', '2019-04-30', 'ploy', 1);
+INSERT INTO `m_testcase_header` (`projectId`, `Id`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `testCaseDescription`, `expectedResult`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeflag`) VALUES
+(2, 1, 16, 'OS_TC_03', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-04-17', 'ploy', 1),
+(2, 2, 17, 'OS_TC_01', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 3, 18, 'OS_TC_02', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
+(2, 4, 23, 'OS_TC_04', '1', '', 'Valid', '2019-04-30', 'ploy', '2019-04-30', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -552,16 +597,6 @@ CREATE TABLE `t_change_request_detail` (
   `refColumnName` char(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
---
--- Dumping data for table `t_change_request_detail`
---
-
-INSERT INTO `t_change_request_detail` (`changeRequestNo`, `sequenceNo`, `changeType`, `typeData`, `refdataId`, `refSchemaVersionId`, `dataName`, `dataType`, `dataLength`, `scale`, `constraintUnique`, `constraintNotNull`, `constraintDefault`, `constraintMin`, `constraintMax`, `refTableName`, `refColumnName`) VALUES
-('CH01', '1', 'edit', '1', '40', '48', 'dDiscount', NULL, NULL, NULL, 'N', 'N', NULL, NULL, '100', 'ORDER_DETA', 'DISCOUNT'),
-('CH01', '2', 'edit', '1', '38', '46', 'dUnit Pric', 'DECIMAL', NULL, '2', 'N', 'N', NULL, NULL, NULL, 'ORDER_DETA', 'UNIT_PRICE'),
-('CH01', '3', 'delete', '2', '41', NULL, 'dPrice', 'decimal', '18', '2', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('CH01', '4', 'add', '1', '287', '1', 'dId', 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL);
-
 -- --------------------------------------------------------
 
 --
@@ -583,13 +618,6 @@ CREATE TABLE `t_change_request_header` (
   `updateDate` char(10) DEFAULT NULL,
   `reason` varchar(50) CHARACTER SET utf8 DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `t_change_request_header`
---
-
-INSERT INTO `t_change_request_header` (`projectId`, `changeRequestNo`, `changeUserId`, `changeDate`, `changeFunctionId`, `changeFunctionNo`, `changeFunctionVersion`, `changeStatus`, `createUser`, `createDate`, `updateUser`, `updateDate`, `reason`) VALUES
-('2', 'CH01', '1', '2019-05-08', '25', 'OS_FR_03', '1', '1', 'ploy', '2019-05-08', 'ploy', '2019-05-08', NULL);
 
 -- --------------------------------------------------------
 
@@ -646,6 +674,12 @@ ALTER TABLE `aff_fr`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `aff_rtm`
+--
+ALTER TABLE `aff_rtm`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `aff_schema`
 --
 ALTER TABLE `aff_schema`
@@ -670,16 +704,22 @@ ALTER TABLE `map_schema_version`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `map_tc_version`
+--
+ALTER TABLE `map_tc_version`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `m_database_schema_info`
 --
 ALTER TABLE `m_database_schema_info`
-  ADD PRIMARY KEY (`schemaVersionId`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
-  ADD PRIMARY KEY (`schemaVersionId`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `m_fn_req_detail`
@@ -691,7 +731,7 @@ ALTER TABLE `m_fn_req_detail`
 -- Indexes for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
-  ADD PRIMARY KEY (`functionId`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- Indexes for table `m_project`
@@ -715,7 +755,7 @@ ALTER TABLE `m_testcase_detail`
 -- Indexes for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
-  ADD PRIMARY KEY (`testCaseId`);
+  ADD PRIMARY KEY (`Id`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -725,6 +765,11 @@ ALTER TABLE `m_testcase_header`
 -- AUTO_INCREMENT for table `aff_fr`
 --
 ALTER TABLE `aff_fr`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
+-- AUTO_INCREMENT for table `aff_rtm`
+--
+ALTER TABLE `aff_rtm`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT for table `aff_schema`
@@ -747,15 +792,20 @@ ALTER TABLE `map_fr_version`
 ALTER TABLE `map_schema_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
+-- AUTO_INCREMENT for table `map_tc_version`
+--
+ALTER TABLE `map_tc_version`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+--
 -- AUTO_INCREMENT for table `m_database_schema_info`
 --
 ALTER TABLE `m_database_schema_info`
-  MODIFY `schemaVersionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
-  MODIFY `schemaVersionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
@@ -765,7 +815,7 @@ ALTER TABLE `m_fn_req_detail`
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
-  MODIFY `functionId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 --
 -- AUTO_INCREMENT for table `m_project`
 --
@@ -780,7 +830,7 @@ ALTER TABLE `m_testcase_detail`
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
-  MODIFY `testCaseId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

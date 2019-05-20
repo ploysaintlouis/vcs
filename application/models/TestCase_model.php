@@ -116,7 +116,9 @@ class TestCase_model extends CI_Model{
 			FROM M_TESTCASE_HEADER h
 			INNER JOIN M_TESTCASE_DETAIL v
 			ON h.testCaseId = v.testCaseId
+			AND h.testCaseVersion = v.testCaseVersion
 			WHERE $where_condition";
+			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}

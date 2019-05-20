@@ -113,7 +113,7 @@ class FunctionalRequirement_model extends CI_Model {
 		}
 
 		if(isset($param->schemaVersionId) && !empty($param->schemaVersionId)){
-			$where[] = "d.schemaVersionId = $param->schemaVersionId";
+			$where[] = "d.schemaId = $param->schemaVersionId";
 		}
 
 		$where_clause = implode(' AND ', $where);
@@ -205,6 +205,7 @@ class FunctionalRequirement_model extends CI_Model {
 				h.functionNo,
 				h.functionDescription,
 				v.functionVersion,
+				db.Id,
 				db.schemaVersionId,
 				v.typeData,
 				v.dataId,
@@ -227,6 +228,7 @@ class FunctionalRequirement_model extends CI_Model {
 		INNER JOIN M_DATABASE_SCHEMA_INFO db
 		ON v.refTableName = db.tableName
 		AND v.refColumnName = db.columnName
+		AND db.activeflag = '1'
 		WHERE $where_clause
 		UNION
 		SELECT 	h.projectId,
@@ -234,6 +236,7 @@ class FunctionalRequirement_model extends CI_Model {
 				h.functionNo,
 				h.functionDescription,
 				v.functionVersion,
+				NULL Id,
 				NULL schemaVersionId,
 				v.typeData,
 				v.dataId,v.dataName,
@@ -283,12 +286,12 @@ class FunctionalRequirement_model extends CI_Model {
 	}
 
 	function searchFunctionalRequirementVersionByCriteria($param){
-		if(null != $param->functionId && !empty($param->functionId)){
-			$where[] = "functionId = $param->functionId";
-		}
 
-		if(isset($param->functionVersionNumber) && !empty($param->functionVersionNumber)){
-			$where[] = "functionVersion = $param->functionVersion";
+		if(null != $param->functionId && !empty($param->functionId)){
+			$where[] = "functionId = '$param->functionId'";
+		}
+		if(isset($param->functionversion) && !empty($param->functionversion)){
+			$where[] = "functionVersion = '$param->functionVersion'";
 		}
 
 		$where_condition = implode(" AND ", $where);
@@ -296,6 +299,7 @@ class FunctionalRequirement_model extends CI_Model {
 		$sqlStr = "SELECT * 
 			FROM M_FN_REQ_DETAIL
 			WHERE $where_condition";
+			print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}
@@ -344,7 +348,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 
 		if ($param->referTableName !=null) {
 				$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,
-		 createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaVersionId,dataType,
+		 createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaId,dataType,
 		 effectiveStartDate,effectiveEndDate,activeFlag,functionVersion,
 		 dataLength,decimalPoint,constraintPrimaryKey,constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue)
 		 VALUES ('{$param->projectId}','{$param->typeData}', '{$param->dataName}', '{$param->referTableName}',
@@ -355,7 +359,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 		//var_dump($sqlStr);
 		}else{
 			$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,
-			createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaVersionId,dataType,
+			createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaId,dataType,
 			effectiveStartDate,effectiveEndDate,activeFlag,functionVersion,
 			dataLength,decimalPoint,constraintPrimaryKey,constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue)
 			VALUES ('{$param->projectId}','{$param->typeData}', '{$param->dataName}', '{$param->referTableName}',

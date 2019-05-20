@@ -20,6 +20,8 @@
         $this->load->view('ChangeManagement/results/panel_affect_fr',$aff_fr_panel);
         $this->load->view('ChangeManagement/results/panel_affect_schema',$aff_schema_panel);
         $this->load->view('ChangeManagement/results/panel_affect_testcase',$aff_testcase_panel);
+        $this->load->view('ChangeManagement/results/panel_affect_rtm',$aff_rtm_panel);
+
     ?>
     <div class="col-sm-11"></div><div class="col-sm-1"><button type="button" class="btn btn-success" id="btnConfirmResult">Confirm</button></div>
     <div id="divFunction">
@@ -95,10 +97,10 @@
                     $("#divFunction").html(data);
                 
                         //$("#loadingPage").modal(hide);
-                            //alert(data.result);
+                            alert("Save Successful!");
                             //alert(data.FR_Description);
                             //alert(baseUrl);
-                        //window.location  = baseUrl+"index.php/Dashboard";
+                        window.location  = baseUrl+"index.php/Dashboard";
                         $("#loadingPage").modal('hide');
                     }
                 });

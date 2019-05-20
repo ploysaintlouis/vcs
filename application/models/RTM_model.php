@@ -69,7 +69,16 @@ class RTM_model extends CI_Model{
 	}
 
 	function searchRTMVersionInfoByCriteria($param){
+		//print_r($param->activeflag);
 
+		if(isset($param->projectId) && !empty($param->projectId)){
+			$where[] = "a.projectId = $param->projectId";
+		}
+		if((null != $param->activeflag)){
+			$where[] = "a.activeflag = '$param->activeflag' ";
+		}
+		$where_condition = implode(" AND ", $where);
+		//print_r($where_condition);
 			$sqlStr ="SELECT 
 					a.testCaseversion,b.testCaseNo,
 					a.functionversion,a.functionId,c.functionNo,
@@ -78,9 +87,13 @@ class RTM_model extends CI_Model{
 					FROM M_RTM_VERSION a
 					LEFT JOIN M_FN_REQ_HEADER c
 					ON a.functionId = c.functionId
+					AND a.functionVersion = c.functionVersion
 					LEFT JOIN M_TESTCASE_HEADER b
 					on a.testCaseId = b.testCaseId
-					where a.projectid = $param->projectId ";
+					AND a.testCaseVersion = b.testCaseVersion
+					where $where_condition
+					ORDER BY functionNo,activeflag ";
+					//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		//return $result->row();
 		return $result->result_array();

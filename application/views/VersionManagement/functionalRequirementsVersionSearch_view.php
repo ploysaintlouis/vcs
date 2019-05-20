@@ -68,8 +68,8 @@
 								<?php 
 								if(null != $fnReqVersionCombo) { ?>
 	            						<?php	foreach($fnReqVersionCombo as $value): ?>
-	            							<option value="<?php echo $value['functionVersion']; ?>" <?php echo set_select('inputVersion', $value['functionVersion'], (!empty($fnReqVersionId) && $fnReqVersionId == $value['functionVersion']? TRUE : FALSE )); ?>>
-		            								<?php echo 'Version '.$value['functionVersion']; ?>
+	            							<option value="<?php echo $value['Id']; ?>" <?php echo set_select('inputVersion', $value['Id'], (!empty($fnReqVersionId) && $fnReqVersionId == $value['Id']? TRUE : FALSE )); ?>>
+		            								<?php echo 'Version '.$value['functionversion']; ?>
 		        						</option>
 									<?php endforeach; ?>
 									<?php } ?>
@@ -125,7 +125,7 @@
 							<div class="form-group">
 								<dl>
 									<dt>Version:</dt>
-									<dd><?php echo $resultVersionInfo->functionVersion; ?></dd>
+									<dd><?php echo $resultVersionInfo->functionVersionNumber; ?></dd>
 								</dl>
 							</div>
 						</div>
@@ -176,7 +176,7 @@
                 							<tr>
                 								<td><?php echo $define++; ?></td>
                 								<td>
-													<?php if ($value['typeData'] == '1' ){
+													<?php if ($value['typeData'] = '1' ){
 														echo "Input"; 
 													}else{
 														echo "Output"; 

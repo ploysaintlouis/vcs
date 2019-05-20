@@ -79,8 +79,8 @@
             						<option value="">--Please Select--</option>
             						<?php if(isset($testCaseVersionCombo) && 0 < count($testCaseVersionCombo)){ 
             							foreach($testCaseVersionCombo as $value){ ?>
-            								<option value="<?php echo $value['testCaseVersion']; ?>" <?php echo set_select('inputVersion', $value['testCaseVersion'], (!empty($testCaseVersion) && $testCaseVersion == $value['testCaseVersion']? TRUE : FALSE )); ?>>
-	            									<?php echo 'Version '.$value['testCaseVersion']; ?>
+            								<option value="<?php echo $value['testcaseVersion']; ?>" <?php echo set_select('inputVersion', $value['testcaseVersion'], (!empty($testCaseVersion) && $testCaseVersion == $value['testcaseVersion']? TRUE : FALSE )); ?>>
+	            									<?php echo 'Version '.$value['testcaseVersion']; ?>
 	        								</option>
             						<?php } } ?>
             					</select>
