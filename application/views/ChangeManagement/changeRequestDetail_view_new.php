@@ -135,10 +135,24 @@
 	                							<th>Max</th>
 	                							<th>Table</th>
 	                							<th>Column</th>
-	                							<th> 
-	                							<!-- <a href="#"><span class="label label-success">Add new input</span></a> -->
-	                								<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs " >Add new Input/Output</button>
-	                							</th>
+												<th>
+												<?php if(isset($inputChangeConfirm) && 0 < count($inputChangeConfirm)) { 
+														foreach($inputChangeConfirm as $value1): 
+															$userId = $this->session->userdata('userId'); //echo $_SESSION['staffflag'] ;
+
+															if (($_SESSION['userId'] != $value1['userId']) || ($resultHeader->functionId == $value1['functionId']))
+															{ 
+																$var =1; ?>
+																<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs "<?php echo isset($var) ? 'disabled="true"' : '';?> >Add New Input/Output</button>
+															<?php }else{ ?>
+																<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs " >Add New Input/Output</button>
+															<?php } 
+														endforeach; 
+													}else{ ?>
+																<button type="button" name="addBtn" id ="addBtn" class="btn btn-success btn-xs" >Add New Input/Output</button> 
+
+													<?php } ?>	</th>
+
 	                						</tr>
 											<script type="text/javascript">
 												$(function() {
@@ -262,9 +276,10 @@
 													<input type="hidden" name="projectId" id="projectId" value="<?php echo $value['projectId']; ?>">
 													<?php if(isset($inputChangeConfirm) && 0 < count($inputChangeConfirm)) { 
 														foreach($inputChangeConfirm as $value1): 
-															//echo $value1['functionId'];
-															if ($value['functionId'] == $value1['functionId'])
-															{
+															$userId = $this->session->userdata('userId'); //echo $_SESSION['staffflag'] ;
+
+															if (($_SESSION['userId'] != $value1['userId']) || ($value['functionId'] == $value1['functionId']))
+															{ 
 																$var =1; ?>
 																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" <?php echo isset($var) ? 'disabled="true"' : ''; ?> >Edit</button> 
 																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " <?php echo isset($var) ? 'disabled="true"' : ''; ?> >Delete</button> <!-- bug ไม่ส่ง keyid บ้างปุ่ม -->

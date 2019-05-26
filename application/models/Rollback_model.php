@@ -48,6 +48,8 @@ class Rollback_model extends CI_Model{
 			FROM T_CHANGE_REQUEST_HEADER h 
 			INNER JOIN M_USERS u 
 			ON h.changeUserId = u.userId
+			INNER JOIN TEMP_ROLLBACK a
+			ON a.ChangeRequestNo <> h.changeRequestNo
 			INNER JOIN M_FN_REQ_HEADER fh 
 			ON h.changeFunctionId = fh.functionId
 			WHERE $where_condition
@@ -126,12 +128,12 @@ class Rollback_model extends CI_Model{
 	}
 	
 	function getChangeHistoryDatabaseSchemaList($changeRequestNo){
-		$sqlStr = "SELECT DISTINCT a.* 
+		$sqlStr = "SELECT DISTINCT a.*,b.New_Schema_Version
 			 FROM AFF_SCHEMA a,MAP_SCHEMA_VERSION b
 			WHERE a.changeRequestNo = '$changeRequestNo'
 			  AND a.changeType <> ''
-			  AND a.schemaVersionId = b.schemaVersionId
-			  AND b.Schema_Version = a.Version
+			  AND a.schemaVersionId = b.Old_schemaVersionId
+			  AND b.Old_Schema_Version = a.Version
 			ORDER BY tableName, columnName
 			";
 		$result = $this->db->query($sqlStr);
@@ -150,6 +152,33 @@ class Rollback_model extends CI_Model{
 			FROM AFF_RTM h
 			WHERE h.changeRequestNo = '$changeRequestNo'
 			ORDER BY h.functionNo, h.testCaseNo";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	function saveProcess($changeRequestNo, $projectId, $reason,$userId) {
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$strsql = "INSERT INTO TEMP_ROLLBACK 
+		(projectid,ChangeRequestNo,status,userId,requestDate,reason)
+		VALUES('$projectId','$changeRequestNo','0','$userId','$currentDateTime','$reason')
+		";
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+	} 
+	
+	function searchSaveProcessRollback($param){
+		$sqlStr = "SELECT 
+				a.ChangeRequestNo, 
+				a.status,
+				b.Firstname,
+			  b.lastname,
+				a.requestDate,
+				a.reason
+			 FROM TEMP_ROLLBACK a,M_USERS b
+			WHERE a.userId = b.userId
+			AND a.status = '0'
+			ORDER BY requestDate";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}

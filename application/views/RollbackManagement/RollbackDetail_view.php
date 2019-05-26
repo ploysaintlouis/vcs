@@ -321,7 +321,7 @@
 											<?php } ?>
 										</td>
 										<td class="hidden-sm hidden-xs">
-											<small class="label label-success"><?php echo $value['newSchemaVersionNumber'] ?></small>
+											<small class="label label-success"><?php echo $value['New_Schema_Version'] ?></small>
 										</td>
 									</tr>
 									<?php } ?>
@@ -388,6 +388,35 @@
 		</div>
 	</div>
 
+	<div class="row">
+		<div class="col-md-12">
+			<form role="form" method="post" id="cancelChange_form" action="<?php echo base_url() ?>index.php/Rollback/saveProcess/">
+				<input type="hidden" name="changeRequestNo" value="<?php echo $keyParam['changeRequestNo'] ?>">
+        		<input type="hidden" name="projectId" value="<?php echo $keyParam['projectId'] ?>">
+				<input type="hidden" name="userId" value="<?php echo $_SESSION['userId'] ?>">
+				<div class="box box-solid" style="margin-top: 10px;">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group" id="_inputForm">
+				        			<label>Please provide in this entry the reason for cancelling the change.</label>
+
+				        			<input type="text" class="form-control" id="inputReason" name="inputReason" value="<?php echo $reason ?>">
+				        			<?php echo form_error('inputReason', '<font color="red">','</font><br>'); ?>
+
+				        			<button type="submit" class="btn btn-danger" onclick="changeCancellation()" style="margin-top: 5px;">
+					            		<i class="fa fa-fw fa-undo"></i>
+					            		Save
+					            	</button>
+				        		</div>
+							</div>
+						</div>
+					</div>
+				</div>
+	      	</form>	
+		</div>
+	</div>
+
 	<!-- <div id="cancel_modal" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
 			<div class="modal-content" style="border-radius:6px;">
@@ -418,6 +447,7 @@
 		</div>
 	</div> -->
 
+<?php if ($_SESSION['staffflag'] == '3') { ?>
 	<div class="row">
 		<div class="col-md-12">
 			<form role="form" method="post" id="cancelChange_form" action="<?php echo base_url() ?>Rollback/doCancelProcess/">
@@ -429,10 +459,6 @@
 							<div class="col-sm-12">
 								<div class="form-group" id="_inputForm">
 				        			<label>Please provide in this entry the reason for cancelling the change.</label>
-
-				        			<input type="text" class="form-control" id="inputReason" name="inputReason" value="<?php echo $reason ?>">
-				        			<?php echo form_error('inputReason', '<font color="red">','</font><br>'); ?>
-
 				        			<button type="submit" class="btn btn-danger" onclick="changeCancellation()" style="margin-top: 5px;">
 					            		<i class="fa fa-fw fa-undo"></i>
 					            		Rollback Change
@@ -445,5 +471,6 @@
 	      	</form>	
 		</div>
 	</div>
+<?php } ?>
 
 </section>

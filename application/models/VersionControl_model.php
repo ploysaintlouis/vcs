@@ -505,12 +505,25 @@ class VersionControl_model extends CI_Model{
        return $result->result_array();
     } 
 
-    function MapDBVersion($New_param,$New_param_DB) {
+    function SearchDatabaseSchemaOldDetail($schema_list_aff,$paramInsert) {
+    
+        $strsql = "SELECT DISTINCT tableName,schemaVersionId,Version
+                FROM AFF_SCHEMA
+                WHERE tableName = '$schema_list_aff->tableName'
+                AND ChangeRequestNo = '$schema_list_aff->changeRequestNo'
+        ";
+       $result = $this->db->query($strsql);
+       //echo $sqlStr ;
+       return $result->result_array();
+    } 
+
+    function MapDBVersion($Old_param_DB,$New_param_DB) {
         $currentDateTime = date('Y-m-d H:i:s');
 
         $strsql = "INSERT INTO MAP_SCHEMA_VERSION 
-        (projectid, FR_Id, FR_Version,schemaVersionId, TableName,Schema_Version)
-        VALUES('$New_param->projectId','$New_param->functionId','$New_param->functionversion',
+        (projectid,Old_schemaVersionId,Old_TableName,Old_Schema_Version,
+        New_schemaVersionId,New_TableName,New_Schema_Version)
+        VALUES('$Old_param_DB->projectId','$Old_param_DB->schemaVersionId','$Old_param_DB->tableName','$Old_param_DB->schemaVersionNumber',
         '$New_param_DB->schemaVersionId','$New_param_DB->tableName','$New_param_DB->schemaVersionNumber')
         ";
 		$result = $this->db->query($strsql);

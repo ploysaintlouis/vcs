@@ -26,7 +26,8 @@ class Rollback extends CI_Controller{
 		public function search(){
 			$error_message = '';
 			$changeList = null;
-	
+			$waitList = null;
+
 			$projectId = $this->input->post('inputProject');
 			$this->FValidate->set_rules('inputProject', null, 'required');
 			if($this->FValidate->run()){
@@ -37,11 +38,13 @@ class Rollback extends CI_Controller{
 				if(0 == count($changeList)){
 					$error_message = ER_MSG_006;
 				}
-	
+				$waitList = $this->mRollback->searchSaveProcessRollback($criteria);
+
 				$data['selectedProjectId'] = $projectId;
 			}
 			$formObj = (object) array('projectId' => $projectId);
 			$data['criteria'] = $formObj;
+			$data['waitList'] = $waitList;
 			$data['changeList'] = $changeList;
 			$data['error_message'] = $error_message;
 			$this->openView($data, 'search');
@@ -118,6 +121,33 @@ class Rollback extends CI_Controller{
 		$data['affectedSchemaList'] = $affectedSchemaList;
 		$data['affectedRTMList'] = $affectedRTMList;
 		return true;
+	}
+
+	public function saveProcess(){
+		$error_message = '';
+		$success_message = '';
+
+		$changeRequestNo = $this->input->post('changeRequestNo');
+		$projectId = $this->input->post('projectId');
+		$reason = $this->input->post('inputReason');
+		$userId = $this->input->post('userId');
+echo $changeRequestNo;
+		try{
+			$this->FValidate->set_rules('inputReason', null, 'trim|required');
+			
+			if($this->FValidate->run()){
+				$saveRollback = $this->mRollback->saveProcess($changeRequestNo, $projectId, $reason,$userId);
+			}else{
+				$error_message = str_replace("{0}", "Input Reason", ER_MSG_019);
+			}
+		}catch(Exception $e) {
+			$error_message = $e->getMessage();
+		}
+
+		$data['reason'] = $reason;
+		$data['error_message'] = $error_message;
+		$data['success_message'] = $success_message;
+		$this->openView($data, 'search');
 	}
 
 	public function doCancelProcess(){

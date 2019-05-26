@@ -114,4 +114,45 @@
 			window.location  = baseUrl + "index.php/Rollback/viewDetail/"+ projectId+"/" +changeRequestNo;
 		}
 	</script>
+
+<?php if(isset($waitList) and 0 < count($waitList)){ ?>
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-success" style="margin-top: -10px;">
+				<div class="box-header">
+					<h3 class="box-title">Waiting Rollback</h3>
+				</div>
+
+				<div class="box-body table-responsive no-padding" style="margin-top: -10px;">
+					<table id="resultTbl" class="table table-striped">
+						<tbody>
+							<tr>
+								<th class="col-md-1">#</th>
+								<th class="col-md-2">Change Request No.</th>
+								<th class="col-md-1">Request Date</th>
+								<th class="col-md-1">User</th>
+								
+								<th class="col-md-3">reason</th>
+							</tr>
+							<?php 
+							$i = 1;
+							foreach($waitList as $value){ ?>
+							<tr>
+								<td><?php echo $i++ ?></td>
+								<td><?php echo $value['ChangeRequestNo'] ?></td>
+								<td><?php echo $value['requestDate'] ?></td>
+								<td><?php echo $value['Firstname'].' '.$value['lastname'] ?></td>
+								<td><?php echo $value['reason'] ?></td>
+
+							</tr>
+							<?php } ?>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<?php } ?>
+
 </section>

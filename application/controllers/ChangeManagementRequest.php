@@ -1017,9 +1017,18 @@ class ChangeManagementRequest extends CI_Controller {
 						'schemaVersionId'			=> $value['schemaVersionId']
 					);
 				}
-				//print_r($New_param_DB);
-				if(0 < count($New_param)){
-					$MAP_FR = $this->mVersion->MapDBVersion($New_param,$New_param_DB);
+				$OldDB = $this->mVersion->SearchDatabaseSchemaOldDetail($schema_list_aff,$paramInsert);
+				foreach($OldDB as $value){
+					$Old_param_DB = (object) array(
+						'projectId' 	  			=> $prjId,
+						'tableName'			=> $value['tableName'],
+						'schemaVersionNumber' => $value['Version'],
+						'schemaVersionId'			=> $value['schemaVersionId']
+					);
+				}
+				//print_r($Old_param_DB);
+				if(0 < count($New_param_DB)){
+					$MAP_FR = $this->mVersion->MapDBVersion($Old_param_DB,$New_param_DB);
 				}
 
 				//** save change history DB detail		

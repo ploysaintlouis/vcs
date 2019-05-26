@@ -19,10 +19,6 @@ class ChangeManagement_model extends CI_Model{
 
 	function searchTempFRInputChangeList($param){
 
-		if(!empty($param->userId)){
-			$where[] = "userId = $param->userId";
-		}
-
 		if(!empty($param->functionId)){
 			$where[] = "functionId = $param->functionId";
 		}
@@ -61,10 +57,6 @@ class ChangeManagement_model extends CI_Model{
 
 	function searchTempFRInputChangeConfirm($param){
 
-		if(!empty($param->userId)){
-			$where[] = "userId = $param->userId";
-		}
-
 		if(!empty($param->functionId)){
 			$where[] = "functionId = $param->functionId";
 		}
@@ -92,7 +84,7 @@ class ChangeManagement_model extends CI_Model{
 		}
 		$where_clause = implode(' AND ', $where);
 
-		$sqlStr = "SELECT distinct functionId,functionVersion
+		$sqlStr = "SELECT distinct functionId,functionVersion,userId
 			FROM T_TEMP_CHANGE_LIST
 			WHERE $where_clause
 			AND confirmflag <> '0'
