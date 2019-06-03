@@ -13,7 +13,7 @@ class TestCase_model extends CI_Model{
 	function searchTestCaseInfoByCriteria($projectId, $testCaseStatus,$testCaseNo,$testCaseVersion){
 		$where[] = "th.projectId = ".$projectId." ";
 		if("2" != $testCaseStatus){
-			$where[] = "tv.activeFlag = '".$testCaseStatus."'";
+			$where[] = "th.activeFlag = '".$testCaseStatus."'";
 		}
 		if(!empty($testCaseVersion)){
 			$where[] = "th.testCaseVersion ='$testCaseVersion'";
@@ -27,22 +27,21 @@ class TestCase_model extends CI_Model{
 				th.testCaseNo,
 				th.testCaseDescription,
 				th.expectedResult,
-				
 				th.testCaseVersion,
-				CONVERT(nvarchar, tv.effectiveStartDate, 103) as effectiveStartDate,
-				CONVERT(nvarchar, tv.effectiveEndDate, 103) as effectiveEndDate,
-				tv.activeFlag,
+				th.UpdateDate,
+				th.UpdateDate,
+				th.activeFlag,
 				h.functionNo,
 				h.functionDescription
-			FROM M_TESTCASE_HEADER th
-			INNER JOIN M_TESTCASE_DETAIL tv
-			ON th.testCaseId = tv.testCaseId
-			LEFT JOIN M_RTM r
-			ON th.testCaseId = r.testCaseId
-			LEFT JOIN M_FN_REQ_HEADER h
-			ON r.functionId = h.functionId
-			WHERE $where_clause
+			FROM M_TESTCASE_HEADER th , M_RTM_VERSION r,M_FN_REQ_HEADER h 
+			WHERE   th.testCaseId = r.testCaseId 
+			AND th.testCaseVersion = r.testCaseVersion
+			AND r.functionId = h.functionId 
+			AND r.functionVersion = h.functionVersion
+			AND h.activeflag = '1'
+			AND $where_clause
 			ORDER BY th.testCaseNo, th.testCaseVersion";
+			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -123,10 +122,10 @@ class TestCase_model extends CI_Model{
 		return $result->row();
 	}
 
-	function insertTestCaseHeader($param, $user){
+	function insertTestCaseHeader($param, $user,$New_testCaseId){
 		$currentDateTime = date('Y-m-d H:i:s');
-		$sqlStr = "INSERT INTO M_TESTCASE_HEADER (testCaseNo, testCaseDescription, expectedResult, projectId, createDate, createUser, updateDate, updateUser,testcaseVersion,activeflag) 
-		VALUES ('{$param->testCaseNo}', '{$param->testCaseDescription}', '{$param->expectedResult}', {$param->projectId}, '{$currentDateTime}', '$user', '{$currentDateTime}', '$user','{$param->testcaseVersion}','{$param->activeflag}')";
+		$sqlStr = "INSERT INTO M_TESTCASE_HEADER (testCaseId,testCaseNo, testCaseDescription, expectedResult, projectId, createDate, createUser, updateDate, updateUser,testcaseVersion,activeflag) 
+		VALUES ('{$New_testCaseId}','{$param->testCaseNo}', '{$param->testCaseDescription}', '{$param->expectedResult}', {$param->projectId}, '{$currentDateTime}', '$user', '{$currentDateTime}', '$user','{$param->testcaseVersion}','{$param->activeflag}')";
 		$result = $this->db->query($sqlStr);
 		if($result){
 			$query = $this->db->query("SELECT MAX(testCaseId) AS last_id FROM M_TESTCASE_HEADER");
@@ -239,6 +238,17 @@ function searchFRMAXTCNo() {
 		return $this->db->affected_rows();
 	}
 
+	function searchMaxTestcaseId(){
+
+		$strsql = " SELECT MAX(testCaseId) as MAX_TestCaseId
+		FROM M_TESTCASE_HEADER 
+	    ";
+
+		$result = $this->db->query($strsql);
+		//echo $sqlStr ;
+		return $result->result_array();
+	}
+
 	function deleteTestCaseDetail($param){
 		if(isset($param->testCaseId)  && !empty($param->testCaseId)){
 			$where[] = "testCaseId = $param->testCaseId";
@@ -260,8 +270,9 @@ function searchFRMAXTCNo() {
 	function uploadTestCaseInfo($param, $user){
 		$this->db->trans_begin(); //Starting Transaction
 
-		$testCaseId = '';
 		$effectiveStartDate = date('Y-m-d H:i:s');
+		$MAX_TestCaseId = $this->searchMaxTestcaseId();
+		$New_testCaseId = $MAX_TestCaseId[0]['MAX_TestCaseId']+1;
 
 		//Check Existing Test Case Header
 		//var_dump($param[0]);
@@ -273,10 +284,9 @@ function searchFRMAXTCNo() {
 			$testCaseId = $result->testCaseId;
 		}else{
 			//Insert new Test Case Header
-			$testCaseId = $this->insertTestCaseHeader($param[0], $user);
+			$testCaseId = $this->insertTestCaseHeader($param[0], $user,$New_testCaseId);
 			
 			//Insert new Test Case Version
-
 
 			$param[0]->testCaseId = $testCaseId;
 			$param[0]->effectiveStartDate = $effectiveStartDate;

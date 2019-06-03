@@ -388,6 +388,7 @@
 		</div>
 	</div>
 
+	<?php if ($_SESSION['staffflag'] != '3') { ?>
 	<div class="row">
 		<div class="col-md-12">
 			<form role="form" method="post" id="cancelChange_form" action="<?php echo base_url() ?>index.php/Rollback/saveProcess/">
@@ -416,6 +417,7 @@
 	      	</form>	
 		</div>
 	</div>
+	<?php } ?>
 
 	<!-- <div id="cancel_modal" class="modal fade" tabindex="-1" role="dialog">
 		<div class="modal-dialog">
@@ -450,7 +452,7 @@
 <?php if ($_SESSION['staffflag'] == '3') { ?>
 	<div class="row">
 		<div class="col-md-12">
-			<form role="form" method="post" id="cancelChange_form" action="<?php echo base_url() ?>Rollback/doCancelProcess/">
+			<form role="form" method="post" id="cancelChange_form" action="<?php echo base_url() ?>index.php/Rollback/doCancelProcess/">
 				<input type="hidden" name="changeRequestNo" value="<?php echo $keyParam['changeRequestNo'] ?>">
         		<input type="hidden" name="projectId" value="<?php echo $keyParam['projectId'] ?>">
 				<div class="box box-solid" style="margin-top: 10px;">
@@ -458,7 +460,6 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group" id="_inputForm">
-				        			<label>Please provide in this entry the reason for cancelling the change.</label>
 				        			<button type="submit" class="btn btn-danger" onclick="changeCancellation()" style="margin-top: 5px;">
 					            		<i class="fa fa-fw fa-undo"></i>
 					            		Rollback Change

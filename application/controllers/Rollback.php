@@ -131,7 +131,7 @@ class Rollback extends CI_Controller{
 		$projectId = $this->input->post('projectId');
 		$reason = $this->input->post('inputReason');
 		$userId = $this->input->post('userId');
-echo $changeRequestNo;
+//echo $changeRequestNo;
 		try{
 			$this->FValidate->set_rules('inputReason', null, 'trim|required');
 			
@@ -156,60 +156,105 @@ echo $changeRequestNo;
 
 		$changeRequestNo = $this->input->post('changeRequestNo');
 		$projectId = $this->input->post('projectId');
-		$reason = $this->input->post('inputReason');
+		$user = $_SESSION['username'];
 
 		try{
-			$this->FValidate->set_rules('inputReason', null, 'trim|required');
+
+				/** 1. Get FR Change Details */
+				$changeFRInfo = $this->mRollback->getChangeRequestFunctionalRequirement($changeRequestNo);
+				//print_r($changeFRInfo);
+				foreach ($changeFRInfo as $value) {
+					$param_FR = (object) array(
+						'projectId'  => $projectId,
+						'status' 	 => 1,
+						'user'		=>$user,
+						'changeRequestNo' => $changeRequestNo,
+						'functionId' => $value['FR_Id'],
+						'functionNo' 	  => $value['FR_No'],
+						'functionVersion' => $value['FR_Version'],
+						'New_FR_Id'	=>$value['New_FR_Id'],
+						'New_FR_Version' =>$value['New_FR_Version']
+						);
+						//print_r($param_FR);
+						if (0 < count($param_FR)){
+							$UpdateStatusFR_New = $this->mRollback->updateRollback_FRHeader($param_FR);
+							$UpdateStatusFR_Old = $this->mRollback->updateRequirementsHeader($param_FR);
+							$UpdateStatusFRDetail_New = $this->mRollback->updateRollback_FRDetail($param_FR);
+							$UpdateStatusFRDetail_Old = $this->mRollback->updateRequirementsDetail($param_FR);
+						}
+				}
+				//print_r($param_FR->user);
+
+				/** 2. Get TC Change Details */
+				$changeTCInfo = $this->mRollback->getChangeRequestTestCase($changeRequestNo);
+				foreach ($changeTCInfo as $value) {
+					$param_TC = (object) array(
+						'projectId'  => $projectId,
+						'status' 	 => 1,
+						'user'		=>$user,
+						'changeRequestNo' => $changeRequestNo,
+						'testCaseId' => $value['testcaseId'],
+						'testcaseNo' 	  => $value['testcaseNo'],
+						'testcaseVersion' => $value['testcaseVersion'],
+						'New_testCaseId' => $value['New_TC_Id'],
+						'New_testcaseVersion' => $value['New_TC_Version']		
+						);		
+						if (0 < count($param_TC)){
+							$UpdateStatusTC_New = $this->mRollback->updateRollback_TCHeader($param_TC);
+							$UpdateStatusTC_Old = $this->mRollback->updateTestcaseHeader($param_TC);
+							$UpdateStatusTCDetail_New = $this->mRollback->updateRollback_TCDetail($param_TC);
+							$UpdateStatusTCDetail_Old = $this->mRollback->updateTestcaseDetail($param_TC);
+						}	
+				}		
 			
-			if($this->FValidate->run()){
-				/** 1. Get Change Details */
-				$changeInfo = $this->mChange->getChangeRequestInformation($changeRequestNo);
-				$param = (object) array(
-					'projectId'  => $projectId,
-					'status' 	 => 1,
-					'functionId' => $changeInfo->changeFunctionId
-					);
-				$lastFRInfo = $this->mFR->searchFunctionalRequirementHeaderInfo($param);
+				/** 3. Get SCHEMA Change Details */
+				$changeDBInfo = $this->mRollback->getChangeRequestSchema($changeRequestNo);
+				foreach ($changeDBInfo as $value) {
+					$param_DB = (object) array(
+						'projectId'  => $projectId,
+						'status' 	 => 1,
+						'user'		=>$user,
+						'changeRequestNo' => $changeRequestNo,
+						'SchemaVersionId' => $value['SchemaVersionId'],
+						'tableName' 	  => $value['tableName'],
+						'Version' => $value['Version'],
+						'New_SchemaVersionId' => $value['New_SchemaVersionId'],
+						'New_Version' => $value['New_Schema_Version']
+						);
+						if (0 < count($param_DB)){
+							$UpdateStatusDB_New = $this->mRollback->updateRollback_DBHeader($param_DB);
+							$UpdateStatusDB_Old = $this->mRollback->updateSchemaHeader($param_DB);
+							$UpdateStatusDBDetail_New = $this->mRollback->updateRollback_DBDetail($param_DB);
+							$UpdateStatusDBDetail_Old = $this->mRollback->updateSchemaDetail($param_DB);
+						}
+					}	
 
-				/** 2. Call Change API */
-				$param = (object) array(
-					'projectId' 	  => $projectId,
-					'functionId' 	  => $changeInfo->changeFunctionId,
-					'functionNo' 	  => $changeInfo->changeFunctionNo,
-					'functionVersion' => $lastFRInfo[0]['functionVersion'],
-					'changeRequestNo' => $changeRequestNo,
-					'type' 			  => 2 //1 = Change, 2 = Cancel
-					);
-				$changeResult = $this->callChangeAPI($param);
-
-				if('Y' == $changeResult->result->isSuccess){
-					/** 3. Control Version */
-					/** 4. Update Change Request's Status */
-					$user = $this->session->userdata('username');
-
-					$processData = array(
-						'user' 				  => $user, 
-						'changeRequestNo' 	  => $changeRequestNo, 
-						'reason' 			  => $reason,
-						'updateDateCondition' => $changeInfo->updateDate);
-
-					$controlVersionResult = $this->mCancellation->cancelProcess($changeResult, $error_message, $processData);
+				/** 4. Get RTM Change Details */
+				$changeRTMInfo = $this->mRollback->getChangeRequestSRTM($changeRequestNo);
+				foreach ($changeRTMInfo as $value) {	
+					$param_RTM = (object) array(
+						'projectId'  => $projectId,
+						'status' 	 => 1,
+						'user'		=>$user,
+						'changeRequestNo' => $changeRequestNo,
+						'functionId' => $value['functionId'],
+						'functionVersion' 	  => $value['functionVersion'],
+						'testCaseId' => $value['testcaseId'],
+						'testcaseVersion' => $value['testcaseVersion']
+						);	
+						if (0 < count($param_RTM)){
+							$UpdateStatusRTM_New = $this->mRollback->updateRollback_RTMHeader($param_RTM);
+							$UpdateStatusRTM_Old = $this->mRollback->updateRTMDetail($param_TC,$param_FR);
+						}
+				}
 
 					/** 5. Display Result */
-					if($controlVersionResult == true){
-						$this->displayResult($changeRequestNo, $projectId);
-						return false;
-					}
-				}else{
-					$error_message = $changeResult->result->error_message;
-				}
-			}else{
-				$error_message = str_replace("{0}", "Input Reason", ER_MSG_019);
-			}
+					$this->displayResult($changeRequestNo,$projectId);
+
 		}catch(Exception $e) {
 			$error_message = $e->getMessage();
 		}
-
+/*
 		$data['keyParam'] = array(
 			'changeRequestNo' => $changeRequestNo, 
 			'projectId' 	  => $projectId);
@@ -217,10 +262,51 @@ echo $changeRequestNo;
 		//Get All Change Request Data
 		$this->getAllChangeRequestData($changeRequestNo, $projectId, $error_message, $data);
 
+		$data['error_message'] = $error_message;
+		$this->openView($data, 'view');*/
+	}
+	
+	private function displayResult($changeRequestNo, $projectId){
+		$success_message = '';
+		$error_message = '';
+		$reason = '';
+
+		$Rollback_reason = $this->mRollback->RollbackReason($changeRequestNo,$projectId);
+
+		$criteria = (object) array(
+				'projectId' 	  => $projectId,
+				'changeStatus' 	  => '1',
+				'changeRequestNo' => $changeRequestNo);
+		$Update_Rollback = $this->mRollback->updatestatusRolback($criteria);
+		$changeHeaderResult = $this->mRollback->searchChangesInformationForCancelling($criteria);
+		if(0 < count($changeHeaderResult)){
+			$headerInfo = array(
+				'changeRequestNo' 	=> $changeHeaderResult[0]['changeRequestNo'],
+				'changeUser' 		=> $changeHeaderResult[0]['changeUser'],
+				'changeDate' 		=> $changeHeaderResult[0]['changeDate'],
+				'changeStatus'		=> $changeHeaderResult[0]['changeStatus'],
+				'fnReqNo' 			=> $changeHeaderResult[0]['changeFunctionNo'],
+				'fnReqVer' 			=> $changeHeaderResult[0]['changeFunctionVersion'],
+				'fnReqDesc' 		=> $changeHeaderResult[0]['functionDescription'],
+				);
+			
+			$reason = $Rollback_reason[0]['reason'];
+			
+			//search change detail
+			$detailInfo = $this->mRollback->getChangeRequestInputList($changeRequestNo);
+
+			$success_message = IF_MSG_001;
+		}else{
+			$error_message = ER_MSG_017;
+		}
+
+		$data['headerInfo'] = $headerInfo;
+		$data['detailInfo'] = $detailInfo;
+
 		$data['reason'] = $reason;
 		$data['error_message'] = $error_message;
 		$data['success_message'] = $success_message;
-		$this->openView($data, 'view');
+		$this->openView($data, 'result');
 	}
 
     private function openView($data, $view){

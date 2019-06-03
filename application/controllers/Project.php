@@ -285,7 +285,7 @@ class Project extends CI_Controller {
 			return FALSE;
 		}
 
-		$countRTM = $this->mRTM->searchExistRTMVersion($projectId);
+		$countRTM = $this->mRTM->searchExistRTMVersion($projectId,'','');
 		if(0 != count($countRTM)){
 			$error_message = ER_IMP_056;
 			return FALSE;

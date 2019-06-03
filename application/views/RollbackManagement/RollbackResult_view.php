@@ -6,8 +6,8 @@
 	<ol class="breadcrumb">
 		<li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
 		<li><a href="#">Change Management</a></li>
-		<li><a href="#">Cancellation</a></li>
-		<li class="active">Cancellation Result</li>
+		<li><a href="#">Rollback</a></li>
+		<li class="active">Rollback Result</li>
 	</ol>
 
 	<!-- Main content -->
@@ -32,6 +32,11 @@
                 					</b>
                 					<small class="pull-right">
                 						Status:
+										<?php if ($headerInfo['changeStatus'] =='1'){
+											$headerInfo['changeStatus'] = 'Complete';
+										}else{
+											$headerInfo['changeStatus'] = 'Not Complete';
+										} ?>
                 						<span class="label label-danger">
                 							<b><?php echo isset($headerInfo['changeStatus'])? $headerInfo['changeStatus']: "";  ?></b>
                 						</span>
@@ -87,7 +92,7 @@
 	                					<tr>
 	                						<th class="col-md-1">#</th>
 	                						<th class="col-md-1">Change Type</th>
-	            							<th class="col-md-1">Input Name</th>
+	            							<th class="col-md-1">Data Name</th>
 	            							<th class="col-md-1">Data Type</th>
 	            							<th class="col-md-1">Data Length</th>
 	            							<th class="col-md-1">Scale</th>
@@ -119,7 +124,7 @@
                 									?>
                 								</td>
 							                	<td>
-                									<?php echo $value['inputName']; ?>
+                									<?php echo $value['dataName']; ?>
                 								</td>
                 								<td>
                 									<?php echo $value['dataType']; ?>
@@ -171,7 +176,7 @@
 					<div class="row">
 						<div class="col-sm-12">
 							<div class="form-group" id="_inputForm">
-								<label>The reason for cancelling the change:</label>
+								<label>The reason for Rollback the change:</label>
 								<h4><span class="text-green"><?php echo $reason; ?></span></h4>
 							</div>
 						</div>

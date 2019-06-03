@@ -101,6 +101,8 @@
 			                			echo $value['effectiveStartDate'];
 			                		?>
 			                	</td>
+								<input type="hidden" id="selectedfunctionId" value="<?php echo isset($value['functionId'])? $value['functionId'] : '' ?>">
+
 			                	<td style="text-align: center;width: 10%;">
 			                		<button type="button" class="btn btn-block bg-orange btn-xs" onclick="viewFunctionDetail(<?php echo $value['functionId']; ?>)">
 			                			<i class="fa fa-edit"></i>
@@ -124,6 +126,7 @@
 		
 		 function viewFunctionDetail(functionId){
 		 	var projectId = $('#selectedProjectId').val();
+			 var functionId = $('#selectedfunctionId').val();
 		 	window.location  = baseUrl + "index.php/ChangeManagementRequest/view_detail/" + projectId + "/" + functionId;		
 		 }
 

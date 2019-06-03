@@ -1,0 +1,4 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,BK_TC_01,Test Add A Product Information ,Valid,input,PRODUCT_ID,1
+2,BK_TC_01,Test Add A Product Information ,Valid,input,PRODUCT_NAME,Deposit Cash
+3,BK_TC_01,Test Add A Product Information ,Valid,input,DESCRIPTION,Deposit Cash Only

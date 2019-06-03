@@ -125,7 +125,7 @@
 							<div class="form-group">
 								<dl>
 									<dt>Version:</dt>
-									<dd><?php echo $resultVersionInfo->functionVersionNumber; ?></dd>
+									<dd><?php echo $resultVersionInfo->functionVersion; ?></dd>
 								</dl>
 							</div>
 						</div>
@@ -140,9 +140,10 @@
 									}else{
 										echo "<span class='badge bg-red'>".constant("UNACTIVE_STATUS")."</span>";
 									} ?>
+									<!--
 									<div class="pull-right">
 										<button id="btnDiffVersion">Diff with Previous Version</button>
-									</div>
+									</div>-->
 									</dd>
 								</dl>
 							</div>

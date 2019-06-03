@@ -11,27 +11,25 @@ class DatabaseSchema_model extends CI_Model{
 	}
 
 	function searchDatabaseSchemaByCriteria($projectId, $dbSchemaStatus){
-		$where[] = "di.projectId = ".$projectId." ";
+		$where[] = "dv.projectId = ".$projectId." ";
 		if("2" != $dbSchemaStatus)
 			$where[] = "dv.activeFlag = '".$dbSchemaStatus."'";
 		
 		$where_clause = implode(' AND ', $where);
 
 		$sqlStr = "SELECT 
-				di.tableName,
-				di.columnName,
+				dv.tableName,
+				dv.columnName,
 				dv.schemaVersionNumber,
-				CONVERT(nvarchar, dv.effectiveStartDate, 103) as effectiveStartDate,
-				COALESCE(CONVERT(nvarchar, dv.effectiveEndDate, 103), '-') as effectiveEndDate,
+				dv.effectiveStartDate,
+				dv.effectiveEndDate,
 				dv.activeFlag,
-				CONVERT(nvarchar, dv.createDate, 120) as createDate,
-				CONCAT(u.firstname, ' ', u.lastname) as createUser
-			FROM M_DATABASE_SCHEMA_INFO di , M_DATABASE_SCHEMA_VERSION dv,M_USERS u
+				dv.createDate,
+				CONCAT(u.firstname, '   ', u.lastname) as createUser
+			FROM M_DATABASE_SCHEMA_VERSION dv,M_USERS u
 			WHERE $where_clause
-			AND dv.projectid = di.projectid
-			AND dv.schemaVersionId = di.schemaVersionId
 			AND dv.createUser = u.username
-			ORDER BY di.tableName, di.columnName,dv.schemaVersionNumber ";
+			ORDER BY dv.tableName, dv.columnName,dv.schemaVersionNumber ";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -75,6 +73,7 @@ class DatabaseSchema_model extends CI_Model{
 			AND di.schemaVersionId = dv.schemaVersionId
 			AND di.tableName = dv.tableName
 			AND di.columnName = dv.columnName";
+			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}
@@ -95,15 +94,17 @@ class DatabaseSchema_model extends CI_Model{
 
 	function uploadDatabaseSchema($param, $user, $projectId){
 		$this->db->trans_begin(); //Starting Transaction
+		$MAX_schemaVersionId = $this->searchStartMaxschemaVersionId();
+		$schemaVersionId = $MAX_schemaVersionId[0]['MAX_schemaVersionId']+1;
 
 		foreach($param as $value){
 			//Insert Database Schema Version
 			$value->projectId = $projectId;
-			$result = $this->insertDatabaseSchemaVersion($value, $user);
+			$result = $this->insertDatabaseSchemaVersion($value, $user,$schemaVersionId);
 			if(null != $result){
 				//Insert Database Schema Information
 				$value->schemaVersionId = $result;
-				$this->insertDatabaseSchemaInfo($value, $projectId);
+				$this->insertDatabaseSchemaInfo($value, $projectId,$schemaVersionId);
 			}
 		}
 		
@@ -117,23 +118,39 @@ class DatabaseSchema_model extends CI_Model{
 	    }
 	}
 
-	function insertDatabaseSchemaVersion($param, $user){
+	function insertDatabaseSchemaVersion($param, $user,$schemaVersionId){
 		$currentDateTime = date('Y-m-d H:i:s');
 
 		$previousSchemaVersionId = (empty($param->previousVersionId)? "NULL": $param->previousVersionId);
 
-		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_VERSION (projectId, tableName, columnName, schemaVersionNumber, effectiveStartDate, effectiveEndDate, activeFlag, createDate, createUser, updateDate, updateUser) VALUES ($param->projectId, '{$param->tableName}', '{$param->columnName}', {$param->schemaVersionNo}, '$currentDateTime', NULL, '{$param->status}', '$currentDateTime', '$user', '$currentDateTime', '$user')";
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_VERSION (projectId, tableName, columnName, 
+		schemaVersionId,schemaVersionNumber, effectiveStartDate, effectiveEndDate, activeFlag, createDate, 
+		createUser, updateDate, updateUser)
+		 VALUES ($param->projectId, '{$param->tableName}', '{$param->columnName}', 
+		'$schemaVersionId', {$param->schemaVersionNo}, '$currentDateTime', NULL, 
+		'{$param->status}', '$currentDateTime', '$user', '$currentDateTime', '$user')";
 
 		$result = $this->db->query($sqlStr);
 		if($result){
-			$query = $this->db->query("SELECT IDENT_CURRENT('M_DATABASE_SCHEMA_VERSION') as last_id");
+			$query = $this->db->query("SELECT MAX(schemaVersionId) as last_id FROM M_DATABASE_SCHEMA_VERSION " );
 			$resultId = $query->result();
 			return $resultId[0]->last_id;
 		}
 		return NULL;
 	}
 
-	function insertDatabaseSchemaInfo($param, $projectId){
+	function searchStartMaxschemaVersionId(){
+
+		$strsql = " SELECT MAX(schemaVersionId) as MAX_schemaVersionId
+		FROM M_DATABASE_SCHEMA_VERSION 
+	    ";
+
+		$result = $this->db->query($strsql);
+		//echo $sqlStr ;
+		return $result->result_array();
+	}
+
+	function insertDatabaseSchemaInfo($param, $projectId,$schemaVersionId){
 		$dataType = $param->dataType;
 		$dataLength = !empty($param->dataLength)? $param->dataLength : "NULL";
 		$scale = !empty($param->scale)? $param->scale : "NULL";
@@ -141,7 +158,13 @@ class DatabaseSchema_model extends CI_Model{
 		$minValue = !empty($param->minValue)? $param->minValue : "NULL";
 		$maxValue = !empty($param->maxValue)? $param->maxValue : "NULL";
 
-		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_INFO (tableName, columnName, schemaVersionId, dataType, [dataLength], decimalPoint, constraintPrimaryKey, constraintUnique, constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, projectId) VALUES ('{$param->tableName}', '{$param->columnName}', {$param->schemaVersionId}, '{$dataType}', $dataLength, {$scale}, '{$param->primaryKey}', '{$param->unique}' , {$defaultValue}, '{$param->null}', {$minValue}, {$maxValue}, $projectId)";
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_INFO 
+		(tableName, columnName, schemaVersionId, dataType, dataLength, 
+		decimalPoint, constraintPrimaryKey, constraintUnique, constraintDefault, 
+		constraintNull, constraintMinValue, constraintMaxValue, projectId,Version,activeflag) 
+		VALUES ('{$param->tableName}', '{$param->columnName}', {$schemaVersionId},
+		 '{$dataType}', $dataLength, {$scale}, '{$param->primaryKey}', '{$param->unique}' ,
+		  {$defaultValue}, '{$param->null}', {$minValue}, {$maxValue}, $projectId,{$param->schemaVersionNo},'1')";
 
 		$result = $this->db->query($sqlStr);
 		return $result;

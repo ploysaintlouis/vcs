@@ -33,7 +33,7 @@ class RTM extends CI_Controller{
 		$projectId = $this->input->post('inputProjectName');
 		$this->FValidate->set_rules('inputProjectName', null, 'required');
 		if($this->FValidate->run()){
-			$searchResultList = $this->mRTM->searchRTMInfoByCriteria($projectId);
+			$searchResultList = $this->mRTM->searchRTMInfoByCriteria($projectId,'','');
 
 			$data['selectedProjectId'] = $projectId;
 			$data['searchFlag'] = 'Y';

@@ -13,14 +13,6 @@ class RTM_model extends CI_Model{
 	}
 
 	function searchRTMInfoByCriteria($projectId,$functionId,$functionVersion){
-			
-			if(!empty($functionVersion)){
-				$where[] = "a.functionVersion = $functionVersion";
-			}
-			if(!empty($functionId)){
-				$where[] = "a.functionId = $functionId";
-			}
-			$where_condition = implode(' AND ', $where);
 
 	$sqlStr = "SELECT 
 					a.testCaseversion,b.testCaseNo,
@@ -30,10 +22,13 @@ class RTM_model extends CI_Model{
 					LEFT JOIN M_FN_REQ_HEADER c
 					ON a.functionId = c.functionId
 					LEFT JOIN M_TESTCASE_HEADER b
-					on a.testCaseId = b.testCaseId
-					where a.projectid = '$projectId'
-					and a.activeFlag = '1' 
-					AND $where_condition ";
+					ON a.testCaseId = b.testCaseId
+					WHERE a.projectid = '$projectId'
+					AND a.activeFlag = '1' 
+					AND c.activeflag = '1'
+					AND b.activeflag = '1'
+					ORDER BY c.functionNo,a.functionversion
+					 ";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -42,7 +37,7 @@ class RTM_model extends CI_Model{
 	function searchExistRTMInfoByTestCaseId($projectId, $testCaseId){
 		$sqlStr = "SELECT *
 			FROM M_RTM_VERSION r
-			WHERE r.projectId = $projectId
+			WHERE r.projectId = '$projectId'
 			AND r.testCaseId= $testCaseId";
 	 	$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -51,9 +46,9 @@ class RTM_model extends CI_Model{
 	function searchExistRTMVersion($projectId,$testCaseId,$functionId){
 		$sqlStr = "SELECT *
 			FROM M_RTM_VERSION 
-			WHERE projectId = $projectId
-			AND testCaseId = $testCaseId
-			AND functionId = $functionId
+			WHERE projectId = '$projectId'
+			AND testCaseId = '$testCaseId'
+			AND functionId = '$functionId'
 			AND activeFlag = '1'";
 		$result = $this->db->query($sqlStr);
 		return $result->row();

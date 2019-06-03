@@ -82,14 +82,14 @@ class VersionManagement_model extends CI_Model{
 		INNER JOIN M_DATABASE_SCHEMA_INFO ds
 		ON ds.tableName = fd.refTableName
 		AND ds.columnName = fd.refColumnName
-		AND ds.schemaVersionId = fd.schemaVersionId
+		AND ds.Id = fd.schemaVersionId
 		WHERE fh.projectId = $param->projectId
 		AND fh.functionId = $param->functionId
 		AND  fd.effectiveStartDate <= '$param->targetDate'
 		AND ('$param->targetDate' <= fd.effectiveEndDate OR fd.effectiveEndDate is null)
 		AND (fd.effectiveEndDate != '$param->targetDate' OR fd.effectiveEndDate is null)" ;
 
-		print_r(	$sqlStr );
+		//print_r(	$sqlStr );
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}

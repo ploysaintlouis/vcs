@@ -32,6 +32,7 @@ class Rollback_model extends CI_Model{
 		}
 		$where_condition = implode(" AND ", $where);
 
+		/*
 		$sqlStr = "
 			SELECT 
 				h.changeRequestNo,
@@ -54,6 +55,24 @@ class Rollback_model extends CI_Model{
 			ON h.changeFunctionId = fh.functionId
 			WHERE $where_condition
 			ORDER BY h.changeDate desc";
+			*/
+			$sqlStr = "SELECT 
+			h.changeRequestNo,
+			h.changeDate,
+			CONCAT(u.firstname, '   ', u.lastname) as changeUser,
+			h.changeFunctionId,
+			h.changeFunctionNo,
+			h.changeFunctionVersion,
+			fh.functionDescription,
+			h.changeRequestNo,
+			h.changeStatus,
+			h.changeStatus as changeStatusMisc,
+			h.reason
+		FROM T_CHANGE_REQUEST_HEADER h ,M_USERS u ,M_FN_REQ_HEADER fh
+		WHERE h.changeUserId = u.userId
+					AND h.changeFunctionId = fh.functionId
+		AND  h.changeRequestNo NOT IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK)
+		ORDER BY h.changeDate desc";
 		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -163,8 +182,13 @@ class Rollback_model extends CI_Model{
 		(projectid,ChangeRequestNo,status,userId,requestDate,reason)
 		VALUES('$projectId','$changeRequestNo','0','$userId','$currentDateTime','$reason')
 		";
-		$result = $this->db->query($strsql);
-		return $this->db->affected_rows();
+    $result = $this->db->query($strsql);
+   if($result){
+    $query = $this->db->query("SELECT MAX(Id) AS last_id FROM TEMP_ROLLBACK");
+       $resultId = $query->result();
+       return $resultId[0]->last_id;
+   }
+   return NULL;
 	} 
 	
 	function searchSaveProcessRollback($param){
@@ -182,6 +206,343 @@ class Rollback_model extends CI_Model{
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
+
+	public function getChangeRequestFunctionalRequirement($changeRequestNo){
+
+			$sqlStr = "SELECT h.*,fh.New_FR_Id,fh.New_FR_Version
+			FROM AFF_FR h,MAP_FR_VERSION fh
+			WHERE h.FR_Id = fh.Old_FR_Id
+			AND h.FR_Version = fh.Old_FR_Version
+			AND h.ChangeRequestNo = '$changeRequestNo'";
+		//	print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+	
+	public function getChangeRequestTestCase($changeRequestNo){
+
+			$sqlStr = "SELECT h.*,fh.New_TC_Id,fh.New_TC_Version
+			FROM AFF_TESTCASE h,MAP_TC_VERSION fh
+			WHERE h.testcaseId = fh.Old_TC_ID
+			AND h.testcaseVersion = fh.Old_TC_Version
+			AND h.ChangeRequestNo = '$changeRequestNo'";
+		//	print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getChangeRequestSchema($changeRequestNo){
+
+			$sqlStr = "SELECT DISTINCT a.SchemaVersionId,a.tableName,a.Version,
+			b.New_SchemaVersionId,b.New_Schema_Version
+			FROM AFF_SCHEMA a,MAP_SCHEMA_VERSION b
+			WHERE b.Old_SchemaVersionId = a.SchemaVersionId 
+			AND b.Old_Schema_Version = a.Version
+			AND a.ChangeRequestNo = '$changeRequestNo' ";
+		//	print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getChangeRequestSRTM($changeRequestNo){
+
+			$sqlStr = "SELECT *
+			FROM AFF_RTM
+			WHERE ChangeRequestNo = '$changeRequestNo'";
+		//	print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function RollbackReason($changeRequestNo,$projectId){
+
+		$sqlStr = "SELECT reason
+		FROM TEMP_ROLLBACK
+		WHERE ChangeRequestNo = '$changeRequestNo'
+		AND projectId = '$projectId' ";
+	//	print_r($sqlStr);
+	$result = $this->db->query($sqlStr);
+	return $result->result_array();
+}
+
+	function updateRollback_FRHeader($param_FR){
+
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE M_FN_REQ_HEADER
+			SET activeflag = '1',
+				updateDate 	 = '$currentDateTime',
+				updateUser 	 = '$param_FR->user'
+			WHERE functionId = '$param_FR->functionId'
+			AND functionversion = '$param_FR->functionVersion'
+			AND projectid = '$param_FR->projectId'
+      AND activeflag = '0' ";
+			//print_r($sqlStr);
+            $result = $this->db->query($sqlStr);
+            return $this->db->affected_rows();
+    
+		}
+
+		function updateRequirementsHeader($param_FR){
+
+			$currentDateTime = date('Y-m-d H:i:s');
+	
+			$sqlStr = "UPDATE M_FN_REQ_HEADER
+				SET activeflag = '0',
+					updateDate 	 = '$currentDateTime',
+					updateUser 	 = '$param_FR->user'
+				WHERE functionId = '$param_FR->New_FR_Id'
+				AND functionversion = '$param_FR->New_FR_Version'
+				AND projectid = '$param_FR->projectId'
+							AND activeflag = '1' ";
+				//print_r($sqlStr);
+							$result = $this->db->query($sqlStr);
+							return $this->db->affected_rows();
+			
+			}
+
+		function updateRollback_FRDetail($param_FR) {
+			$currentDateTime = date('Y-m-d H:i:s');
+		
+				$strsql = "UPDATE M_FN_REQ_DETAIL 
+					SET effectiveEndDate = '$currentDateTime',
+					updateDate = '$currentDateTime',
+					updateUser = '$param_FR->user',
+					activeFlag = '1'
+					WHERE functionVersion = '$param_FR->functionVersion' 
+					AND functionId = '$param_FR->functionId'
+					AND activeflag = '0' 
+					AND projectid = '$param_FR->projectId' 
+			";
+			$result = $this->db->query($strsql);
+			return $this->db->affected_rows();
+		} 
+
+		function updateRequirementsDetail($param_FR) {
+			$currentDateTime = date('Y-m-d H:i:s');
+				
+				$strsql = "UPDATE M_FN_REQ_DETAIL 
+					SET effectiveEndDate = '$currentDateTime',
+					updateDate = '$currentDateTime',
+					updateUser = '$param_FR->user',
+					activeFlag = '0'
+					WHERE functionVersion = '$param_FR->New_FR_Version' 
+					AND functionId = '$param_FR->New_FR_Id'
+					AND activeflag = '1' 
+					AND projectid = '$param_FR->projectId' 
+				";
+			$result = $this->db->query($strsql);
+			return $this->db->affected_rows();
+		} 				
+
+		function updateTestcaseHeader($param_TC){
+			$currentDateTime = date('Y-m-d H:i:s');
+
+			$sqlStr = "UPDATE M_TESTCASE_HEADER
+					SET activeFlag = '0', 
+					updateDate = '$currentDateTime', 
+					updateUser = '$param_TC->user' 
+					WHERE projectId = '$param_TC->projectId'
+					AND testCaseId = '$param_TC->New_testCaseId'
+					AND testcaseVersion = '$param_TC->New_testcaseVersion' ";
+//print_r($sqlStr);
+			$result = $this->db->query($sqlStr);
+			return $this->db->affected_rows();
+	} 
+
+	function updateRollback_TCHeader($param_TC){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE M_TESTCASE_HEADER
+				SET activeFlag = '1', 
+				updateDate = '$currentDateTime', 
+				updateUser = '$param_TC->user' 
+				WHERE projectId = '$param_TC->projectId'
+				AND testCaseId = '$param_TC->testCaseId'
+				AND testcaseVersion = '$param_TC->testcaseVersion' ";
+//print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+	} 
+
+	function updateRollback_TCDetail($param_TC){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE M_TESTCASE_DETAIL
+			SET effectiveEndDate = '$currentDateTime', 
+				activeFlag = '0', 
+				updateDate = '$currentDateTime', 
+				updateUser = '$param_TC->user' 
+						WHERE projectId = '$param_TC->projectId'
+						AND testCaseId = '$param_TC->New_testCaseId'
+						AND testcaseVersion = '$param_TC->New_testcaseVersion' ";
+		//print_r($sqlStr);
+				$result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+} 
+
+function updateTestcaseDetail($param_TC){
+	$currentDateTime = date('Y-m-d H:i:s');
+
+	$sqlStr = "UPDATE M_TESTCASE_DETAIL
+		SET effectiveEndDate = '$currentDateTime', 
+			activeFlag = '1', 
+			updateDate = '$currentDateTime', 
+			updateUser = '$param_TC->user' 
+					WHERE projectId = '$param_TC->projectId'
+					AND testCaseId = '$param_TC->testCaseId'
+					AND testcaseVersion = '$param_TC->testcaseVersion' ";
+	//print_r($sqlStr);
+			$result = $this->db->query($sqlStr);
+	return $this->db->affected_rows();
+} 
+
+	function updateRollback_DBHeader($param_DB){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+	$sqlStr = "UPDATE M_DATABASE_SCHEMA_VERSION
+	SET effectiveEndDate = '$currentDateTime', 
+		activeFlag = '1', 
+		updateDate = '$currentDateTime', 
+		updateUser = '$param_DB->user' 
+				WHERE projectId = '$param_DB->projectId'
+				AND schemaVersionId = '$param_DB->SchemaVersionId'
+				AND schemaVersionNumber = '$param_DB->Version'
+				AND activeflag = '0' ";
+	//print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+	return $this->db->affected_rows();
+	} 
+
+	function updateSchemaHeader($param_DB){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+	$sqlStr = "UPDATE M_DATABASE_SCHEMA_VERSION
+	SET effectiveEndDate = '$currentDateTime', 
+		activeFlag = '0', 
+		updateDate = '$currentDateTime', 
+		updateUser = '$param_DB->user' 
+				WHERE projectId = '$param_DB->projectId'
+				AND schemaVersionId = '$param_DB->New_SchemaVersionId'
+				AND schemaVersionNumber = '$param_DB->New_Version'
+				AND activeflag = '1' ";
+	//print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+	return $this->db->affected_rows();
+	} 
+
+	function updateRollback_DBDetail($param_DB){
+
+		$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
+			SET activeflag = '1'
+            WHERE projectId = '$param_DB->projectId'
+						AND schemaVersionId = '$param_DB->SchemaVersionId'
+						AND Version = '$param_DB->Version'
+            AND activeflag = '0' ";
+//print_r($sqlStr);
+        $result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+		} 	
+		
+		function updateSchemaDetail($param_DB){
+
+			$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
+				SET activeflag = '0'
+							WHERE projectId = '$param_DB->projectId'
+							AND schemaVersionId = '$param_DB->New_SchemaVersionId'
+							AND Version = '$param_DB->New_Version'
+							AND activeflag = '1' ";
+	//print_r($sqlStr);
+					$result = $this->db->query($sqlStr);
+			return $this->db->affected_rows();
+			}		
+
+	function updateRollback_RTMHeader($param_RTM){
+		$currentDateTime = date('Y-m-d H:i:s');
+		
+		$sqlStr = "UPDATE M_RTM_VERSION
+			SET activeflag = '1',
+				updateDate 	 = '$currentDateTime',
+				updateUser 	 = '$param_RTM->user'
+			WHERE functionId = '$param_RTM->functionId'
+			AND functionversion = '$param_RTM->functionVersion'
+			AND projectid = '$param_RTM->projectId'
+			AND testCaseId = '$param_RTM->testCaseId'
+			AND testCaseversion = '$param_RTM->testcaseVersion'
+			AND activeflag = '0' ";
+					//print_r($sqlStr);
+			$result = $this->db->query($sqlStr);
+			return $this->db->affected_rows();
+	}		
+
+	function updateRTMDetail($param_TC,$param_FR){
+		$currentDateTime = date('Y-m-d H:i:s');
+		
+		$sqlStr = "UPDATE M_RTM_VERSION
+			SET activeflag = '0',
+				updateDate 	 = '$currentDateTime',
+				updateUser 	 = '$param_FR->user'
+			WHERE functionId = '$param_FR->functionId'
+			AND functionversion = '$param_FR->functionVersion'
+			AND projectid = '$param_FR->projectId'
+			AND testCaseId = '$param_TC->testCaseId'
+			AND testCaseversion = '$param_TC->testcaseVersion'
+			AND activeflag = '1' ";
+					//print_r($sqlStr);
+			$result = $this->db->query($sqlStr);
+			return $this->db->affected_rows();
+	}	
+
+	function updatestatusRolback($criteria) {
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$strsql = "UPDATE TEMP_ROLLBACK SET
+		 status = '$criteria->changeStatus'
+		WHERE projectId = '$criteria->projectId'
+		AND changeRequestNo =  '$criteria->changeRequestNo'
+		AND status = '0'
+		";
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+	} 
+
+
+	public function searchChangesInformationForCancelling($param){
+		
+		if(isset($param->projectId) && !empty($param->projectId)){
+			$where[] = "h.projectId = $param->projectId";
+		}
+
+		if(isset($param->changeRequestNo) && !empty($param->changeRequestNo)){
+			$where[] = "h.changeRequestNo = '$param->changeRequestNo'";
+		}
+
+		if(isset($param->changeStatus) && !empty($param->changeStatus)){
+			$where[] = "h.changeStatus = '$param->changeStatus'";
+		}
+		$where_condition = implode(" AND ", $where);
+
+		$sqlStr = "SELECT 
+		h.changeRequestNo,
+		h.changeDate,
+		CONCAT(u.firstname, '   ', u.lastname) as changeUser,
+		h.changeFunctionId,
+		h.changeFunctionNo,
+		h.changeFunctionVersion,
+		fh.functionDescription,
+		h.changeRequestNo,
+		h.changeStatus,
+		h.changeStatus as changeStatusMisc,
+		h.reason
+	FROM T_CHANGE_REQUEST_HEADER h ,M_USERS u ,M_FN_REQ_HEADER fh
+	WHERE h.changeUserId = u.userId
+				AND h.changeFunctionId = fh.functionId
+	AND  h.changeRequestNo IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1')
+	ORDER BY h.changeDate desc";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
 
 }
 

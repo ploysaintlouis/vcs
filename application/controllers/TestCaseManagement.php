@@ -34,7 +34,7 @@ class TestCaseManagement extends CI_Controller{
 
 		$this->FValidate->set_rules('inputProjectName', null, 'required');
 		if($this->FValidate->run()){
-			$resultList = $this->mTestCase->searchTestCaseInfoByCriteria($projectId, ACTIVE_CODE);
+			$resultList = $this->mTestCase->searchTestCaseInfoByCriteria($projectId, ACTIVE_CODE,'','');
 
 			$data['selectedProjectId'] = $projectId;
 			$data['searchFlag'] = 'Y';

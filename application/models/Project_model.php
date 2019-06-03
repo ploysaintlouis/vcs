@@ -48,12 +48,13 @@ class Project_model extends CI_Model {
 		$queryStr 
 			= "SELECT 
 				p.projectId, p.projectName, p.projectNameAlias, 
-				CONVERT(p.effdate, CHAR(103)) as startDate, 
-				CONVERT(p.endDate, CHAR(103)) as endDate, 
+				p.effdate as startDate, 
+				p.endDate,
 				p.customer as customer, 
 				p.databaseName, p.hostname, p.port, p.username, p.password, p.startFlag
 			FROM M_PROJECT p
 			WHERE p.projectId = $projectId";
+			//print_r($queryStr);
 		$result = $this->db->query($queryStr);
 		return $result->row();
 	}
@@ -103,16 +104,16 @@ class Project_model extends CI_Model {
 		$sql = "INSERT INTO M_PROJECT (projectName, projectNameAlias, effDate, endDate, customer, createDate, createUser, updateDate, updateUser, activeFlag, databaseName, hostname, port, username, password) VALUES ('{$param->projectName}', '{$param->projectAlias}', '".$param->startDate->format('Y-m-d')."', '".$param->endDate->format('Y-m-d')."', '$param->customer', '$currentDateTime', '$param->user', '$currentDateTime', '$param->user', '".ACTIVE_CODE."', '$param->databaseName', '$param->hostname', '$param->port', '$param->username', '$param->password')";
 		$insertResult = $this->db->query($sql);
 		if($insertResult){
-			$query = $this->db->query("SELECT IDENT_CURRENT('M_PROJECT') as last_id");
+			$query = $this->db->query("SELECT count(*) as last_id FROM M_PROJECT ");
 			$result = $query->result();
 			
 			$param->projectId = $result[0]->last_id;
 		}
-
+/*
 			$str = "insert into M_SCHEMA_ID
 					values ({$param->projectId},'1','1') ";
 			$resultstr = $this->db->query($str);	
-
+*/
 		$this->db->trans_complete();
     	$trans_status = $this->db->trans_status();
 	    if($trans_status == FALSE){
@@ -130,7 +131,7 @@ class Project_model extends CI_Model {
 
 		$currentDateTime = date('Y-m-d H:i:s');
 
-		$sql = "UPDATE [M_PROJECT] 
+		$sql = "UPDATE M_PROJECT
 			SET projectNameAlias = '{$param->projectAlias}', 
 				effDate = '{$param->startDate->format('Y-m-d')}', 
 				endDate = '{$param->endDate->format('Y-m-d')}', 
@@ -164,7 +165,7 @@ class Project_model extends CI_Model {
 				updateUser = '{$param->user}' 
 			WHERE projectId = {$param->projectId}";
 			*/
-		$sql = "UPDATE [M_PROJECT] 
+		$sql = "UPDATE M_PROJECT
 			SET startFlag = '1',
 				updateDate = '{$currentDateTime}', 
 				updateUser = '{$param->user}' 

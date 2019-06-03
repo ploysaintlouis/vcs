@@ -1110,6 +1110,9 @@ class ChangeManagementRequest extends CI_Controller {
 				//echo "2";
 				$updateRTM = $this->mVersion->updateRTMVersion($rtm_relate);
 				$Complete = $this->mVersion->insertRTMVersion($relate_new_fr,$relate_new_tc);
+				if (0 <	count($Complete)){
+					$DeleteTemp_change = $this->mVersion->deleteTempChange($param);
+				}
 			}
 		}		
 

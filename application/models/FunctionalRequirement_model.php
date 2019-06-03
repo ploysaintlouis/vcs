@@ -72,6 +72,7 @@ class FunctionalRequirement_model extends CI_Model {
 			AND i.dataName = '$dataName'
 			AND ($activeFlag is null or i.activeFlag = $activeFlag)
 			ORDER BY i.createDate desc";
+		//	print_r($queryStr);
 		$result = $this->db->query($queryStr);
 		return $result->row();
 	}
@@ -263,7 +264,7 @@ class FunctionalRequirement_model extends CI_Model {
 		WHERE $where_clause
 		ORDER BY dataId";
 //echo $queryStr;
-			//var_dump($queryStr);
+			//print_r($queryStr);
 		$result = $this->db->query($queryStr);
 		return $result->result_array();
 	}
@@ -299,25 +300,26 @@ class FunctionalRequirement_model extends CI_Model {
 		$sqlStr = "SELECT * 
 			FROM M_FN_REQ_DETAIL
 			WHERE $where_condition";
-			print_r($sqlStr);
+			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}
 
-	function insertFRHeader($param){
+	function insertFRHeader($param,$New_functionId){
 		$currentDateTime = date('Y-m-d H:i:s');
 	/*	$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, createDate, createUser, updateDate, updateUser) VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}')";*/
 	if($param->functionVersionNo == null){
-		$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
+		$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionId,functionNo, functionDescription, projectId, 
 		createDate, createUser, updateDate, updateUser,functionversion,activeflag) 
-		VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
+		VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
 		'$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','1','1')";
 	}else{
-$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, 
+$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionId,functionNo, functionDescription, projectId, 
 createDate, createUser, updateDate, updateUser,functionversion,activeflag) 
-VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
+VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, 
 '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}','{$param->functionVersionNo}','{$param->activeFlag}')";
 	}
+	//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		if($result){
 			$query = $this->db->query("SELECT MAX(functionId) AS last_id FROM M_FN_REQ_HEADER");
@@ -348,7 +350,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 
 		if ($param->referTableName !=null) {
 				$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,
-		 createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaId,dataType,
+		 createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaVersionId,dataType,
 		 effectiveStartDate,effectiveEndDate,activeFlag,functionVersion,
 		 dataLength,decimalPoint,constraintPrimaryKey,constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue)
 		 VALUES ('{$param->projectId}','{$param->typeData}', '{$param->dataName}', '{$param->referTableName}',
@@ -359,7 +361,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 		//var_dump($sqlStr);
 		}else{
 			$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,
-			createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaId,dataType,
+			createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaVersionId,dataType,
 			effectiveStartDate,effectiveEndDate,activeFlag,functionVersion,
 			dataLength,decimalPoint,constraintPrimaryKey,constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue)
 			VALUES ('{$param->projectId}','{$param->typeData}', '{$param->dataName}', '{$param->referTableName}',
@@ -488,12 +490,25 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 		$result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
 	}
+	function searchMaxfunctionId(){
+
+		$strsql = " SELECT MAX(functionId) as MAX_functionId
+		FROM M_FN_REQ_HEADER 
+	    ";
+
+		$result = $this->db->query($strsql);
+		//echo $sqlStr ;
+		return $result->result_array();
+	}
 
 	function uploadFR($param){
 		$this->db->trans_begin(); //Starting Transaction
 
 		//insert Functional Requirement Header
-		$functionId = $this->insertFRHeader($param[0]);
+		$MAX_functionId = $this->searchMaxfunctionId();
+		$New_functionId = $MAX_functionId[0]['MAX_functionId']+1;
+
+		$functionId = $this->insertFRHeader($param[0],$New_functionId);
 		if(NULL != $functionId){
 			$effectiveStartDate = date('Y-m-d H:i:s');
 			
@@ -531,7 +546,7 @@ VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projec
 					$detail->constraintNull = $resultSchemaInfo->constraintNull;
 					$detail->constraintMinValue = $resultSchemaInfo->constraintMinValue;
 					$detail->constraintMaxValue = $resultSchemaInfo->constraintMaxValue;
-					$detail->schemaVersionId = $resultSchemaInfo->schemaVersionId;
+					$detail->schemaVersionId = $resultSchemaInfo->Id;
 				}else{
 					if ($detail->decimalPoint == null){
 						$detail->decimalPoint = 'NULL';

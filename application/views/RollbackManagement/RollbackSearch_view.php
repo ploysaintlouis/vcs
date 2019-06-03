@@ -143,7 +143,14 @@
 								<td><?php echo $value['requestDate'] ?></td>
 								<td><?php echo $value['Firstname'].' '.$value['lastname'] ?></td>
 								<td><?php echo $value['reason'] ?></td>
-
+								<?php if ($_SESSION['staffflag'] == '3') { ?>
+								<td>
+									<button class="btn btn-block btn-default btn-xs" name = "viewChangeDetail" onclick="viewChangeDetail('<?php echo $value['ChangeRequestNo'] ?>')">
+										<i class="fa fa-fw fa-file-text-o"></i>	
+										See Detail
+									</button>
+								</td>
+								<?php } ?>
 							</tr>
 							<?php } ?>
 						</tbody>

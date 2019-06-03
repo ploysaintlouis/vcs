@@ -960,5 +960,17 @@ class VersionControl_model extends CI_Model{
             return $this->db->affected_rows();
     
     }
+
+    function deleteTempChange($param){
+
+        $strsql = "DELETE FROM T_TEMP_CHANGE_LIST
+               WHERE functionId = '$param->functionId' 
+                AND projectId = '$param->projectId' 
+                AND functionVersion = '$param->functionVersion' ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+    } 
+
 }
 ?>
