@@ -101,10 +101,11 @@
 			                			echo $value['effectiveStartDate'];
 			                		?>
 			                	</td>
-								<input type="hidden" id="selectedfunctionId" value="<?php echo isset($value['functionId'])? $value['functionId'] : '' ?>">
+								<input type="hidden" name="functionVersion" id="functionVersion" value="<?php echo $value['functionVersion']; ?>">
+								<input type="hidden" name="functionId" id="functionId" value="<?php echo $value['functionId']; ?>">
 
 			                	<td style="text-align: center;width: 10%;">
-			                		<button type="button" class="btn btn-block bg-orange btn-xs" onclick="viewFunctionDetail(<?php echo $value['functionId']; ?>)">
+			                		<button type="button" name="change" id="<?php echo $value['functionId']; ?>"  class="btn btn-block bg-orange btn-xs" >
 			                			<i class="fa fa-edit"></i>
 			                			 Change
 			                		</button>
@@ -131,4 +132,17 @@
 		 }
 
 	</script>
+
+<script type="text/javascript">
+	$(function() {
+		$("button[name*='change']").bind( "click", function() {
+		var id = $(this).prop("id");
+		var projectId = $('#selectedProjectId').val();
+		var functionId = $('#functionId').val();
+		var functionVersion = $('#functionVersion').val();
+		window.location = baseUrl + "index.php/ChangeManagementRequest/view_detail/" + projectId + "/" + id + "/" +functionVersion ;	
+		});
+	});
+</script>
+
 </section>

@@ -580,6 +580,9 @@ class ChangeManagementRequest extends CI_Controller {
 			$dataForPage["aff_schema_panel"] = $affSchemalist;
 			$dataForPage["aff_rtm_panel"] = $affRTMList;
 
+		  //echo json_encode($dataForPage);
+			$this->writeJsonFile_Input($dataForPage, $param->functionId);
+
 			$this->load->view('template/header');
 			$data = array();
 			$data['active_title'] = 'ChangeManagement';
@@ -598,6 +601,34 @@ class ChangeManagementRequest extends CI_Controller {
 
 		$data['success_message'] = $success_message;
 		$data['error_message'] = $error_message;
+	}
+
+	private function writeJsonFile_Input($inputData, $changedFunctionId){
+		try{
+			$datetime = date('YmdHis');
+			$outputFileName = "log/change/requestDataJson".$changedFunctionId."_".$datetime.".txt";
+
+			print_r($inputData);
+			$encodedString = json_encode($inputData);
+			file_put_contents($outputFileName, $encodedString);
+
+		}catch(Exception $e){
+			echo 'Caught exception: ',  $e->getMessage(), "\n";
+		}
+	}
+
+	private function writeJsonFile_Output($outputData, $changedFunctionId){
+		try{
+			$datetime = date('YmdHis');
+
+
+
+			$encodedString = json_encode($outputData);
+			$inputFileName = "log/change/responseDataJson_".$changedFunctionId."_".$datetime.".txt";
+			file_put_contents($inputFileName, $encodedString);
+		}catch(Exception $e){
+			echo 'Caught exception: ',  $e->getMessage(), "\n";
+		}
 	}
 
 	function testscript(){
