@@ -284,6 +284,39 @@ class ChangeManagementRequest extends CI_Controller {
 		return $data;
 	}
 	
+	function bind_data_change_list_relate($param){
+		$data = array();
+		$data['change_list'] = array();
+		/// *** call model and bind data here.
+		$row = array(); //อยากจะส่ง $RelateResultSCHEMA,$RelateResultNotSCHEMA ไป display 
+		//echo $param->functionId;
+		
+		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		$i=1;
+		foreach ($RelateResultSCHEMA as $value) {
+			$row["no"] = $i++;
+			if ($value["typeData"] == '1'){
+				$row["typeData"]= "input";
+			}else{
+				$row["typeData"]= "output";
+			}
+			$row["dataName"]= $value["dataName"];
+			$row["newDataType"]= $value["newDataType"];
+			$row["newDataLength"]= $value["newDataLength"];
+			$row["newScaleLength"] = $value["newScaleLength"];
+			$row["newUnique"]= $value["newUnique"];
+			$row["newNotNull"]= $value["newNotNull"];
+			$row["newDefaultValue"]= $value["newDefaultValue"];
+			$row["newMinValue"] = $value["newMinValue"];
+			$row["newMaxValue"] = $value["newMaxValue"];
+			$row["tableName"]= $value["tableName"];
+			$row["columnName"]= $value["columnName"];
+			$row["changeType"]= $value["changeType"];
+			array_push($data['change_list'],$row);
+		}
+		
+		return $data;
+	}
 
 	function bind_data_aff_functionalrequirement($param){
 		$data = array();
@@ -369,6 +402,66 @@ class ChangeManagementRequest extends CI_Controller {
 		return $data;
 	}	
 
+	function bind_data_aff_functionalrequirement_relate($param){
+		$data = array();
+		$data['aff_fr_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+		$i = 1;
+		$frId = "";
+		$frVersion = "";
+		$change_title = "edit";
+
+		foreach($ListofAffectFRRelateSchema as $value){
+			//echo $change_title;
+
+			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
+				$row["no"] = $i++;
+				$row["frId"]= $value["functionId"];
+				$row["fr_no"] =$param->functionNo;
+				$changetype = $this->mChange->searchTempFRInputChangeList($param);
+				foreach($changetype as $new_type){
+					if($change_title != $new_type['changeType']&& "edit" != $new_type['changeType']){
+						$change_title = $new_type['changeType'];
+					}
+					if(('add' == $new_type["changeType"]) || ('delete' == $new_type["changeType"])) {
+							$change_title = "delete";
+					}										
+				}
+				$row["change_type"]= $change_title;
+				$row["version"]= $value['functionVersion'];
+				$frNo = $value["functionId"];
+				$frVersion = $value['functionVersion'];
+				array_push($data['aff_fr_list'],$row);
+			}
+		}
+		
+		//ListofAffectOthFr = $this->callImpactOthFunction($param);
+		$ListofChangeSchemaOthFr = $this->mChange->checkChangeRequestrelateSCHEMAOtherFr($param);
+		$fr_title = $frId.$frVersion ;
+		$change_title = "edit";
+		foreach($ListofChangeSchemaOthFr as $value){
+			if($frId.$frVersion  != $value["FROth_Id"].$value["FROth_Version"] ){
+				if($change_title != $value['changeType']&& "edit" != $value['changeType']){
+					$change_title = $value['changeType'];
+				}
+				if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+						$change_title = "delete";
+				}			
+				$row['change_type'] = $change_title;
+				$row["no"] = $i++;
+				$row["frId"]= $value["FROth_Id"];
+				$row["fr_no"]= $value["FROth_NO"];
+				$row["version"]= $value['FROth_Version'];
+				array_push($data['aff_fr_list'],$row);
+				$frId = $value["FROth_Id"];
+			}
+		}
+//print_r($data);
+		return $data;
+	}	
+
 	function bind_data_aff_testcase($param){
 		$data = array();
 		$data['aff_testcase_list'] = array();
@@ -412,6 +505,55 @@ class ChangeManagementRequest extends CI_Controller {
 						foreach($RelateResultNotSCHEMA as $value){
 							if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
 								$changetype = "delete";
+							}
+						}
+					}
+					$row['change_type'] = $changetype;
+					array_push($data['aff_testcase_list'],$row);
+				}
+			}
+		}
+//print_r($data);
+		return $data;
+	}
+	
+	function bind_data_aff_testcase_relate($param){
+		$data = array();
+		$data['aff_testcase_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		$ListofChangeSchemaOthFr = $this->mChange->checkOtherFr($param);
+		//print_r($ListofChangeSchemaOthFr);
+		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$ListofChangeSchemaOthFr);
+		//print_r($ListofTCAffected);
+		$i = 1;
+		$testNo = "";
+		$testVersion = "";
+		foreach($ListofTCAffected as $value)
+		{
+			$test_title = $testNo.$testVersion;
+			if($test_title != $value["testCaseNo"].$value['testcaseVersion'] ){
+				if($value["testCaseNo"] != ""){
+					$row["no"] = $i++;
+					$testNo = $row["test_id"]= $value["testCaseId"];
+					$testNo = $row["test_no"]= $value["testCaseNo"];
+					$testVersion = $row["version"]= $value['testcaseVersion'];
+					if($value["tctype"] == 'Oth'){
+						$changetype = "edit";
+						$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+						foreach($ListofAffectFRRelateSchema as $value){
+							if($changetype != $value["changeType"] ){
+								$changetype = $value['changeType'];
+							}
+						}					
+					}else{
+						$changetype = "edit";
+						$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+						foreach($RelateResultSCHEMA as $value){
+							if($changetype  != $value["changeType"] ){
+								if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+									$changetype = "delete";
+								}
 							}
 						}
 					}
@@ -503,6 +645,57 @@ class ChangeManagementRequest extends CI_Controller {
 		}
 		return $data;
 	}
+	
+	function bind_data_aff_rtm_relate($param){
+		$data = array();
+		$data['aff_rtm_list'] = array();
+		/// *** call model and bind data here.
+		$row=array();
+		$ListofChangeSchemaOthFr = $this->mChange->checkOtherFr($param);
+		//print_r($ListofChangeSchemaOthFr);
+		$ListofRTMAffected= $this->mVersion->checkRTMAffected($param,$ListofChangeSchemaOthFr);
+		//print_r($ListofTCAffected);
+		$i = 1;
+		$testNo = "";
+		$testVersion = "";
+		foreach($ListofRTMAffected as $value)
+		{
+			$test_title = $testNo.$testVersion;
+			if($test_title != $value["testCaseNo"].$value['testcaseVersion'] ){
+				if($value["testCaseNo"] != ""){
+					$row["no"] = $i++;
+					$testId = $row["test_id"]= $value["testCaseId"];
+					$testNo = $row["test_no"]= $value["testCaseNo"];
+					$testVersion = $row["version"]= $value['testcaseVersion'];
+					$testId = $row["fr_id"]= $value["functionId"];
+					$testNo = $row["fr_no"]= $value["functionNo"];
+					$testVersion = $row["fr_version"]= $value['functionVersion'];
+					if($value["tctype"] == 'Oth'){
+						$changetype = "edit";
+						$ListofAffectFRRelateSchema = $this->mChange->checkChangeRequestrelateSCHEMA($param);
+						foreach($ListofAffectFRRelateSchema as $value){
+							if($changetype != $value["changeType"] ){
+								$changetype = $value['changeType'];
+							}
+						}					
+					}else{
+						$changetype = "edit";
+						$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+						foreach($RelateResultSCHEMA as $value){
+							if($changetype  != $value["changeType"] ){
+								if(('add' == $value["changeType"]) || ('delete' == $value["changeType"])) {
+									$changetype = "delete";
+								}
+							}
+						}
+					}
+					$row['change_type'] = $changetype;
+					array_push($data['aff_rtm_list'],$row);
+				}
+			}
+		}
+		return $data;
+	}
 
 	function doChangeProcess(){ //requestChangeFRInputs
 		$errorFlag = false;
@@ -562,12 +755,18 @@ class ChangeManagementRequest extends CI_Controller {
 				'fnDesc'		  => $resultReqHeader[0]['fnDesc']
 			);
 
+
 			$title = $this->bind_data_title($param);
 			$chglist = $this->bind_data_change_list($param);
 			$affFrList = $this->bind_data_aff_functionalrequirement($param);
 			$affSchemalist = $this->bind_data_aff_schema($param);
 			$affTestCaseList = $this->bind_data_aff_testcase($param);
 			$affRTMList = $this->bind_data_aff_rtm($param);
+
+			$chglist_relete = $this->bind_data_change_list_relate($param);
+			$data["title_panel"]= $title;
+			$data["change_panel"]=$chglist_relete;
+			$this->writeJsonFile_Input($data, $param->functionId);
 
 			$dataForPage["functionId"] = $param->functionId;
 			$dataForPage["projectId"] = $param->projectId;
@@ -580,8 +779,18 @@ class ChangeManagementRequest extends CI_Controller {
 			$dataForPage["aff_schema_panel"] = $affSchemalist;
 			$dataForPage["aff_rtm_panel"] = $affRTMList;
 
-		  //echo json_encode($dataForPage);
-			$this->writeJsonFile_Input($dataForPage, $param->functionId);
+			//echo json_encode($dataForPage);
+			$affFrList_relate = $this->bind_data_aff_functionalrequirement_relate($param);
+			$affTestCaseList_relate = $this->bind_data_aff_testcase_relate($param);
+			$affSchemalist_relate = $this->bind_data_aff_schema($param);
+			$affRTMList_relate = $this->bind_data_aff_rtm_relate($param);
+
+			$data_response["title_panel"]= $title;
+			$data_response["aff_fr_panel"]= $affFrList_relate;
+			$data_response["aff_testcase_panel"]= $affTestCaseList_relate;
+			$data_response["aff_schema_panel"] = $affSchemalist_relate;
+			$data_response["aff_rtm_panel"] = $affRTMList_relate;
+			$this->writeJsonFile_Output($data_response, $param->functionId);
 
 			$this->load->view('template/header');
 			$data = array();
@@ -608,7 +817,7 @@ class ChangeManagementRequest extends CI_Controller {
 			$datetime = date('YmdHis');
 			$outputFileName = "log/change/requestDataJson".$changedFunctionId."_".$datetime.".txt";
 
-			print_r($inputData);
+			//print_r($inputData);
 			$encodedString = json_encode($inputData);
 			file_put_contents($outputFileName, $encodedString);
 

@@ -873,11 +873,6 @@ class ChangeManagement_model extends CI_Model{
 			$FROth_Version =  "";
 		}
 //echo $FROth_No ;
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_RTM
-		(SELECT  testCaseId,testCaseversion,functionId,functionVersion,'' AS tctype
-		FROM M_RTM_VERSION
-		WHERE 1=2)";
-		$result = $this->db->query($sqlStr);
 
 		//echo $FROth_Id;
 		if(null != $FROth_Id) {
