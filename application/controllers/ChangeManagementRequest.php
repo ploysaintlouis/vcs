@@ -708,7 +708,9 @@ class ChangeManagementRequest extends CI_Controller {
 		$projectId = $this->input->post('projectId');
 		$functionId = $this->input->post('functionId');
 		$functionVersion = $this->input->post('functionVersion');
-
+echo $functionId;
+echo $projectId;
+echo $functionVersion;
 		//see this function to bind load data to template view
 		//url -> ChangeManagementRequest/view_change_result/{projectId}
 		$dataForPage = array();

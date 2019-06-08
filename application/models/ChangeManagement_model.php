@@ -55,6 +55,21 @@ class ChangeManagement_model extends CI_Model{
 		return $result->result_array();
 	}
 
+	function searchTempFRChangeList($param){
+
+		$sqlStr = "SELECT DISTINCT a.functionId,a.functionVersion,b.functionNo,b.functionDescription,c.username
+			FROM T_TEMP_CHANGE_LIST a,M_FN_REQ_HEADER b,M_USERS c
+			WHERE a.functionId = b.functionId
+			AND a.functionVersion = b.functionversion
+			AND a.userId = c.userId
+			AND a.confirmflag = '1'
+			ORDER BY a.lineNumber
+			 ";
+			//echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
 	function searchTempFRInputChangeConfirm($param){
 
 		if(!empty($param->functionId)){

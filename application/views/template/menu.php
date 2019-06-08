@@ -155,6 +155,30 @@
 		        		</li>
 		        	</ul>
 		        </li>
+						<?php if ( 3 == $_SESSION['staffflag'] ){ ?>
+
+						<li class="treeview">
+		        	<a href="#">
+		        		<i class="fa fa-history"></i>
+			        	<span>Approve</span>
+			        	<span class="pull-right-container">
+					  		<i class="fa fa-angle-left pull-right"></i>
+						</span>
+		        	</a>
+		        	<ul class="treeview-menu" id="ApproveChange">
+		        		<li id="trns003">
+		        			<a href="<?php echo base_url(); ?>index.php/ApproveChange/">
+		        				<i class="fa fa-circle-o"></i>Approve Change
+		        			</a>
+		        		</li>
+								<li id="trns004">
+		        			<a href="<?php echo base_url(); ?>index.php/ApproveRollback/">
+		        				<i class="fa fa-circle-o"></i>Approve Rollback
+		        			</a>
+		        		</li>
+		        	</ul>
+		        </li>
+						<?php } ?>
       		</ul>
 	    </section>
 	    <!-- /.sidebar -->

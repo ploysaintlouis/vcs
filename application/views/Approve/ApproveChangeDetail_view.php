@@ -1,11 +1,11 @@
 <section class="content-header">
 	<h1>
 		<span class="glyphicon glyphicon-list-alt"></span>
-		Change Request
+		Approve Change<
 	</h1>
 	<ol class="breadcrumb">
 		<li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
-		<li><a href="#">Change Management</a></li>
+		<li><a href="#">Approve Change<</a></li>
 		<li class="active">Change Request</li>
 	</ol>
 
@@ -140,16 +140,9 @@
 														foreach($inputChangeConfirm as $value1): 
 															$userId = $this->session->userdata('userId'); //echo $_SESSION['staffflag'] ;
 
-															if (($_SESSION['userId'] != $value1['userId']) || ($resultHeader->functionId == $value1['functionId']))
-															{ 
-																$var =1; ?>
-																<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs "<?php echo isset($var) ? 'disabled="true"' : '';?> >Add New Input/Output</button>
-															<?php }else{ ?>
-																<button type="button" name="addBtn" id="addBtn" class="btn btn-success btn-xs " >Add New Input/Output</button>
-															<?php } 
+	
 														endforeach; 
 													}else{ ?>
-																<button type="button" name="addBtn" id ="addBtn" class="btn btn-success btn-xs" >Add New Input/Output</button> 
 
 													<?php } ?>	</th>
 
@@ -198,7 +191,7 @@
 												$(function() {
 
 													$("button[name*='delete']").bind( "click", function() {
-														var msg = "Are you sure to delete this functional requirement's input?";
+														var msg = "Are you sure to delete this Change Request?";
 														if(confirm(msg))
 														{
 															var id = $(this).prop("id");
@@ -206,10 +199,12 @@
 															var functionId = $('#functionId').val();
 															var functionVersion = $('#functionVersion').val();
 															//var tr = $(this).parent().parent().html());
-															var url = baseUrl + "index.php/ChangeManagementRequest/delete_detail/"+id;
+															var url = baseUrl + "index.php/ApproveChange/delete_detail/"+id;
 															$.ajax({url: url, 
 															success: function(result){
 																$("#loadPopup").html(result);
+																window.location  = baseUrl+"index.php/Dashboard";
+                       											 $("#loadingPage").modal('hide');
 															}});
 														}
 													});
@@ -278,20 +273,9 @@
 														foreach($inputChangeConfirm as $value1): 
 															$userId = $this->session->userdata('userId'); //echo $_SESSION['staffflag'] ;
 
-															if (($_SESSION['userId'] != $value1['userId']) || ($value['functionId'] == $value1['functionId']))
-															{ 
-																$var =1; ?>
-																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" <?php echo isset($var) ? 'disabled="true"' : ''; ?> >Edit</button> 
-																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " <?php echo isset($var) ? 'disabled="true"' : ''; ?> >Delete</button> <!-- bug ไม่ส่ง keyid บ้างปุ่ม -->
-															<?php }else{ ?>
-																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" >Edit</button> 
-																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> 
-															<?php } 
 														endforeach; 
 													}else{ ?>
-																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" >Edit</button> 
-																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> 
-
+															
 													<?php } ?>
 
                 								</td>
@@ -373,16 +357,13 @@
 										if (isset($value['confirmflag']))
 										{
 											$var =1; ?>
-											<button type="button" name="confirmChange" id="confirmChange" class="btn btn-primary" style="margin-top: -10px;" onclick="mst001Save()" <?php echo isset($var) ? 'disabled="true"' : ''; ?>>
-											<i class="fa fa-save"></i> Confirm
-											</button>
+						
 										<?php }else{ ?>
-											<button type="button" name="confirmChange" id="confirmChange" class="btn btn-primary" style="margin-top: -10px;" onclick="mst001Save()" >
-											<i class="fa fa-save"></i> Confirm
-											</button>
+			
 										<?php } ?>
 									</div>		
-									
+									<?php $keyId1 = $projectInfo->projectId."|".$value['functionId']."|".$value['functionVersion'] ?>
+
 									<input type="hidden" name="functionId" id="functionId" value="<?php echo $value['functionId']; ?>">
             						<input type="hidden" name="functionVersion" id="functionVersion" value="<?php echo $value['functionVersion']; ?>">
 	                			</div>
@@ -390,7 +371,23 @@
 	                	</div>
 	                </div>
                 </div>
+                <div align="right">
+				<button type="button" name="delete" id="<?php echo $keyId1; ?>" class="btn btn-danger " style="margin-top: -10px;" >Delete</button> 
 
+				<?php if ( 3 == $staffflag){ 
+						if (isset($value['approveflag']))
+						{
+							$var =1; ?>		
+						<button type="button" class="btn btn-primary sumbitChangeRequest" style="margin-top: -10px;" <?php echo isset($var) ? 'disabled="true"' : ''; ?>>
+						<i class="fa fa-save"></i> Submit
+						</button>
+					<?php }else{ ?>
+						<button type="button" class="btn btn-primary sumbitChangeRequest" style="margin-top: -10px;" >
+						<i class="fa fa-save"></i> Submit
+						</button>
+						<?php } ?>
+				<?php } ?>
+</div>
 				<script type="text/javascript">
 					function mst001Save(){
 						var msg = "Are you sure to Confirm Change?";
