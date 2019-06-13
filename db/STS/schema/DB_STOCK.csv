@@ -1,0 +1,4 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+4,STOCK,SHARE_ID,Y,int,,,Y,,Y,,
+4,STOCK,SHARECODE,N,varchar,20,,Y,,Y,,
+4,STOCK,SHARENAME,N,varchar,50,,Y,,Y,,

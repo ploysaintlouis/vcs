@@ -1,0 +1,6 @@
+functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
+ST_FR_01,Add Customer Information,input,ACCOUNT,,,,CUSTOMER,ACCOUNT
+ST_FR_01,Add Customer Information,input,CUSTOMER_NAME,,,,CUSTOMER,CUSTOMER_NAME
+ST_FR_01,Add Customer Information,input,BIRTHDATE,,,,CUSTOMER,BIRTHDATE
+ST_FR_01,Add Customer Information,input,ADDRESS,,,,CUSTOMER,ADDRESS
+ST_FR_01,Add Customer Information,input,PHONE,,,,CUSTOMER,PHONE

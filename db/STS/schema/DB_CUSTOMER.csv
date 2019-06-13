@@ -1,0 +1,6 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+4,CUSTOMER,ACCOUNT,Y,varchar,10,,Y,,Y,,
+4,CUSTOMER,CUSTOMER_NAME,N,varchar,100,,N,,Y,,
+4,CUSTOMER,BIRTHDATE,N,DATE,,,N,,Y,,
+4,CUSTOMER,ADDRESS,N,varchar,100,,N,,Y,,
+4,CUSTOMER,PHONE,N,varchar,10,,N,,Y,,
