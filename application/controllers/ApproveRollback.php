@@ -34,9 +34,11 @@ class ApproveRollback extends CI_Controller{
 				$criteria = (object) array(
 					'projectId' 	=> $projectId,
 					'changeStatus' 	=> '1');
-				$changeList = $this->mRollback->searchChangesInformationForRollback($criteria);
-				if(0 == count($changeList)){
-					$error_message = ER_MSG_006;
+				if ($_SESSION['staffflag'] != '3') {
+					$changeList = $this->mRollback->searchChangesInformationForRollback($criteria);
+					if(0 == count($changeList)){
+						$error_message = ER_MSG_006;
+					}
 				}
 				$waitList = $this->mRollback->searchSaveProcessRollback($criteria);
 
@@ -311,8 +313,11 @@ class ApproveRollback extends CI_Controller{
 
     private function openView($data, $view){
 		if('search' == $view){
-			$data['html'] = 'Approve/ApproveRollbackSearch_view';
-			$data['projectCombo'] = $this->mProject->searchStartProjectCombobox();
+			if ($_SESSION['staffflag'] == '3'){
+				$data['html'] = 'RollbackManagement/RollbackSearchApprove_view';
+			}else{
+				$data['html'] = 'RollbackManagement/RollbackSearch_view';
+			}			$data['projectCombo'] = $this->mProject->searchStartProjectCombobox();
 		}else if('view' == $view){
 			$data['html'] = 'Approve/ApproveRollbackDetail_view';
 		}else{
