@@ -73,7 +73,7 @@ class Rollback_model extends CI_Model{
 					AND h.changeFunctionId = fh.functionId
 		AND  h.changeRequestNo NOT IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK)
 		ORDER BY h.changeDate desc";
-		//	print_r($sqlStr);
+			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}

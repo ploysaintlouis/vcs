@@ -126,7 +126,7 @@
 		        </li>
 		        <li class="treeview">
 		        	<a href="#">
-		        		<i class="fa fa-history"></i>
+		        		<i class="fa fa-code-fork"></i>
 			        	<span>Version Management</span>
 			        	<span class="pull-right-container">
 					  		<i class="fa fa-angle-left pull-right"></i>
@@ -159,7 +159,7 @@
 
 						<li class="treeview">
 		        	<a href="#">
-		        		<i class="fa fa-history"></i>
+		        		<i class="fa fa-thumbs-o-up"></i>
 			        	<span>Approve</span>
 			        	<span class="pull-right-container">
 					  		<i class="fa fa-angle-left pull-right"></i>
