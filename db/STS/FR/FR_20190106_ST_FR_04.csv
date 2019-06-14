@@ -1,5 +1,5 @@
 functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
-ST_FR_03,Buy/Sell,input,ACCOUNT,,,,CUSTOMER,ACCOUNT
-ST_FR_03,Buy/Sell,input,SHARECODE,,,,STOCK,SHARECODE
-ST_FR_03,Buy/Sell,input,UNIT,INT,,,,
-ST_FR_03,Buy/Sell,output,AMOUNT,DECIMAL,8,2,,
+ST_FR_04,Buy/Sell,input,ACCOUNT,,,,CUSTOMER,ACCOUNT
+ST_FR_04,Buy/Sell,input,SHARECODE,,,,STOCK,SHARECODE
+ST_FR_04,Buy/Sell,input,UNIT,INT,,,,
+ST_FR_04,Buy/Sell,output,AMOUNT,DECIMAL,8,2,,

@@ -99,7 +99,7 @@ class RTM extends CI_Controller{
 			$fullPath = $uploadData['upload_data']['full_path'];
 			$this->load->library('csvreader');
 			$result =  $this->csvreader->parse_file($fullPath);//path to csv file
-
+//echo count($result);
 			//Validate data in File
 			if(0 < count($result)){
 				$totalRecord = count($result);
@@ -107,12 +107,13 @@ class RTM extends CI_Controller{
        		    $incorrectRecord = 0;
        		    $rtmList = array();
 
-       		    $resultValidate = $this->validate($result, $projectId, $uploadResult, $correctRecord, $rtmList);
+				   $resultValidate = $this->validate($result, $projectId, $uploadResult, $correctRecord, $rtmList);
+				   //print_r($rtmList);
        		    if($resultValidate){
        		    	$user = (null != $this->session->userdata('username'))? $this->session->userdata('username'): 'userDefault';
-       		    	
+       		    	//print_r($rtmList);
 					   //Saving data
-					   //echo $resultValidate;
+					  // echo $resultValidate;
        		    	$saveResult = $this->mRTM->uploadRTM($rtmList, $user);
        		    	if($saveResult){
        		    		$successMessage = ER_MSG_009;
@@ -142,6 +143,7 @@ class RTM extends CI_Controller{
 		$lineNo = 0;
 
 		$this->load->library('common');
+		//var_dump($data);
 		foreach ($data as $value) {
 			//echo $value['FunctionalRequirementID'];
 			++$lineNo;
@@ -166,7 +168,8 @@ class RTM extends CI_Controller{
    					$uploadResult = $this->common->appendThings($uploadResult, 'ER_IMP_051', $lineNo);
    					$hasError = TRUE;
    				}else{
-   					$functionId = $resultFR[0]['functionId'];
+					   $functionId = $resultFR[0]['functionId'];
+					   //echo $functionId;
    				}
    			}
 
@@ -199,10 +202,8 @@ class RTM extends CI_Controller{
    				$correctRecord++;
    				$rtmList[] = (object) array(
    					'projectId' => $projectId, 
-   				//	'functionId' => $functionId,
-				//   'testCaseId' => $testCaseId,
-   					'functionId' => $value[KEY_FR_ID], 
-   					'testCaseId' => $value[KEY_TC_TESTCASE_NO], 					   
+   					'functionId' => $functionId,
+				   'testCaseId' => $testCaseId,				   
 					'functionversion' => '',
 					'testCaseversion' => '',
 					'effectiveStartDate' => '',

@@ -1,0 +1,5 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,ST_TC_04,Test Buy/Sell,Valid,input,ACCOUNT,123456
+2,ST_TC_04,Test Buy/Sell,Valid,input,SHARECODE,HMPRO
+3,ST_TC_04,Test Buy/Sell,Valid,input,UNIT,17.5
+4,ST_TC_04,Test Buy/Sell,Valid,output,AMOUNT,20000

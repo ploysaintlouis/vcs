@@ -99,7 +99,7 @@ class TestCaseManagement extends CI_Controller{
 			$fullPath = $data['upload_data']['full_path'];
 			$this->load->library('csvreader');
 			$result =  $this->csvreader->parse_file($fullPath);//path to csv file
-
+//echo count($result);
 			//Validate data in File
 			if(0 < count($result)){
 				$totalRecord = count($result);

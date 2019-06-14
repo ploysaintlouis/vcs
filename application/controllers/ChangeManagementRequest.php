@@ -183,37 +183,86 @@ class ChangeManagementRequest extends CI_Controller {
 		$data['dataTypeCombo'] = $this->mMisc->searchMiscellaneous('','');
 
 		$this->load->view('ChangeManagement/popup/edit',$data);
-    }
-    function delete_detail($id){
-		$data = array();
-		$data['keyid'] = $id;
-	//	echo $id;
-		if(null !== $id && !empty($id)){
-			//echo $keyId;
-			$keyList = explode("%7C", $id);
-			//inputid
-			$param = (object) array(
-				'projectId' => $keyList[0], 
-				'dataId' => $keyList[1], 
-				'schemaVersionId' => $keyList[2], 
-				'functionId' => $keyList[3], 
-				'typeData' => $keyList[4]
-			);
-		}	
-		$userId = $this->session->userdata('userId');
-		$user = $this->session->userdata('username');
-
-		//echo $param->functionId;
-		$dataDelete = $this->mMisc->searchMiscellaneous('','');
-		foreach ($dataDelete as $value) {
-			var_dump($value) ;
 		}
+		
+    function delete_detail($id){
+			$data = array();
+			$data['keyid'] = $id;
+
+			$userId = $this->session->userdata('userId');
+			$user = $this->session->userdata('username');
+
+			if(null !== $id && !empty($id)){
+				//echo $id;
+				$keyList = explode("%7C", $id);
+				//inputid
+				$param = (object) array(
+					'projectId' => $keyList[0], 
+					'dataId' => $keyList[1], 
+					'schemaVersionId' => $keyList[2], 
+					'functionId' => $keyList[3], 
+					'typeData' => $keyList[4],
+					'functionVersion' => $keyList[5],
+					'userId'	=>$userId,
+					'user' => $user
+				);
+			}	
+			$recordDetail = $this->mFR->searchFunctionalRequirementDetail($param);
+			foreach($recordDetail as $value){
+				$paramdetail = (object) array(
+				'dataName' => $value['dataName'], 
+				'dataType' => $value['dataType']
+				);
+			}
+
+			$recordDelete = $this->deleteTempFRInputChangeList($param,$paramdetail);
+			if(0 < $recordDelete){
+			//	refresh Change List
+				$output = 'Done';
+			}else{
+				$output = 'error|'.ER_MSG_015;
+			}
+
     }	
+
+		function deleteTempFRInputChangeList($param,$paramdetail){
+			$currentDateTime = date('Y-m-d H:i:s');
+
+			$sqlStr = "INSERT INTO T_TEMP_CHANGE_LIST (userId, functionId, functionVersion,typeData, dataName, schemaVersionId, newDataType, newDataLength, 
+			newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag) 
+				VALUES (
+					'$param->userId', 
+					'$param->functionId',
+					'$param->functionVersion',
+					'$param->typeData',
+					'$paramdetail->dataName',
+					'$param->schemaVersionId',
+				  '$paramdetail->dataType',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'',
+					'delete',
+					'$param->user', 
+					'$currentDateTime',
+					'$param->dataId',
+					NULL,
+					NULL)";
+			//echo $sqlStr;
+			$result = $this->db->query($sqlStr);
+			return $result;
+
+		}
 
 	function saveTempFRInput_edit($dataName){
 		$output = '';
 		$error_message = '';
-		echo 'HEOOL"';
+		//echo 'HEOOL"';
 	}
 
 	function bind_data_title($param){

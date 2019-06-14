@@ -199,6 +199,7 @@
 								return false;
 							}else{
 								//alert(result[1]);
+								alert("Done.");
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
      							$('#inputChangeListTbl').html(data);  
@@ -212,7 +213,7 @@
 					error: function(){ 
 						alert("There is a problem when save data, Please try to save again.");
 
-					return true;
+					return false;
 					}
 				});
 			});

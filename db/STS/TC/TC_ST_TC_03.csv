@@ -1,0 +1,4 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,ST_TC_03,Test Add securities Information,Valid,input,SHARE_ID,101
+2,ST_TC_03,Test Add securities Information,Valid,input,SHARECODE,HMPRO
+3,ST_TC_03,Test Add securities Information,Valid,input,SHARENAME,Home Product Center Public Co Ltd

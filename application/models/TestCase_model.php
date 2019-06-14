@@ -39,6 +39,7 @@ class TestCase_model extends CI_Model{
 			AND r.functionId = h.functionId 
 			AND r.functionVersion = h.functionVersion
 			AND h.activeflag = '1'
+			AND h.projectId = $projectId
 			AND $where_clause
 			ORDER BY th.testCaseNo, th.testCaseVersion";
 			//print_r($sqlStr);
@@ -86,7 +87,7 @@ class TestCase_model extends CI_Model{
 
 	function searchExistTestCaseHeader($projectId, $testCaseNo){
 		if(null != $projectId && !empty($projectId)){
-			$where[] = "th.projectId = $projectId";
+			$where[] = "th.projectId = '$projectId'";
 		}
 		if(null != $testCaseNo && !empty($testCaseNo)){
 			$where[] = "th.testCaseNo = '$testCaseNo'";
@@ -96,6 +97,7 @@ class TestCase_model extends CI_Model{
 		$sqlStr = "SELECT *
 			FROM M_TESTCASE_HEADER th
 			WHERE $where_clause";
+			//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}

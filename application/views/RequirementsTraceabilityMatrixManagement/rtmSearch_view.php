@@ -80,7 +80,7 @@
 								<th>#</th>
 								<th class="col-sm-3">Functional Requirement ID</th>
 								<th class="col-sm-3">Functional Requirement Version</th>
-								<th class="col-sm-3">Test Case ID</th>
+								<th class="col-sm-2">Test Case ID</th>
 								<th class="col-sm-2">Test Case Version</th>
 								<th class="col-sm-2">Create Date</th>
 							<!--	<th class="col-sm-2">Create User</th> -->

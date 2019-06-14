@@ -123,7 +123,7 @@ class RTM_model extends CI_Model{
 			$where[] = "projectId = '$projectId'";
 		}
 		if(null != $fnId && !empty($fnId)){
-			$where[] = "functionNo = '$fnId'";
+			$where[] = "functionId = '$fnId'";
 		}
 		$where_clause = implode(' AND ', $where);
 		
@@ -147,39 +147,55 @@ class RTM_model extends CI_Model{
 		return $result;
 	}
 
+	function searchExistTestCaseHeader($projectId, $testCaseId){
+		if(null != $projectId && !empty($projectId)){
+			$where[] = "th.projectId = '$projectId'";
+		}
+		if(null != $testCaseId && !empty($testCaseId)){
+			$where[] = "th.testCaseId = '$testCaseId'";
+		}
+		$where_clause = implode(' AND ', $where);
+
+		$sqlStr = "SELECT *
+			FROM M_TESTCASE_HEADER th
+			WHERE $where_clause";
+			//echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result->row();
+	}
+
 	function uploadRTM($param, $user){
 		$this->db->trans_begin(); //Starting Transaction
 		$effectiveStartDate = '';
 
-	//	echo $param[0]->functionId;
-	//	echo $param[0]->testCaseId;
-		$resultfunction = $this->searchExistFunctionalRequirement($param[0]->functionId,$param[0]->projectId);
-		//3.1 Update Version
-		$param[0]->functionversion = $resultfunction->functionversion;
-		$param[0]->functionId = $resultfunction->functionId;
-
-		$resulttestcase = $this->mTestCase->searchExistTestCaseHeader($param[0]->projectId,$param[0]->testCaseId);
-		$param[0]->testCaseversion = $resulttestcase->testcaseVersion;
-		$param[0]->testCaseId = $resulttestcase->testCaseId;
-
-	//	echo $param[0]->functionId;
-	//	echo $param[0]->testCaseId;
-		//Check Existing RTM Version
-		$result = $this->searchExistRTMVersion($param[0]->projectId,$param[0]->testCaseId ,$param[0]->functionId);
-		if((NULL != $result) && (0 < count($result))){
-			$effectiveStartDate = $result->effectiveStartDate;
-		}else{
-			$effectiveStartDate = date('Y-m-d H:i:s');
-			$param[0]->effectiveStartDate = $effectiveStartDate;
-		}
+		for($i=0;$i<count($param);$i++){
+			//echo $param->functionId;
+			//echo $param[0]->testCaseId;
+			$resultfunction = $this->searchExistFunctionalRequirement($param[$i]->functionId,$param[$i]->projectId);
+			//3.1 Update Version
+			//var_dump($resultfunction);
+			$param[$i]->functionversion = $resultfunction->functionversion;
+//			echo $i;
+//echo $param[$i]->functionId;
+			$resulttestcase = $this->searchExistTestCaseHeader($param[$i]->projectId,$param[$i]->testCaseId);
+			//var_dump($resulttestcase);
 		
-		foreach ($param as $value) {
-			
-			$value->functionId = $param[0]->functionId ;
-			$value->testCaseId = $param[0]->testCaseId ;
+			$param[$i]->testCaseversion = $resulttestcase->testcaseVersion;
 
-			$value->effectiveStartDate = $effectiveStartDate;
-			$resultInsertRTMVersion = $this->insertRTMVersion($param[0], $user);
+		//	echo $param[0]->functionId;
+		//	echo $param[0]->testCaseId;
+			//Check Existing RTM Version
+			$result = $this->searchExistRTMVersion($param[$i]->projectId,$param[$i]->testCaseId ,$param[$i]->functionId);
+			if((NULL != $result) && (0 < count($result))){
+				$effectiveStartDate = $result->effectiveStartDate;
+			}else{
+				$effectiveStartDate = date('Y-m-d H:i:s');
+				$param[$i]->effectiveStartDate = $effectiveStartDate;
+			}
+			//print_r($param[$i]);
+
+			$resultInsertRTMVersion = $this->insertRTMVersion($param[$i], $user);
+		
 		}
 
     	$trans_status = $this->db->trans_status();

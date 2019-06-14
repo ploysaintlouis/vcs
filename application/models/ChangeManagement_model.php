@@ -208,6 +208,7 @@ class ChangeManagement_model extends CI_Model{
 
 		$sqlStr = "DELETE FROM T_TEMP_CHANGE_LIST
 			WHERE $where_condition";
+			//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
 	}

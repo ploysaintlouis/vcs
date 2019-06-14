@@ -271,7 +271,7 @@
 												}else{
 													$value['typeData'] = '2';
 												}	?>											
-                									<?php $keyId = $projectInfo->projectId."|".$value['dataId']."|".$value['schemaVersionId']."|".$hfield['functionId']."|".$value['typeData']; ?>
+                									<?php $keyId = $projectInfo->projectId."|".$value['dataId']."|".$value['schemaVersionId']."|".$hfield['functionId']."|".$value['typeData']."|".$value['functionVersion']; ?>
 
 													<input type="hidden" name="projectId" id="projectId" value="<?php echo $value['projectId']; ?>">
 													<?php if(isset($inputChangeConfirm) && 0 < count($inputChangeConfirm)) { 
@@ -370,7 +370,7 @@
 									<div class="box-body" align="right">
 									<?php 
 														
-										if (isset($value['confirmflag']))
+										if (isset($value['confirmflag']) && (isset($value['changeType'])) )
 										{
 											$var =1; ?>
 											<button type="button" name="confirmChange" id="confirmChange" class="btn btn-primary" style="margin-top: -10px;" onclick="mst001Save()" <?php echo isset($var) ? 'disabled="true"' : ''; ?>>
