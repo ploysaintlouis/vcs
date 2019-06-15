@@ -220,6 +220,19 @@ class DatabaseSchema_model extends CI_Model{
 		return $this->db->affected_rows();
 	}
 
+	function searchSchemaVersion($tableName ) {
+   
+        $strsql = " SELECT DISTINCT schemaVersionId, Id
+                      FROM M_DATABASE_SCHEMA_VERSION 
+                     WHERE tableName = '$tableName'
+                     AND activeFlag= '1'
+                     ";
+    
+    $result = $this->db->query($strsql);
+    //echo $sqlStr ;
+    return $result->result_array();
+    }
+
 	function getSchemaFromDatabaseTarget($connectionDB, $tableName, $columnName){
 		$dbSchemaDetail = array();
 //echo $serverName ;

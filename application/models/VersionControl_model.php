@@ -847,6 +847,8 @@ class VersionControl_model extends CI_Model{
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b,M_FN_REQ_HEADER c
 			WHERE a.functionId = '$param->functionId'
 			AND a.functionversion ='$param->functionVersion' 
+            AND b.projectId ='$param->projectId' 
+			AND b.projectId = c.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion
             AND a.functionId = c.functionId
@@ -856,6 +858,8 @@ class VersionControl_model extends CI_Model{
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b,M_FN_REQ_HEADER c
 			WHERE a.functionId = '$FROth_Id'
 			AND a.functionversion ='$FROth_Version' 
+            AND b.projectId ='$param->projectId' 
+			AND b.projectId = c.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion
             AND a.functionId = c.functionId
@@ -865,6 +869,8 @@ class VersionControl_model extends CI_Model{
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b,M_FN_REQ_HEADER c
 			WHERE a.functionId = '$param->functionId'
 			AND a.functionversion ='$param->functionVersion'
+            AND b.projectId ='$param->projectId' 
+			AND b.projectId = c.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion
             AND a.functionId = c.functionId
@@ -965,12 +971,38 @@ class VersionControl_model extends CI_Model{
 
         $strsql = "DELETE FROM T_TEMP_CHANGE_LIST
                WHERE functionId = '$param->functionId' 
-                AND projectId = '$param->projectId' 
                 AND functionVersion = '$param->functionVersion' ";
 
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
     } 
+
+    function insertSchemaVersion($param){
+		$currentDateTime = date('Y-m-d H:i:s');
+        $Max_DBVersion = $this->searchSchemaVersion($param);
+        $schemaVersionId = $Max_DBVersion[0]['schemaVersionId']+1;
+        $schemaVersionNumber =$Max_DBVersion[0]['schemaVersionNumber'];
+
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_VERSION 
+        (projectId, tableName, columnName,schemaVersionId, schemaVersionNumber, effectiveStartDate, effectiveEndDate, activeFlag, createDate, 
+        createUser, updateDate, updateUser) 
+        SELECT projectId, tableName, columnName,schemaVersionId, '$schemaVersionNumber', '$currentDateTime',
+         NULL, '1', '$currentDateTime', '$param->user', '$currentDateTime', '$param->user'
+         FROM M_DATABASE_SCHEMA_VERSION
+        WHERE projectId = '$param->projectId'
+        AND tableName = '$paramInsert->tableName'
+        AND schemaVersionNumber = '$Old_DBVer'
+        ";
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(schemaVersionId) as last_id FROM M_DATABASE_SCHEMA_VERSION");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    }   
+
 
 }
 ?>

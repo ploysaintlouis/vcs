@@ -60,7 +60,7 @@ class ChangeManagementRequest extends CI_Controller {
 				$criteria = (object) array('userId' => $userId, 'functionId' => $functionId, 'functionVersion' => $functionVersion);
 				$inputChangeList = $this->mChange->searchTempFRInputChangeList($criteria);
 				$inputChangeConfirm = $this->mChange->searchTempFRInputChangeConfirm($criteria);
-//print_r($inputChangeConfirm);
+print_r($inputChangeList);
 			}else{
 				$error_message = ER_MSG_012;
 			}
@@ -148,7 +148,9 @@ class ChangeManagementRequest extends CI_Controller {
 				'dataId' => $keyList[1], 
 				'schemaVersionId' => $keyList[2], 
 				'functionId' => $keyList[3], 
-				'typeData' => $keyList[4]
+				'typeData' => $keyList[4],
+				'functionVersion' => $keyList[5], 
+				'schemaId' => $keyList[6]	
 			);
 		}		
 		$param_new = (object) array(
@@ -179,6 +181,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$data["schemaVersionId"] = $value['schemaVersionId'];
 		$data["refTableName"] = $value['refTableName'];
 		$data["refColumnName"] = $value['refColumnName'];
+		$data["schemaId"] = $param->schemaId;
 
 		$data['dataTypeCombo'] = $this->mMisc->searchMiscellaneous('','');
 
@@ -203,6 +206,7 @@ class ChangeManagementRequest extends CI_Controller {
 					'functionId' => $keyList[3], 
 					'typeData' => $keyList[4],
 					'functionVersion' => $keyList[5],
+					'schemaId' => $keyList[6],
 					'userId'	=>$userId,
 					'user' => $user
 				);
@@ -210,6 +214,8 @@ class ChangeManagementRequest extends CI_Controller {
 			$recordDetail = $this->mFR->searchFunctionalRequirementDetail($param);
 			foreach($recordDetail as $value){
 				$paramdetail = (object) array(
+					'tableName' => $value['refTableName'],
+					'columnName' => $value['refColumnName'],
 				'dataName' => $value['dataName'], 
 				'dataType' => $value['dataType']
 				);
@@ -229,7 +235,8 @@ class ChangeManagementRequest extends CI_Controller {
 			$currentDateTime = date('Y-m-d H:i:s');
 
 			$sqlStr = "INSERT INTO T_TEMP_CHANGE_LIST (userId, functionId, functionVersion,typeData, dataName, schemaVersionId, newDataType, newDataLength, 
-			newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag) 
+			newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag,
+			schemaId) 
 				VALUES (
 					'$param->userId', 
 					'$param->functionId',
@@ -245,19 +252,39 @@ class ChangeManagementRequest extends CI_Controller {
 					'',
 					'',
 					'',
-					'',
-					'',
+					'$paramdetail->tableName',
+					'$paramdetail->columnName',
 					'delete',
 					'$param->user', 
 					'$currentDateTime',
 					'$param->dataId',
 					NULL,
-					NULL)";
+					NULL,
+					'$param->schemaId')";
 			//echo $sqlStr;
 			$result = $this->db->query($sqlStr);
 			return $result;
 
 		}
+
+		
+	function deleteTempFRInputList($id){
+
+			$recordDelete = $this->deleteTempChangeList($id);
+		if (0 <count($recordDelete)){
+			return true;
+		}
+			
+	}
+
+	function deleteTempChangeList($id){
+	
+		$sqlStr = "DELETE FROM T_TEMP_CHANGE_LIST
+			WHERE dataId = '$id' ";
+			//echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $this->db->affected_rows();
+	}
 
 	function saveTempFRInput_edit($dataName){
 		$output = '';
@@ -635,6 +662,21 @@ class ChangeManagementRequest extends CI_Controller {
 
 			array_push($data['aff_schema_list'],$row);
 		}
+		$ListofNewSchemaAffected= $this->mChange->checkNewSchemaAffted($param);
+		$i = 1;
+		foreach($ListofNewSchemaAffected as $value)
+		{
+			//for($i=1;$i<3;$i++){
+			$row["no"] = $i++;
+			$row["schemaVersionId"]= $value["schemaVersionId"];
+			$row["table_name"]= $value["tableName"];
+			$row["column_name"]= $value["columnName"];
+			$row["change_type"]= $value["changeType"];
+			$row["version"]= $value["schemaVersionNumber"];
+
+			array_push($data['aff_schema_list'],$row);
+		}
+
 		return $data;
 	}
 	
@@ -757,9 +799,9 @@ class ChangeManagementRequest extends CI_Controller {
 		$projectId = $this->input->post('projectId');
 		$functionId = $this->input->post('functionId');
 		$functionVersion = $this->input->post('functionVersion');
-echo $functionId;
-echo $projectId;
-echo $functionVersion;
+//echo $functionId;
+//echo $projectId;
+//echo $functionVersion;
 		//see this function to bind load data to template view
 		//url -> ChangeManagementRequest/view_change_result/{projectId}
 		$dataForPage = array();
@@ -980,6 +1022,8 @@ echo $functionVersion;
 		//2. save change request details.
 		$i = 1;
 		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		print_r($RelateResultSCHEMA);
+		
 		foreach ($RelateResultSCHEMA as $value) {
 			$paramInsert = (object) array(
 				'changeRequestNo' => $param->changeRequestNo,
@@ -1004,6 +1048,7 @@ echo $functionVersion;
 		}
 
 		$RelateResultNotSCHEMA  = $this->mChange->searchChangeRequestNotrelateSCHEMA($param);
+		print_r($RelateResultNotSCHEMA);
 		foreach ($RelateResultNotSCHEMA as $value) {
 			$paramInsert = (object) array(
 				'changeRequestNo' => $param->changeRequestNo,
@@ -1242,7 +1287,7 @@ echo $functionVersion;
 								'changeType' => $value['changeType'],
 								'dataId' => $value['dataId'],
 								'typeData'	=> $value['typeData'],
-								'dataName' => $value['dataName'], 
+								'dataName' => trim($value['dataName']), 
 								'newDataType' => $value['newDataType'],
 								'newDataLength' => $value['newDataLength'],
 								'newScaleLength' => $value['newScaleLength'],
@@ -1253,7 +1298,7 @@ echo $functionVersion;
 								'newMaxValue' => $value['newMaxValue'],
 								'tableName' => $value['tableName'],
 								'columnName' => $value['columnName']);
-			//print_r($paramUpdate);
+			print_r($paramUpdate->dataName);
 						//print_r($paramUpdate->changeType);		
 						
 								if($paramUpdate->changeType == 'edit'){

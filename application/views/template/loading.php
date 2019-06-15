@@ -15,7 +15,7 @@
 </style>
 
 <div id="loadingPage" class="modal fade" role="dialog">
-    <div class="modal-dialog">
+   <!-- <div class="modal-dialog">
         <div class="modal-content" style="border-radius:6px;">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -25,6 +25,6 @@
                 <div class="loader"></div>
             </div>
         </div>
-    </div>
+    </div>-->
 </div>
 

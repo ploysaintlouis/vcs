@@ -77,13 +77,16 @@ class ChangeManagement extends CI_Controller{
 
 			$rowResult = $this->mChange->updateTempFRInputChangeList($functionId,$functionVersion);
 			if(0 < $rowResult){
-				echo "<script type='text/javascript'>alert('Save Successful!')</script>";
-				//redirect ( "index.php/ChangeManagement/viewFunctionDetail/" + $projectId + "/" + $functionId);
+				echo "<script type='text/javascript'>alert('Save Successful!')";
+				echo " window.location  = 'localhost:81/vcs/index.php/Dashboard' </script> ";
+
+				redirect ( "index.php/Dashboard");
 				//$url = "index.php/ChangeManagement/viewFunctionDetail/" + $projectId + "/" + $functionId;
-				$this->reloadPage('', $projectId, $functionId,$functionVersion);
+				//$this->reloadPage('', $projectId, $functionId,$functionVersion);
 			}else{
 				echo "error";
 			}
+		//	return true;
 	}
 
 	function doChangeProcess(){ //requestChangeFRInputs
@@ -643,7 +646,7 @@ class ChangeManagement extends CI_Controller{
 	function saveTempFRInput_add(){
 		$output = '';
 		$error_message = '';
-		
+		//print_r($_POST);
 		if(!empty($_POST))
 		{
 			try{
@@ -655,7 +658,7 @@ class ChangeManagement extends CI_Controller{
 				$dataId = $this->input->post('changedataId');
 				$typeData = $this->input->post('changetypeData');
 				$schemaVersionId = $this->input->post('changeSchemaVersionId');
-				$Id = $this->input->post('changeId');
+				$schemaId = $this->input->post('changeSchemaId');
 
 				$dataName = trim($this->input->post('dataName'));
 				$dataType = $this->input->post('inputDataType');
@@ -673,7 +676,7 @@ class ChangeManagement extends CI_Controller{
 				$notNull = empty($notNull)? "N": "Y";
 
 				$user = $this->session->userdata('username');
-
+				
 				$param = (object) array(
 					'userId' => $userId,
 					'functionId' => $functionId,
@@ -681,7 +684,7 @@ class ChangeManagement extends CI_Controller{
 					'typeData' => $typeData,
 					'dataId' => $dataId,
 					'dataName' => $dataName,
-					'Id' => $Id,
+					'schemaId' => $schemaId,
 					'schemaVersionId' => $schemaVersionId,
 					'dataType' => $dataType,
 					'dataLength' => $dataLength,
@@ -695,15 +698,30 @@ class ChangeManagement extends CI_Controller{
 					'column' => $columnName,
 					'changeType' => '',
 					'user' => $user);
+				//print_r($param );
 
 					//*******Change Type: Add
 					//Validate
 			
 					$projectId = $this->input->post('changeProjectId');
 					$resultValidate = $this->validateNewFRInput($projectId, $param, $error_message);
-				
+				//print_r($param );
 					if($resultValidate){
 						
+						if (($param->schemaVersionId == null) && ($param->table <> null ) ){
+							$schema = $this->mDB->searchSchemaVersion($param->table);
+							if( 0 < count($schema) ){
+								foreach($schema as $value){
+								$paramNewschema = (object) array(
+									'schemaVersionId' => $value['schemaVersionId'],
+									'schemaId' => $value['Id']
+										);
+								}
+							}				
+						$param->schemaVersionId = $paramNewschema->schemaVersionId;
+						$param->schemaId = $paramNewschema->schemaId;
+						}
+
 						//Save
 						$param->changeType = CHANGE_TYPE_ADD;
 						$saveResult = $this->mChange->insertTempFRInputChange($param);
@@ -718,8 +736,8 @@ class ChangeManagement extends CI_Controller{
 						$output = 'error|'.$error_message;
 					}
 
-			}catch (Exception $e){
-				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
+			}catch (Exception $error_message){
+				$output = 'error|'.ER_MSG_013.'<br/>'.$error_message;
 			}
 		}
 		//echo $output;
@@ -741,6 +759,7 @@ class ChangeManagement extends CI_Controller{
 				$dataId = $this->input->post('changedataId');
 				$typeData = $this->input->post('changetypeData');
 				$schemaVersionId = $this->input->post('changeSchemaVersionId');
+				$schemaId = $this->input->post('changeSchemaId');
 
 				$dataName = trim($this->input->post('dataName'));
 				$dataType = $this->input->post('inputDataType');
@@ -770,6 +789,7 @@ class ChangeManagement extends CI_Controller{
 					'dataId' => $dataId,
 					'dataName' => $dataName,
 					'schemaVersionId' => $schemaVersionId,
+					'schemaId' =>$schemaId,
 					'dataType' => $dataType,
 					'dataLength' => $dataLength,
 					'scaleLength' => $scalePoint,
@@ -834,8 +854,8 @@ class ChangeManagement extends CI_Controller{
 						//Error already change
 						$output = 'error|'.ER_TRN_001;
 					}
-			}catch (Exception $e){
-				$output = 'error|'.ER_MSG_013.'<br/>'.$e;
+			}catch (Exception $error_message){
+				$output = 'error|'.ER_MSG_013.'<br/>'.$error_message;
 			}
 		}
 		//echo $output;

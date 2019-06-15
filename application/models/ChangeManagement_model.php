@@ -63,6 +63,7 @@ class ChangeManagement_model extends CI_Model{
 			AND a.functionVersion = b.functionversion
 			AND a.userId = c.userId
 			AND a.confirmflag = '1'
+			AND b.projectId = '$param->projectId'
 			ORDER BY a.lineNumber
 			 ";
 			//echo $sqlStr;
@@ -216,6 +217,7 @@ class ChangeManagement_model extends CI_Model{
 	function insertTempFRInputChange($param){
 		$currentDateTime = date('Y-m-d H:i:s');
 
+		$schemaId = !empty($param->schemaId)? $param->schemaId : "NULL";
 		$schemaVersionId = !empty($param->schemaVersionId)? $param->schemaVersionId : "NULL";
 		$dataType = !empty($param->dataType)? "'".$param->dataType."'" : "NULL";
 		$dataLength = !empty($param->dataLength)? $param->dataLength : "NULL";
@@ -231,7 +233,8 @@ class ChangeManagement_model extends CI_Model{
 		$dataLength = !empty($dataLength)? $dataLength : "NULL";
 
 		$sqlStr = "INSERT INTO T_TEMP_CHANGE_LIST (userId, functionId, functionVersion,typeData, dataName, schemaVersionId, newDataType, newDataLength, 
-		newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag) 
+		newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag,
+		schemaId) 
 			VALUES (
 				'$param->userId', 
 				'$param->functionId',
@@ -254,7 +257,8 @@ class ChangeManagement_model extends CI_Model{
 				'$currentDateTime',
 				'$param->dataId',
 				NULL,
-				NULL)";
+				NULL,
+				$schemaId)";
 //echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result;
@@ -758,7 +762,7 @@ class ChangeManagement_model extends CI_Model{
 		AND tableName is NOT NULL
 		AND columnName is NOT  NULL ";
 		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
+		echo $sqlStr ;
 		return $result->result_array();
 	}
 	function searchChangeRequestNotrelateSCHEMA($param){
@@ -768,7 +772,8 @@ class ChangeManagement_model extends CI_Model{
 		WHERE functionId = '$param->functionId'
 		AND functionversion ='$param->functionVersion'
 		AND tableName is NULL
-		AND columnName is  NULL ";
+		AND columnName is  NULL
+	 ";
 
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -784,7 +789,8 @@ class ChangeManagement_model extends CI_Model{
 		AND a.functionVersion = b.functionVersion
 		AND b.activeflag = '1' 
 		AND a.functionId = '$param->functionId'
-		AND a.functionVersion = '$param->functionVersion' ";
+		AND a.functionVersion = '$param->functionVersion' 
+		AND b.projectId = '$param->projectId'";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 
@@ -792,7 +798,7 @@ class ChangeManagement_model extends CI_Model{
 		return $result->result_array();
 	}	
 	function checkChangeRequestrelateSCHEMAOtherFr($param){
-		
+		/*
 		$sqlStr = " SELECT a.*,
 		b.dataName FR_NAME,b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO,c.functionDescription  FROth_Desc
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b,M_FN_REQ_HEADER c
@@ -804,7 +810,23 @@ class ChangeManagement_model extends CI_Model{
 		AND a.functionId = '$param->functionId'
 		AND c.functionDescription <> '$param->fnDesc'
 		AND a.functionVersion ='$param->functionVersion'
+		AND b.projectId = '$param->projectId'
+		AND b.projectId = c.projectId
 		AND a.functionId <> b.functionId
+		AND b.activeflag = '1'";
+		*/
+		$sqlStr = " SELECT a.*,
+		b.dataName FR_NAME,b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO,c.functionDescription  FROth_Desc
+		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b,M_FN_REQ_HEADER c
+		WHERE a.confirmflag = 1 
+		AND a.tableName=b.refTableName 
+		AND a.columnName = b.refColumnName
+		AND b.functionId = c.functionId
+		AND b.functionVersion = c.functionversion
+		AND a.functionId <> '$param->functionId'
+		AND a.functionVersion <>'$param->functionVersion'
+		AND b.projectId = '$param->projectId'
+		AND b.projectId = c.projectId
 		AND b.activeflag = '1'";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
@@ -877,6 +899,27 @@ class ChangeManagement_model extends CI_Model{
 		//echo $sqlStr ;
 		return $result->result_array();
 	}		
+
+	function checkNewSchemaAffted($param){
+
+		$sqlStr = " SELECT a.functionId,a.functionversion,a.changeType,
+		a.schemaVersionId,'' schemaVersionNumber,a.tableName,a.columnName
+		FROM T_TEMP_CHANGE_LIST a
+		WHERE ((a.tableName NOT IN (SELECT tableName FROM M_DATABASE_SCHEMA_VERSION ) 
+			AND a.columnName NOT IN (SELECT columnName FROM M_DATABASE_SCHEMA_VERSION )) or
+			(a.tableName NOT IN (SELECT tableName FROM M_DATABASE_SCHEMA_VERSION ) 
+			OR a.columnName NOT IN (SELECT columnName FROM M_DATABASE_SCHEMA_VERSION )
+			))
+		AND a.functionId = '$param->functionId'
+		AND a.functionversion ='$param->functionVersion'
+		AND a.dataId = '999999'
+		AND a.tableName is NOT NULL
+		AND a.columnName is NOT NULL";
+		$result = $this->db->query($sqlStr);
+		//echo $sqlStr ;
+		return $result->result_array();
+	}	
+
 	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
 
 		if (0 < count($ListofChangeSchemaOthFr)){
@@ -897,6 +940,8 @@ class ChangeManagement_model extends CI_Model{
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
 			WHERE a.functionId = '$param->functionId'
 			AND a.functionversion ='$param->functionVersion' 
+			AND a.projectId ='$param->projectId' 
+			AND a.projectId = b.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion
 			UNION
@@ -904,6 +949,8 @@ class ChangeManagement_model extends CI_Model{
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
 			WHERE a.functionId = '$FROth_Id'
 			AND a.functionversion ='$FROth_Version' 
+			AND a.projectId ='$param->projectId' 
+			AND a.projectId = b.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion		";
 		}else{
@@ -911,12 +958,14 @@ class ChangeManagement_model extends CI_Model{
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
 			WHERE a.functionId = '$param->functionId'
 			AND a.functionversion ='$param->functionVersion'
+			AND a.projectId ='$param->projectId' 
+			AND a.projectId = b.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion ";
 		}
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
-echo $sqlStr;
+//echo $sqlStr;
 		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
 		/*
 		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,c.tctype

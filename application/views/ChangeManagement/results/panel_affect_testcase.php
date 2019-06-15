@@ -27,7 +27,7 @@
 									<i class="fa fa-circle-o <?php echo $label; ?>"></i>
 									<span><?php echo $val['change_type'] ?></span>
 						</td>
-                        <td><?php echo $version_title.$val["version"]; ?></td>
+                        <td><?php echo $val["version"]; ?></td>
                     </tr>
                 <?php
                     //to end loop for each

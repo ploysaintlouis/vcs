@@ -42,7 +42,7 @@
                 					<label for="functionNo" style="margin-right: 3px;margin-bottom: 0px;">Functional Requirement Version:</label>
                 		    	</td>
                 				<td height="10" style="width: 70%;">
-                					<label for="projectName" style="margin-left: 5px;margin-bottom: 0px;"><?php echo $version_title.$change_title['FR_Version']; ?></label>
+                					<label for="projectName" style="margin-left: 5px;margin-bottom: 0px;"><?php echo $change_title['FR_Version']; ?></label>
                 				</td>
                 			</tr>
                 		</table>

@@ -197,7 +197,7 @@
 											<script type="text/javascript">
 												$(function() {
 
-													$("button[name*='delete']").bind( "click", function() {
+													$("button[name='delete']").bind( "click", function() {
 														var msg = "Are you sure to delete this functional requirement's input?";
 														if(confirm(msg))
 														{
@@ -215,6 +215,25 @@
 													});
 												});
 											</script>
+											<script type="text/javascript">
+												$(function() {
+
+													$("button[name*='changedelete']").bind( "click", function() {
+														var msg = "Are you sure to delete?";
+														if(confirm(msg))
+														{
+															var id = $(this).prop("id");
+															//var tr = $(this).parent().parent().html());
+															var url = baseUrl + "index.php/ChangeManagementRequest/deleteTempFRInputList/"+id;
+															$.ajax({url: url, 
+															success: function(result){
+																$("#loadPopup").html(result);
+															}});
+														}
+													});
+												});
+											</script>
+
 	                						<?php 
 	                						$define = 1;
 	                						foreach ($resultDetail as $value): ?>
@@ -271,7 +290,7 @@
 												}else{
 													$value['typeData'] = '2';
 												}	?>											
-                									<?php $keyId = $projectInfo->projectId."|".$value['dataId']."|".$value['schemaVersionId']."|".$hfield['functionId']."|".$value['typeData']."|".$value['functionVersion']; ?>
+                									<?php $keyId = $projectInfo->projectId."|".$value['dataId']."|".$value['schemaVersionId']."|".$hfield['functionId']."|".$value['typeData']."|".$value['functionVersion']."|".$value['Id']; ?>
 
 													<input type="hidden" name="projectId" id="projectId" value="<?php echo $value['projectId']; ?>">
 													<?php if(isset($inputChangeConfirm) && 0 < count($inputChangeConfirm)) { 
@@ -289,6 +308,7 @@
 															<?php } 
 														endforeach; 
 													}else{ ?>
+													
 																<button type="button" name="edit" id="<?php echo $keyId; ?>" class="btn btn-warning btn-xs" >Edit</button> 
 																<button type="button" name="delete" id="<?php echo $keyId; ?>" class="btn btn-danger btn-xs " >Delete</button> 
 
@@ -358,7 +378,7 @@
 				               						</td>		
 													 <?php if(!isset($value['confirmflag']) || ('1' != $value['confirmflag']) ){ ?>
 				               						<td>
-				               							<span id="<?php echo $value['lineNumber']; ?>" class="glyphicon glyphicon-trash deleteTmpFRInputChg" ></span>
+													   <button type="button" name="changedelete" id="<?php echo $value['dataId']; ?>" class="glyphicon glyphicon-trash " ></button> 
 													   
 													</td><?php } ?>
 				               					</tr>
@@ -399,6 +419,11 @@
 							var functionId = $('#functionId').val();
 							var functionVersion = $('#functionVersion').val();
 							window.location  = baseUrl + "index.php/ChangeManagement/updateTempFRChangeList/"+projectId+"/"+functionId+"/"+functionVersion;
+							$.ajax({url: url, 
+							success: function(result){
+															$("#loadPopup").html(result);
+																window.location  = baseUrl+"index.php/Dashboard";
+                       											 $("#loadingPage").modal('hide');							}});
 						}else{
 							return false;
 						}

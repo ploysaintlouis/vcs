@@ -1,11 +1,11 @@
 <section class="content-header">
 	<h1>
 		<span class="glyphicon glyphicon-list-alt"></span>
-		Approve Change<
+		Approve Change
 	</h1>
 	<ol class="breadcrumb">
 		<li><a href="#"><i class="fa fa-dashboard"></i>Home</a></li>
-		<li><a href="#">Approve Change<</a></li>
+		<li><a href="#">Approve Change</a></li>
 		<li class="active">Change Request</li>
 	</ol>
 

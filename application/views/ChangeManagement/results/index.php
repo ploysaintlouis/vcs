@@ -27,11 +27,11 @@
     <div id="divFunction">
     </div>
 
-    <button id="btnTestFunction">
+    <!--<button id="btnTestFunction">
         test function callChangeRelate
     </button>
     <div id="divTestFunction">
-    </div>
+    </div>-->
 </div>
 
 <script>
@@ -94,14 +94,14 @@
                         debugger
                         //alert(data);
                         //$("#loadingPage").modal(data);
-                    $("#divFunction").html(data);
+                    //$("#divFunction").html(data);
                 
                         //$("#loadingPage").modal(hide);
-                            alert("Save Successful!");
+                     //       alert("Save Successful!");
                             //alert(data.FR_Description);
                             //alert(baseUrl);
-                        window.location  = baseUrl+"index.php/Dashboard";
-                        $("#loadingPage").modal('hide');
+                    //    window.location  = baseUrl+"index.php/Dashboard";
+                    //    $("#loadingPage").modal('hide');
                     }
                 });
             //},1000);

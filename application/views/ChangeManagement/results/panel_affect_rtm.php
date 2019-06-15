@@ -22,9 +22,9 @@
                     <tr>
                         <td><?php echo $val["no"]; ?></td>
                         <td><?php echo $val["fr_no"]; ?></td>
-                        <td><?php echo $version_title.$val["fr_version"]; ?></td>
+                        <td><?php echo $val["fr_version"]; ?></td>
                         <td><?php echo $val["test_no"]; ?></td>
-                        <td><?php echo $version_title.$val["version"]; ?></td>
+                        <td><?php echo $val["version"]; ?></td>
                     </tr>
                 <?php
                     //to end loop for each

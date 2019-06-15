@@ -14,10 +14,12 @@
 							<input type="hidden" name="changeFunctionId" id="changeFunctionId" value=<?php echo $functionId ?> >
 							<input type="hidden" name="changeFunction" id="changeFunction" value= <?php echo $functionVersion ?> >
 							<input type="hidden" name="changeType" id="changeType" value="add">
-							<input type="hidden" name="changeSchemaVersionId" id="changeSchemaVersionId" value="1">
+							<input type="hidden" name="changeSchemaVersionId" id="changeSchemaVersionId" value=""  >
+							<input type="hidden" name="changedataId" id="changedataId" value="999999">
 				
-							<input type="hidden" name="userId" id="userId"  value="'.$_SESSION['userId'].'">
-							<input type="hidden" name="user" id="user"  value="'.$_SESSION['username'].'">
+							<input type="hidden" name="userId" id="userId"  value=<?php echo $_SESSION['userId'] ?> >
+							<input type="hidden" name="user" id="user"  value=<?php echo $_SESSION['username'] ?> >
+							<input type="hidden" name="changeSchemaId" id="changeSchemaId" value= "" >
 
 							<table style="width:100%">
 							<tr height="40">
@@ -162,7 +164,9 @@
 					url: "<?php echo base_url(); ?>index.php/ChangeManagement/saveTempFRInput_add/",
                     method: "POST",
 					data: $("#changeInput_form").serialize(),
+					//alert(data);
 					success: function(data){
+						
 						if(null != data){
 							alert(data);
 							var result = data.split("|");
@@ -171,12 +175,12 @@
 								return false;
 							}else{
 								//alert(result[1]);
+								//alert(data);
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
      							$('#inputChangeListTbl').html(data);  
 							}
 						}else{
-							
 							alert("There is a problem when save data, Please try to save again.");
 							return false; 
 						}
