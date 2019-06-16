@@ -1,0 +1,4 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+4,BALANCE,ACCOUNT,Y,VARCHAR,10,,Y,,N,,
+4,BALANCE,product_id,N,INT,,,N,,N,,
+4,BALANCE,BALANCE,N,INT,,,Y,,N,,

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 15, 2019 at 08:13 PM
+-- Generation Time: Jun 16, 2019 at 11:53 AM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -896,9 +896,8 @@ INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functio
 (25, '1', 25, '1', 2, 'dPrice', NULL, NULL, 'decimal', '18', '2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'delete', 'ploy', '2019-04-14', 41, 1, NULL),
 (26, '1', 25, '1', 1, 'dId', NULL, NULL, 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL, 'add', 'ploy', '2019-04-14', 287, 1, NULL),
 (27, '1', 25, '1', 1, 'dUnit Price', 46, 5, 'DECIMAL', NULL, '2', 'N', 'N', NULL, NULL, NULL, 'ORDER_DETAILS', 'UNIT_PRICE', 'edit', 'ploy', '2019-04-15', 38, 1, NULL),
-(52, '2', 40, '1', 1, 'ADDRESS', 67, 7, 'VARCHAR', '150', NULL, 'N', 'Y', NULL, NULL, NULL, 'CUSTOMER', 'ADDRESS', 'edit', 'sa_test', '2019-06-15', 107, 1, NULL),
-(53, '2', 40, '1', 1, 'PHONE', 68, 7, 'varchar', '', '', '', '', '', '', '', 'CUSTOMER', 'PHONE', 'delete', 'sa_test', '2019-06-15', 108, 1, NULL),
-(59, '2', 40, '1', 1, 'EMAIL', 74, 7, 'VARCHAR', '30', NULL, 'N', 'N', NULL, NULL, NULL, 'CUSTOMER', 'EMAIL', 'add', 'sa_test', '2019-06-15', 999999, 1, NULL);
+(59, '2', 41, '1', 2, 'EMAIL', 74, 7, 'VARCHAR', '30', NULL, 'N', 'N', NULL, NULL, NULL, 'CUSTOMER', 'EMAIL', 'add', 'sa_test', '2019-06-15', 999999, 1, NULL),
+(60, '2', 41, '1', 2, 'AGE', NULL, NULL, 'DECIMAL', '3', '2', 'N', 'Y', NULL, NULL, NULL, NULL, NULL, 'edit', 'sa_test', '2019-06-16', 112, 1, NULL);
 
 --
 -- Indexes for dumped tables
@@ -1100,7 +1099,7 @@ ALTER TABLE `temp_rollback`
 -- AUTO_INCREMENT for table `t_temp_change_list`
 --
 ALTER TABLE `t_temp_change_list`
-  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

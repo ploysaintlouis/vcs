@@ -211,48 +211,39 @@ class VersionControl_model extends CI_Model{
        return $result->result_array();
     } 
 
-    function updateChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
+    function updateChangeRequestDetail($param,$paramUpdate,$New_param) {
 
         //print_r($New_FunctionId);
         //print_r($paramUpdate);
 
         $currentDateTime = date('Y-m-d H:i:s');
         $fieldName = '';
-        if($paramUpdate->newDataType != null){
+        if(!empty($paramUpdate->newDataType)){
             $fieldName = " dataType = '$paramUpdate->newDataType' ,";
         }
-        if($paramUpdate->newDataLength != null){
+        if(!empty($paramUpdate->newDataLength)){
             $fieldName .= " dataLength = '$paramUpdate->newDataLength' ,";
         }
-        if($paramUpdate->newScaleLength  != null){
+        if(!empty($paramUpdate->newScaleLength)){
             $fieldName .= " decimalPoint = '$paramUpdate->newScaleLength' ,";
         }
-        if($paramUpdate->newDefaultValue != null){
+        if(!empty($paramUpdate->newDefaultValue)){
             $fieldName .= " constrraintDefault = '$paramUpdate->newDefaultValue' ,";
         }
-        if($paramUpdate->newMinValue != null){
+        if(!empty($paramUpdate->newMinValue)){
             $fieldName .= " ConstraintMinValue = '$paramUpdate->newMinValue' ,";
         }	
-        if($paramUpdate->newMaxValue != null){
+        if(!empty($paramUpdate->newMaxValue)){
             $fieldName .= " ConstraintMaxValue = '$paramUpdate->newMaxValue' ,";
         }					
         $condition = $fieldName;
-
-        $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
-        foreach($NewFR as $value){
-            $New_param = (object) array(
-                'functionNo' => $value['functionNo'],
-                'functionversion'   => $value['functionVersion']
-            );
-        }
-        //print_r($NewFR);
 
         $strsql = "UPDATE M_FN_REQ_DETAIL
                 set $condition 
                 constraintUnique = '$paramUpdate->newUnique',
                 constraintNull = '$paramUpdate->newNotNull'
                 WHERE functionVersion = '$New_param->functionversion' 
-                AND functionId = '$New_FunctionId'
+                AND functionId = '$New_param->functionId'
                 and activeflag = '1' 
                 AND dataName = '$paramUpdate->dataName'
                 and projectid = '$param->projectId' ";
@@ -261,19 +252,10 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
      } 
     
-    function deleteChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
-                    
-        $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
-        foreach($NewFR as $value){
-            $New_param = (object) array(
-                'functionNo' => $value['functionNo'],
-                'functionversion'   => $value['functionVersion']
-            );
-        }
-        //print_r($NewFR);
+    function deleteChangeRequestDetail($param,$paramUpdate,$New_param) {
 
         $strsql = "DELETE FROM M_FN_REQ_DETAIL
-                WHERE functionId = '$New_FunctionId' 
+                WHERE functionId = '$New_param->functionId' 
                 AND functionVersion = '$New_param->functionversion' 
                 AND activeflag = '1' 
                 AND dataName = '$paramUpdate->dataName'
@@ -282,24 +264,15 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
     }   				
 
-    function addChangeRequestDetail($param,$paramUpdate,$New_FunctionId) {
+    function addChangeRequestDetail($param,$paramUpdate,$New_param) {
         $currentDateTime = date('Y-m-d H:i:s');
-           
-        $NewFR = $this->SearchRequirementsDetail($param,$New_FunctionId);
-        foreach($NewFR as $value){
-            $New_param = (object) array(
-                'functionNo' => $value['functionNo'],
-                'functionversion'   => $value['functionVersion']
-            );
-        }
-        //print_r($NewFR);
 
         $strsql = "INSERT INTO M_FN_REQ_DETAIL 
         (projectid, functionId, functionNo, functionVersion, typeData, dataName, 
         schemaVersionId, refTableName, refColumnName, dataType, dataLength, decimalPoint, constraintPrimaryKey, constraintUnique, 
         constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, effectiveStartDate, effectiveEndDate, activeFlag,
         createDate, createUser, updateDate, updateUser)
-        VALUES('$param->projectId','$New_FunctionId','$New_param->functionNo','$New_param->functionversion',
+        VALUES('$param->projectId','$New_param->functionId','$New_param->functionNo','$New_param->functionversion',
         '$paramUpdate->typeData','$paramUpdate->dataName',NULL,'$paramUpdate->tableName',
         '$paramUpdate->columnName','$paramUpdate->newDataType','$paramUpdate->newDataLength',
         '$paramUpdate->newScaleLength','N','$paramUpdate->newUnique','$paramUpdate->newDefaultValue',
@@ -386,16 +359,17 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
     }  
 
-	function updateDatabaseSchemaVersion($param,$paramInsert){
+	function updateDatabaseSchemaVersion($schema_list_aff){
         $currentDateTime = date('Y-m-d H:i:s');
 
 		$sqlStr = "UPDATE M_DATABASE_SCHEMA_VERSION
 			SET effectiveEndDate = '$currentDateTime', 
 				activeFlag = '0', 
 				updateDate = '$currentDateTime', 
-				updateUser = '$param->user' 
-            WHERE projectId = '$param->projectId'
-            AND tableName = '$paramInsert->tableName'
+				updateUser = '$schema_list_aff->user' 
+            WHERE projectId = '$schema_list_aff->projectId'
+            AND schemaVersionId = '$schema_list_aff->schemaVersionId'
+            AND schemaVersionNumber = '$schema_list_aff->version'
             AND activeflag = '1' ";
 //print_r($sqlStr);
         $result = $this->db->query($sqlStr);
@@ -407,7 +381,8 @@ class VersionControl_model extends CI_Model{
 		$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
 			SET activeflag = '0'
             WHERE projectId = '$param->projectId'
-            AND tableName = '$paramInsert->tableName'
+            AND schemaVersionId = '$schema_list_aff->schemaVersionId'
+            AND Version = '$schema_list_aff->version'
             AND activeflag = '1' ";
 //print_r($sqlStr);
         $result = $this->db->query($sqlStr);
@@ -431,7 +406,8 @@ class VersionControl_model extends CI_Model{
         AND schemaVersionNumber = '$Old_DBVer'
         ";
 
-		$result = $this->db->query($sqlStr);
+        $result = $this->db->query($sqlStr);
+
 		if($result){
 			$query = $this->db->query("SELECT MAX(schemaVersionId) as last_id FROM M_DATABASE_SCHEMA_VERSION");
 			$resultId = $query->result();
@@ -511,6 +487,7 @@ class VersionControl_model extends CI_Model{
                 FROM AFF_SCHEMA
                 WHERE tableName = '$schema_list_aff->tableName'
                 AND ChangeRequestNo = '$schema_list_aff->changeRequestNo'
+                AND Version <> '0'
         ";
        $result = $this->db->query($strsql);
        //echo $sqlStr ;
@@ -562,6 +539,7 @@ class VersionControl_model extends CI_Model{
                 WHERE tableName = '$paramUpdate_DB->tableName' 
                 AND columnName = '$paramUpdate_DB->columnName' 
                 AND activeflag = '1'
+                AND schemaVersionId = '$New_param_DB->schemaVersionId'
                 AND Version = '$New_param_DB->schemaVersionNumber'
              ";
         $result = $this->db->query($strsql);
@@ -569,12 +547,13 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
     } 
 
-    function deleteCDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB){
+    function deleteDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB){
 
         $strsql = "DELETE FROM M_DATABASE_SCHEMA_INFO
                WHERE tableName = '$paramUpdate_DB->tableName' 
                 AND columnName = '$paramUpdate_DB->columnName' 
                 AND activeflag = '1'
+                AND schemaVersionId = '$New_param_DB->schemaVersionId'
                 AND Version = '$New_param_DB->schemaVersionNumber' ";
 
 		$result = $this->db->query($strsql);
@@ -587,6 +566,7 @@ class VersionControl_model extends CI_Model{
                WHERE tableName = '$paramUpdate_DB->tableName' 
                 AND columnName = '$paramUpdate_DB->columnName' 
                 AND activeflag = '1'
+                AND schemaVersionId = '$New_param_DB->schemaVersionId'
                 AND schemaVersionNumber = '$New_param_DB->schemaVersionNumber' ";
 
 		$result = $this->db->query($strsql);
@@ -828,12 +808,12 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
     }  
 
-    function checkRTMAffected($param,$ListofChangeSchemaOthFr){
+    function checkRTMAffected($param,$paramothFR,$y){
 
-		if (0 < count($ListofChangeSchemaOthFr)){
-			$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
-			$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
-			$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
+		if (0 < count($paramothFR)){
+			$FROth_No =  $paramothFR->FROth_NO;
+			$FROth_Id =  $paramothFR->FROth_Id;
+			$FROth_Version =  $paramothFR->FROth_Version;
 		}else{
 			$FROth_No =  "";
 			$FROth_Id =  "";
@@ -841,7 +821,7 @@ class VersionControl_model extends CI_Model{
 		}
 
 		//echo $FROth_Id;
-		if(null != $FROth_Id) {
+		if((null != $FROth_Id) && ($y == '1')) {
 			//echo "1";
 			$sqlStr = "SELECT c.functionId,c.functionNo,c.functionVersion,a.testCaseId,b.testcaseVersion,b.testCaseNo,'' tctype
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b,M_FN_REQ_HEADER c
@@ -864,7 +844,7 @@ class VersionControl_model extends CI_Model{
 			AND a.testCaseversion = b.testCaseversion
             AND a.functionId = c.functionId
             AND a.functionVersion = c.functionVersion		";
-		}else{
+		}else if($FROth_Id == ""){
 			$sqlStr = "SELECT c.functionId,c.functionNo,c.functionVersion,a.testCaseId,a.testcaseVersion,b.testCaseNo,'' tctype
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b,M_FN_REQ_HEADER c
 			WHERE a.functionId = '$param->functionId'
@@ -875,7 +855,19 @@ class VersionControl_model extends CI_Model{
 			AND a.testCaseversion = b.testCaseversion
             AND a.functionId = c.functionId
             AND a.functionVersion = c.functionVersion ";
-		}
+		}else if ((null != $FROth_Id) && ($y != '1')){
+            $sqlStr = " SELECT c.functionId,c.functionNo,c.functionVersion,a.testCaseId,b.testcaseVersion,b.testCaseNo,'Oth' tctype
+			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b,M_FN_REQ_HEADER c
+			WHERE a.functionId = '$FROth_Id'
+			AND a.functionversion ='$FROth_Version' 
+            AND b.projectId ='$param->projectId' 
+			AND b.projectId = c.projectId
+			AND a.testCaseId = b.testCaseId
+			AND a.testCaseversion = b.testCaseversion
+            AND a.functionId = c.functionId
+            AND a.functionVersion = c.functionVersion		";
+        }
+        //echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 
@@ -1003,6 +995,74 @@ class VersionControl_model extends CI_Model{
 		return NULL;
     }   
 
+    function addDatabaseSchemaInfoDetail($New_param_DB,$paramUpdate_DB){
 
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_INFO 
+        (projectId, tableName, columnName, schemaVersionId,Version, dataType, dataLength, decimalPoint, 
+        constraintPrimaryKey, constraintUnique, constraintDefault,constraintNull,
+        constraintMinValue,constraintMaxValue,activeflag) 
+        VALUES('$New_param_DB->projectId','$paramUpdate_DB->tableName','$paramUpdate_DB->columnName',
+        '$New_param_DB->schemaVersionId','$New_param_DB->schemaVersionNumber','$paramUpdate_DB->newDataType',
+        '$paramUpdate_DB->newDataLength',
+        '$paramUpdate_DB->newScaleLength',
+        'N',
+        '$paramUpdate_DB->newUnique',
+        '$paramUpdate_DB->newDefaultValue',
+        '$paramUpdate_DB->newNotNull',
+        '$paramUpdate_DB->newMinValue',
+        '$paramUpdate_DB->newMaxValue',
+        '1'
+        )
+        ";
+//print_r($sqlStr);
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(Id) as last_id FROM M_DATABASE_SCHEMA_INFO");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    }   
+
+    function addDatabaseSchemaVersionDetail($New_param_DB,$paramUpdate_DB){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "INSERT INTO M_DATABASE_SCHEMA_VERSION 
+        (projectId, tableName, columnName,schemaVersionId, schemaVersionNumber, effectiveStartDate, effectiveEndDate, activeFlag, createDate, 
+        createUser, updateDate, updateUser) 
+        VALUES('$New_param_DB->projectId','$New_param_DB->tableName','$paramUpdate_DB->columnName',
+        '$New_param_DB->schemaVersionId', '$New_param_DB->schemaVersionNumber', '$currentDateTime',
+         NULL, '1', '$currentDateTime', '$New_param_DB->user', '$currentDateTime', '$New_param_DB->user'
+        )
+        ";
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(schemaVersionId) as last_id FROM M_DATABASE_SCHEMA_VERSION");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    }   
+    
+     function updateSchemaDetail($New_param_DB,$New_param) {
+                
+        $sql = "UPDATE M_FN_REQ_DETAIL a,
+         (SELECT Id,columnName,tableName FROM M_DATABASE_SCHEMA_INFO
+         WHERE  schemaVersionId = '$New_param_DB->schemaVersionId'
+                 AND Version = '$New_param_DB->schemaVersionNumber'
+                 AND activeflag = '1') AS DB
+         SET a.schemaVersionId  = DB.Id
+         WHERE  a.activeFlag = '1'
+         AND a.functionId = '$New_param->functionId'
+         and a.functionVersion = '$New_param->functionVersion'
+         AND a.refColumnName = DB.columnName
+         AND a.refTableName = DB.tableName";
+
+        $result = $this->db->query($sql);
+        //print_r($strsql);
+        return $this->db->affected_rows();
+     }
 }
 ?>

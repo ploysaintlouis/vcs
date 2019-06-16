@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 15, 2019 at 08:13 PM
+-- Generation Time: Jun 16, 2019 at 08:47 AM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -43,7 +43,8 @@ CREATE TABLE `aff_fr` (
 INSERT INTO `aff_fr` (`id`, `projectId`, `ChangeRequestNo`, `FR_Id`, `FR_No`, `FR_Version`, `changeType`) VALUES
 (1, 2, 'CH01', 25, 'OS_FR_03', 1, 'delete'),
 (2, 2, 'CH01', 36, 'OS_FR_04', 1, 'edit'),
-(3, 2, 'CH02', 27, 'OS_FR_02', 1, 'delete');
+(3, 2, 'CH02', 27, 'OS_FR_02', 1, 'delete'),
+(5, 4, 'CH04', 40, 'ST_FR_01', 1, 'delete');
 
 -- --------------------------------------------------------
 
@@ -69,7 +70,8 @@ CREATE TABLE `aff_rtm` (
 INSERT INTO `aff_rtm` (`id`, `ChangeRequestNo`, `functionId`, `functionNo`, `functionVersion`, `testcaseId`, `testcaseNo`, `testcaseVersion`) VALUES
 (1, 'CH01', 25, 'OS_FR_03', 1, 16, 'OS_TC_03', 1),
 (2, 'CH01', 36, 'OS_FR_04', 1, 23, 'OS_TC_04', 1),
-(3, 'CH02', 27, 'OS_FR_02', 1, 18, 'OS_TC_02', 1);
+(3, 'CH02', 27, 'OS_FR_02', 1, 18, 'OS_TC_02', 1),
+(5, 'CH04', 40, 'ST_FR_01', 1, 27, 'ST_TC_01', 1);
 
 -- --------------------------------------------------------
 
@@ -94,7 +96,10 @@ CREATE TABLE `aff_schema` (
 INSERT INTO `aff_schema` (`id`, `ChangeRequestNo`, `schemaVersionId`, `tableName`, `columnName`, `Version`, `changeType`) VALUES
 (1, 'CH01', 5, 'ORDER_DETAILS', 'UNIT_PRICE', 1, 'edit'),
 (2, 'CH01', 5, 'ORDER_DETAILS', 'DISCOUNT', 1, 'edit'),
-(3, 'CH02', 4, 'ORDERS', 'SHIP_ADDRESS', 1, 'edit');
+(3, 'CH02', 4, 'ORDERS', 'SHIP_ADDRESS', 1, 'edit'),
+(6, 'CH04', 7, 'CUSTOMER', 'ADDRESS', 1, 'edit'),
+(7, 'CH04', 7, 'CUSTOMER', 'PHONE', 1, 'delete'),
+(8, 'CH04', 7, 'CUSTOMER', 'EMAIL', 0, 'add');
 
 -- --------------------------------------------------------
 
@@ -118,7 +123,8 @@ CREATE TABLE `aff_testcase` (
 INSERT INTO `aff_testcase` (`id`, `ChangeRequestNo`, `testcaseId`, `testcaseNo`, `testcaseVersion`, `changeType`) VALUES
 (1, 'CH01', 16, 'OS_TC_03', 1, 'delete'),
 (2, 'CH01', 23, 'OS_TC_04', 1, 'edit'),
-(3, 'CH02', 18, 'OS_TC_02', 1, 'delete');
+(3, 'CH02', 18, 'OS_TC_02', 1, 'delete'),
+(5, 'CH04', 27, 'ST_TC_01', 1, 'delete');
 
 -- --------------------------------------------------------
 
@@ -144,7 +150,8 @@ CREATE TABLE `map_fr_version` (
 INSERT INTO `map_fr_version` (`id`, `projectId`, `Old_FR_Id`, `Old_FR_No`, `Old_FR_Version`, `New_FR_Id`, `New_FR_No`, `New_FR_Version`) VALUES
 (1, 2, 25, 'OS_FR_03', 1, 37, 'OS_FR_05', 1),
 (2, 2, 36, 'OS_FR_04', 1, 36, 'OS_FR_04', 2),
-(3, 2, 27, 'OS_FR_02', 1, 38, 'OS_FR_06', 1);
+(3, 2, 27, 'OS_FR_02', 1, 38, 'OS_FR_06', 1),
+(5, 4, 40, 'ST_FR_01', 1, 44, 'ST_FR_05', 1);
 
 -- --------------------------------------------------------
 
@@ -169,7 +176,8 @@ CREATE TABLE `map_schema_version` (
 
 INSERT INTO `map_schema_version` (`id`, `projectId`, `Old_schemaVersionId`, `Old_TableName`, `Old_Schema_Version`, `New_schemaVersionId`, `New_TableName`, `New_Schema_Version`) VALUES
 (7, 2, 5, 'ORDER_DETAILS', 1, 5, 'ORDER_DETAILS', 2),
-(8, 2, 4, 'ORDERS', 1, 4, 'ORDERS', 2);
+(8, 2, 4, 'ORDERS', 1, 4, 'ORDERS', 2),
+(10, 4, 7, 'CUSTOMER', 1, 7, 'CUSTOMER', 2);
 
 -- --------------------------------------------------------
 
@@ -195,7 +203,8 @@ CREATE TABLE `map_tc_version` (
 INSERT INTO `map_tc_version` (`id`, `projectId`, `Old_TC_Id`, `Old_TC_No`, `Old_TC_Version`, `New_TC_Id`, `New_TC_No`, `New_TC_Version`) VALUES
 (1, 2, 16, 'OS_TC_03', 1, 24, 'OS_TC_05', 1),
 (2, 2, 23, 'OS_TC_04', 1, 23, 'OS_TC_04', 2),
-(3, 2, 18, 'OS_TC_02', 1, 25, 'OS_TC_06', 1);
+(3, 2, 18, 'OS_TC_02', 1, 25, 'OS_TC_06', 1),
+(5, 4, 27, 'ST_TC_01', 1, 31, 'ST_TC_05', 1);
 
 -- --------------------------------------------------------
 
@@ -270,7 +279,12 @@ INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `I
 (4, 'CUSTOMER', 'PHONE', 68, 7, 1, 'varchar', '10', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
 (4, 'STOCK', 'SHARE_ID', 69, 8, 1, 'int', NULL, NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 1),
 (4, 'STOCK', 'SHARECODE', 70, 8, 1, 'varchar', '20', NULL, 'N', 'Y', NULL, 'Y', NULL, NULL, 1),
-(4, 'STOCK', 'SHARENAME', 71, 8, 1, 'varchar', '50', NULL, 'N', 'Y', NULL, 'Y', NULL, NULL, 1);
+(4, 'STOCK', 'SHARENAME', 71, 8, 1, 'varchar', '50', NULL, 'N', 'Y', NULL, 'Y', NULL, NULL, 1),
+(4, 'CUSTOMER', 'ACCOUNT', 86, 7, 2, 'varchar', '10', NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 1),
+(4, 'CUSTOMER', 'CUSTOMER_NAME', 87, 7, 2, 'varchar', '100', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
+(4, 'CUSTOMER', 'BIRTHDATE', 88, 7, 2, 'date', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
+(4, 'CUSTOMER', 'ADDRESS', 89, 7, 2, 'VARCHAR', '150', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
+(4, 'CUSTOMER', 'EMAIL', 93, 7, 2, 'VARCHAR', '30', NULL, 'N', 'N', NULL, 'N', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -335,14 +349,19 @@ INSERT INTO `m_database_schema_version` (`projectId`, `Id`, `schemaVersionId`, `
 (3, 67, 6, '1', 'PRODUCT', 'PRODUCT_ID', '2019-06-02', NULL, '2019-06-02', 'ploy', '2019-06-02', 'ploy', 1),
 (3, 68, 6, '1', 'PRODUCT', 'PRODUCT_NAME', '2019-06-02', NULL, '2019-06-02', 'ploy', '2019-06-02', 'ploy', 1),
 (3, 69, 6, '1', 'PRODUCT', 'DESCRIPTION', '2019-06-02', NULL, '2019-06-02', 'ploy', '2019-06-02', 'ploy', 1),
-(4, 70, 7, '1', 'CUSTOMER', 'ACCOUNT', '2019-06-14', '2019-06-15', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 1),
-(4, 71, 7, '1', 'CUSTOMER', 'CUSTOMER_NAME', '2019-06-14', '2019-06-15', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 1),
-(4, 72, 7, '1', 'CUSTOMER', 'BIRTHDATE', '2019-06-14', '2019-06-15', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 1),
-(4, 73, 7, '1', 'CUSTOMER', 'ADDRESS', '2019-06-14', '2019-06-15', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 1),
-(4, 74, 7, '1', 'CUSTOMER', 'PHONE', '2019-06-14', '2019-06-15', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 1),
+(4, 70, 7, '1', 'CUSTOMER', 'ACCOUNT', '2019-06-14', '2019-06-16', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 0),
+(4, 71, 7, '1', 'CUSTOMER', 'CUSTOMER_NAME', '2019-06-14', '2019-06-16', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 0),
+(4, 72, 7, '1', 'CUSTOMER', 'BIRTHDATE', '2019-06-14', '2019-06-16', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 0),
+(4, 73, 7, '1', 'CUSTOMER', 'ADDRESS', '2019-06-14', '2019-06-16', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 0),
+(4, 74, 7, '1', 'CUSTOMER', 'PHONE', '2019-06-14', '2019-06-16', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 0),
 (4, 75, 8, '1', 'STOCK', 'SHARE_ID', '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
 (4, 76, 8, '1', 'STOCK', 'SHARECODE', '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
-(4, 77, 8, '1', 'STOCK', 'SHARENAME', '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1);
+(4, 77, 8, '1', 'STOCK', 'SHARENAME', '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
+(4, 92, 7, '2', 'CUSTOMER', 'ACCOUNT', '2019-06-16', NULL, '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1),
+(4, 93, 7, '2', 'CUSTOMER', 'CUSTOMER_NAME', '2019-06-16', NULL, '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1),
+(4, 94, 7, '2', 'CUSTOMER', 'BIRTHDATE', '2019-06-16', NULL, '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1),
+(4, 95, 7, '2', 'CUSTOMER', 'ADDRESS', '2019-06-16', NULL, '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1),
+(4, 99, 7, '2', 'CUSTOMER', 'EMAIL', '2019-06-16', NULL, '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -424,14 +443,14 @@ INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functio
 (3, 39, 'BK_FR_01', 1, '1', 101, 'PRODUCT_ID', '61', 'PRODUCT', 'PRODUCT_ID', 'int', '', '', 'Y', 'N', '', 'Y', '', '', '2019-06-02', NULL, 1, '2019-06-02', 'ploy', '2019-06-02', 'ploy'),
 (3, 39, 'BK_FR_01', 1, '1', 102, 'PRODUCT_NAME', '62', 'PRODUCT', 'PRODUCT_NAME', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-02', NULL, 1, '2019-06-02', 'ploy', '2019-06-02', 'ploy'),
 (3, 39, 'BK_FR_01', 1, '1', 103, 'DESCRIPTION', '63', 'PRODUCT', 'DESCRIPTION', 'varchar', '255', '', 'N', 'N', '', 'Y', '', '', '2019-06-02', NULL, 1, '2019-06-02', 'ploy', '2019-06-02', 'ploy'),
-(4, 40, 'ST_FR_01', 1, '1', 104, 'ACCOUNT', '64', 'CUSTOMER', 'ACCOUNT', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-14', '2019-06-15', 1, '2019-06-14', 'sa_test', '2019-06-15', 'ploy'),
-(4, 40, 'ST_FR_01', 1, '1', 105, 'CUSTOMER_NAME', '65', 'CUSTOMER', 'CUSTOMER_NAME', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-15', 1, '2019-06-14', 'sa_test', '2019-06-15', 'ploy'),
-(4, 40, 'ST_FR_01', 1, '1', 106, 'BIRTHDATE', '66', 'CUSTOMER', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-15', 1, '2019-06-14', 'sa_test', '2019-06-15', 'ploy'),
-(4, 40, 'ST_FR_01', 1, '1', 107, 'ADDRESS', '67', 'CUSTOMER', 'ADDRESS', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-15', 1, '2019-06-14', 'sa_test', '2019-06-15', 'ploy'),
-(4, 40, 'ST_FR_01', 1, '1', 108, 'PHONE', '68', 'CUSTOMER', 'PHONE', 'varchar', '10', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-15', 1, '2019-06-14', 'sa_test', '2019-06-15', 'ploy'),
+(4, 40, 'ST_FR_01', 1, '1', 104, 'ACCOUNT', '64', 'CUSTOMER', 'ACCOUNT', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-14', '2019-06-16', 0, '2019-06-14', 'sa_test', '2019-06-16', 'ploy'),
+(4, 40, 'ST_FR_01', 1, '1', 105, 'CUSTOMER_NAME', '65', 'CUSTOMER', 'CUSTOMER_NAME', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-16', 0, '2019-06-14', 'sa_test', '2019-06-16', 'ploy'),
+(4, 40, 'ST_FR_01', 1, '1', 106, 'BIRTHDATE', '66', 'CUSTOMER', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-16', 0, '2019-06-14', 'sa_test', '2019-06-16', 'ploy'),
+(4, 40, 'ST_FR_01', 1, '1', 107, 'ADDRESS', '67', 'CUSTOMER', 'ADDRESS', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-16', 0, '2019-06-14', 'sa_test', '2019-06-16', 'ploy'),
+(4, 40, 'ST_FR_01', 1, '1', 108, 'PHONE', '68', 'CUSTOMER', 'PHONE', 'varchar', '10', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', '2019-06-16', 0, '2019-06-14', 'sa_test', '2019-06-16', 'ploy'),
 (4, 41, 'ST_FR_02', 1, '1', 109, 'ACCOUNT', '64', 'CUSTOMER', 'ACCOUNT', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
-(4, 41, 'ST_FR_02', 1, '1', 110, 'CUSTOMER_NAME', '65', 'CUSTOMER', 'CUSTOMER_NAME', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
-(4, 41, 'ST_FR_02', 1, '1', 111, 'BIRTHDATE', '66', 'CUSTOMER', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
+(4, 41, 'ST_FR_02', 1, '2', 110, 'CUSTOMER_NAME', '65', 'CUSTOMER', 'CUSTOMER_NAME', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
+(4, 41, 'ST_FR_02', 1, '2', 111, 'BIRTHDATE', '66', 'CUSTOMER', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
 (4, 41, 'ST_FR_02', 1, '2', 112, 'AGE', NULL, '', '', 'INT', '', 'NULL', NULL, NULL, NULL, NULL, NULL, NULL, '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
 (4, 42, 'ST_FR_03', 1, '1', 113, 'SHARE_ID', '69', 'STOCK', 'SHARE_ID', 'int', '', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
 (4, 42, 'ST_FR_03', 1, '1', 114, 'SHARECODE', '70', 'STOCK', 'SHARECODE', 'varchar', '20', '', 'N', 'Y', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
@@ -439,7 +458,12 @@ INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functio
 (4, 43, 'ST_FR_04', 1, '1', 116, 'ACCOUNT', '64', 'CUSTOMER', 'ACCOUNT', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
 (4, 43, 'ST_FR_04', 1, '1', 117, 'SHARECODE', '70', 'STOCK', 'SHARECODE', 'varchar', '20', '', 'N', 'Y', '', 'Y', '', '', '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
 (4, 43, 'ST_FR_04', 1, '1', 118, 'UNIT', NULL, '', '', 'INT', '', 'NULL', NULL, NULL, NULL, NULL, NULL, NULL, '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
-(4, 43, 'ST_FR_04', 1, '2', 119, 'AMOUNT', NULL, '', '', 'DECIMAL', '8', '2', NULL, NULL, NULL, NULL, NULL, NULL, '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test');
+(4, 43, 'ST_FR_04', 1, '2', 119, 'AMOUNT', NULL, '', '', 'DECIMAL', '8', '2', NULL, NULL, NULL, NULL, NULL, NULL, '2019-06-14', NULL, 1, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test'),
+(4, 44, 'ST_FR_05', 1, '1', 128, 'ACCOUNT', '86', 'CUSTOMER', 'ACCOUNT', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-16', NULL, 1, '2019-06-16', 'ploy', '2019-06-16', 'ploy'),
+(4, 44, 'ST_FR_05', 1, '1', 129, 'CUSTOMER_NAME', '87', 'CUSTOMER', 'CUSTOMER_NAME', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-16', NULL, 1, '2019-06-16', 'ploy', '2019-06-16', 'ploy'),
+(4, 44, 'ST_FR_05', 1, '1', 130, 'BIRTHDATE', '88', 'CUSTOMER', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-16', NULL, 1, '2019-06-16', 'ploy', '2019-06-16', 'ploy'),
+(4, 44, 'ST_FR_05', 1, '1', 131, 'ADDRESS', '89', 'CUSTOMER', 'ADDRESS', 'VARCHAR', '150', '', 'N', 'N', '', 'Y', '', '', '2019-06-16', NULL, 1, '2019-06-16', 'ploy', '2019-06-16', 'ploy'),
+(4, 44, 'ST_FR_05', 1, '1', 135, 'EMAIL', '93', 'CUSTOMER', 'EMAIL', 'VARCHAR', '30', '', 'N', 'N', '', 'N', '', '', '2019-06-16', NULL, 1, '2019-06-16', 'ploy', '2019-06-16', 'ploy');
 
 -- --------------------------------------------------------
 
@@ -474,10 +498,11 @@ INSERT INTO `m_fn_req_header` (`Id`, `functionId`, `functionNo`, `functionversio
 (39, 36, 'OS_FR_04', '2', 'Create Order Discount', '2019-05-22', 'ploy', '2019-06-01', '', 2, 0),
 (40, 38, 'OS_FR_06', '1', 'Create a New Order', '2019-05-23', 'ploy', '2019-05-23', 'ploy', 2, 1),
 (44, 39, 'BK_FR_01', '1', 'Add A Product Information', '2019-06-02', 'ploy', '2019-06-02', 'ploy', 3, 1),
-(45, 40, 'ST_FR_01', '1', 'Add Customer Information', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 4, 1),
+(45, 40, 'ST_FR_01', '1', 'Add Customer Information', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 4, 0),
 (46, 41, 'ST_FR_02', '1', 'View Customer Information', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 4, 1),
 (47, 42, 'ST_FR_03', '1', 'Add ecurities Information', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 4, 1),
-(48, 43, 'ST_FR_04', '1', 'Buy/Sell', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 4, 1);
+(48, 43, 'ST_FR_04', '1', 'Buy/Sell', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 4, 1),
+(50, 44, 'ST_FR_05', '1', 'Add Customer Information', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 4, 1);
 
 -- --------------------------------------------------------
 
@@ -580,7 +605,8 @@ INSERT INTO `m_rtm_version` (`Id`, `projectId`, `testCaseId`, `testCaseversion`,
 (41, 4, 27, 1, 40, 1, '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 0),
 (42, 4, 28, 1, 41, 1, '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
 (43, 4, 29, 1, 42, 1, '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
-(44, 4, 30, 1, 43, 1, '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1);
+(44, 4, 30, 1, 43, 1, '2019-06-14', NULL, '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
+(46, 4, 31, 1, 44, 1, '2019-06-16', NULL, '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -599,7 +625,7 @@ CREATE TABLE `m_running_ch` (
 --
 
 INSERT INTO `m_running_ch` (`projectId`, `changeRequestNo`, `changeRequestId`) VALUES
-(2, 'CH', 4);
+(2, 'CH', 5);
 
 -- --------------------------------------------------------
 
@@ -681,11 +707,11 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 (3, 26, 'BK_TC_01', '1', 1, 98, 'PRODUCT_ID', '1', '2019-06-02', NULL, '1', '2019-06-02', 'ploy', '2019-06-02', 'ploy', 65),
 (3, 26, 'BK_TC_01', '1', 1, 99, 'PRODUCT_NAME', 'Deposit Cash', '2019-06-02', NULL, '1', '2019-06-02', 'ploy', '2019-06-02', 'ploy', 66),
 (3, 26, 'BK_TC_01', '1', 1, 100, 'DESCRIPTION', 'Deposit Cash Only', '2019-06-02', NULL, '1', '2019-06-02', 'ploy', '2019-06-02', 'ploy', 67),
-(4, 27, 'ST_TC_01', '1', 1, 104, 'ACCOUNT', '123456', '2019-06-14', '2019-06-15', '1', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 68),
-(4, 27, 'ST_TC_01', '1', 1, 105, 'CUSTOMER_NAME', 'Nannaphat', '2019-06-14', '2019-06-15', '1', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 69),
-(4, 27, 'ST_TC_01', '1', 1, 106, 'BIRTHDATE', '05/09/1989', '2019-06-14', '2019-06-15', '1', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 70),
-(4, 27, 'ST_TC_01', '1', 1, 107, 'ADDRESS', '123 test road', '2019-06-14', '2019-06-15', '1', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 71),
-(4, 27, 'ST_TC_01', '1', 1, 108, 'PHONE', '869637133', '2019-06-14', '2019-06-15', '1', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 72),
+(4, 27, 'ST_TC_01', '1', 1, 104, 'ACCOUNT', '123456', '2019-06-14', '2019-06-16', '0', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 68),
+(4, 27, 'ST_TC_01', '1', 1, 105, 'CUSTOMER_NAME', 'Nannaphat', '2019-06-14', '2019-06-16', '0', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 69),
+(4, 27, 'ST_TC_01', '1', 1, 106, 'BIRTHDATE', '05/09/1989', '2019-06-14', '2019-06-16', '0', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 70),
+(4, 27, 'ST_TC_01', '1', 1, 107, 'ADDRESS', '123 test road', '2019-06-14', '2019-06-16', '0', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 71),
+(4, 27, 'ST_TC_01', '1', 1, 108, 'PHONE', '869637133', '2019-06-14', '2019-06-16', '0', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 72),
 (4, 28, 'ST_TC_02', '1', 1, 104, 'ACCOUNT', '126868', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 73),
 (4, 28, 'ST_TC_02', '1', 1, 105, 'CUSTOMER_NAME', 'AbcTed', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 74),
 (4, 28, 'ST_TC_02', '1', 1, 106, 'BIRTHDATE', '05/06/1991', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 75),
@@ -696,7 +722,12 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 (4, 30, 'ST_TC_04', '1', 1, 104, 'ACCOUNT', '123456', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 80),
 (4, 30, 'ST_TC_04', '1', 1, 114, 'SHARECODE', 'HMPRO', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 81),
 (4, 30, 'ST_TC_04', '1', 1, 118, 'UNIT', '17.5', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 82),
-(4, 30, 'ST_TC_04', '1', 2, 119, 'AMOUNT', '20000', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 83);
+(4, 30, 'ST_TC_04', '1', 2, 119, 'AMOUNT', '20000', '2019-06-14', NULL, '1', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 83),
+(4, 31, 'ST_TC_05', '1', 1, 104, 'ACCOUNT', '123456', '2019-06-16', NULL, '1', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 92),
+(4, 31, 'ST_TC_05', '1', 1, 105, 'CUSTOMER_NAME', 'Nannaphat', '2019-06-16', NULL, '1', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 93),
+(4, 31, 'ST_TC_05', '1', 1, 106, 'BIRTHDATE', '05/09/1989', '2019-06-16', NULL, '1', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 94),
+(4, 31, 'ST_TC_05', '1', 1, 107, 'ADDRESS', '6WL1xeUt21pgOPRmi2nt1A5AMLRSXCyWMLP8ZFTjPQwo2n8J31', '2019-06-16', NULL, '1', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 95),
+(4, 31, 'ST_TC_05', '1', 1, 999999, 'EMAIL', 'Y34mCfHlgcWl9PGwgYIfydkiWz5BbG', '2019-06-16', NULL, '1', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 99);
 
 -- --------------------------------------------------------
 
@@ -732,10 +763,11 @@ INSERT INTO `m_testcase_header` (`projectId`, `Id`, `testCaseId`, `testCaseNo`, 
 (2, 25, 23, 'OS_TC_04', '2', '', 'Valid', '2019-05-22', 'ploy', '2019-06-01', 'ploy', 0),
 (2, 26, 25, 'OS_TC_06', '1', '', 'Valid', '2019-05-23', 'ploy', '2019-05-23', 'ploy', 1),
 (3, 30, 26, 'BK_TC_01', '1', 'Test Add A Product Information ', 'Valid', '2019-06-02', 'ploy', '2019-06-02', 'ploy', 1),
-(4, 31, 27, 'ST_TC_01', '1', 'Test Add Customer Information', 'Valid', '2019-06-14', 'sa_test', '2019-06-15', 'ploy', 1),
+(4, 31, 27, 'ST_TC_01', '1', 'Test Add Customer Information', 'Valid', '2019-06-14', 'sa_test', '2019-06-16', 'ploy', 0),
 (4, 32, 28, 'ST_TC_02', '1', 'Test View Customer Information', 'Valid', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
 (4, 33, 29, 'ST_TC_03', '1', 'Test Add securities Information', 'Valid', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
-(4, 34, 30, 'ST_TC_04', '1', 'Test Buy/Sell', 'Valid', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1);
+(4, 34, 30, 'ST_TC_04', '1', 'Test Buy/Sell', 'Valid', '2019-06-14', 'sa_test', '2019-06-14', 'sa_test', 1),
+(4, 36, 31, 'ST_TC_05', '1', 'Test Add Customer Information', 'Valid', '2019-06-16', 'ploy', '2019-06-16', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -821,7 +853,10 @@ INSERT INTO `t_change_request_detail` (`changeRequestNo`, `sequenceNo`, `changeT
 ('CH01', '3', 'delete', '2', '41', NULL, NULL, 'dPrice', 'decimal', '18', '2', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 ('CH01', '4', 'add', '1', '287', NULL, NULL, 'dId', 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL),
 ('CH02', '1', 'edit', '1', '52', NULL, '4', 'Ship Addre', 'VARCHAR', '50', NULL, 'N', 'N', NULL, NULL, NULL, 'ORDERS', 'SHIP_ADDRE'),
-('CH02', '2', 'add', '1', '53', NULL, NULL, 'dId', 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL);
+('CH02', '2', 'add', '1', '53', NULL, NULL, 'dId', 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL),
+('CH04', '1', 'add', '1', '999999', NULL, '7', 'EMAIL', 'VARCHAR', '30', NULL, 'N', 'N', NULL, NULL, NULL, 'CUSTOMER', 'EMAIL'),
+('CH04', '2', 'delete', '1', '108', NULL, '7', 'PHONE', 'varchar', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'CUSTOMER', 'PHONE'),
+('CH04', '3', 'edit', '1', '107', NULL, '7', 'ADDRESS', 'VARCHAR', '150', NULL, 'N', 'Y', NULL, NULL, NULL, 'CUSTOMER', 'ADDRESS');
 
 -- --------------------------------------------------------
 
@@ -850,7 +885,8 @@ CREATE TABLE `t_change_request_header` (
 --
 
 INSERT INTO `t_change_request_header` (`projectId`, `changeRequestNo`, `changeUserId`, `changeDate`, `changeFunctionId`, `changeFunctionNo`, `changeFunctionVersion`, `changeStatus`, `createUser`, `createDate`, `updateUser`, `updateDate`, `reason`) VALUES
-('2', 'CH01', '1', '2019-05-22', '25', 'OS_FR_03', '1', '1', 'ploy', '2019-05-22', 'ploy', '2019-05-22', NULL);
+('2', 'CH01', '1', '2019-05-22', '25', 'OS_FR_03', '1', '1', 'ploy', '2019-05-22', 'ploy', '2019-05-22', NULL),
+('4', 'CH04', '1', '2019-06-16', '40', 'ST_FR_01', '1', '1', 'ploy', '2019-06-16', 'ploy', '2019-06-16', NULL);
 
 -- --------------------------------------------------------
 
@@ -895,10 +931,7 @@ INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functio
 (24, '2', 27, '1', 1, 'Ship Address', 43, 4, 'VARCHAR', '50', NULL, 'N', 'N', NULL, NULL, NULL, 'ORDERS', 'SHIP_ADDRESS', 'edit', 'ploy', '2019-04-14', 52, 1, NULL),
 (25, '1', 25, '1', 2, 'dPrice', NULL, NULL, 'decimal', '18', '2', NULL, NULL, NULL, NULL, NULL, NULL, NULL, 'delete', 'ploy', '2019-04-14', 41, 1, NULL),
 (26, '1', 25, '1', 1, 'dId', NULL, NULL, 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL, 'add', 'ploy', '2019-04-14', 287, 1, NULL),
-(27, '1', 25, '1', 1, 'dUnit Price', 46, 5, 'DECIMAL', NULL, '2', 'N', 'N', NULL, NULL, NULL, 'ORDER_DETAILS', 'UNIT_PRICE', 'edit', 'ploy', '2019-04-15', 38, 1, NULL),
-(52, '2', 40, '1', 1, 'ADDRESS', 67, 7, 'VARCHAR', '150', NULL, 'N', 'Y', NULL, NULL, NULL, 'CUSTOMER', 'ADDRESS', 'edit', 'sa_test', '2019-06-15', 107, 1, NULL),
-(53, '2', 40, '1', 1, 'PHONE', 68, 7, 'varchar', '', '', '', '', '', '', '', 'CUSTOMER', 'PHONE', 'delete', 'sa_test', '2019-06-15', 108, 1, NULL),
-(59, '2', 40, '1', 1, 'EMAIL', 74, 7, 'VARCHAR', '30', NULL, 'N', 'N', NULL, NULL, NULL, 'CUSTOMER', 'EMAIL', 'add', 'sa_test', '2019-06-15', 999999, 1, NULL);
+(27, '1', 25, '1', 1, 'dUnit Price', 46, 5, 'DECIMAL', NULL, '2', 'N', 'N', NULL, NULL, NULL, 'ORDER_DETAILS', 'UNIT_PRICE', 'edit', 'ploy', '2019-04-15', 38, 1, NULL);
 
 --
 -- Indexes for dumped tables
@@ -1020,57 +1053,57 @@ ALTER TABLE `t_temp_change_list`
 -- AUTO_INCREMENT for table `aff_fr`
 --
 ALTER TABLE `aff_fr`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `aff_rtm`
 --
 ALTER TABLE `aff_rtm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `aff_schema`
 --
 ALTER TABLE `aff_schema`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 --
 -- AUTO_INCREMENT for table `aff_testcase`
 --
 ALTER TABLE `aff_testcase`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `map_fr_version`
 --
 ALTER TABLE `map_fr_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `map_schema_version`
 --
 ALTER TABLE `map_schema_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
 -- AUTO_INCREMENT for table `map_tc_version`
 --
 ALTER TABLE `map_tc_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT for table `m_database_schema_info`
 --
 ALTER TABLE `m_database_schema_info`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=94;
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
 ALTER TABLE `m_fn_req_detail`
-  MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=128;
+  MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=136;
 --
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 --
 -- AUTO_INCREMENT for table `m_project`
 --
@@ -1080,17 +1113,17 @@ ALTER TABLE `m_project`
 -- AUTO_INCREMENT for table `m_rtm_version`
 --
 ALTER TABLE `m_rtm_version`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=46;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 --
 -- AUTO_INCREMENT for table `m_testcase_detail`
 --
 ALTER TABLE `m_testcase_detail`
-  MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=92;
+  MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=100;
 --
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 --
 -- AUTO_INCREMENT for table `temp_rollback`
 --
@@ -1100,7 +1133,7 @@ ALTER TABLE `temp_rollback`
 -- AUTO_INCREMENT for table `t_temp_change_list`
 --
 ALTER TABLE `t_temp_change_list`
-  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

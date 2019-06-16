@@ -157,7 +157,7 @@
 	</div>
 	
 <script>
-    $(function(){
+    //$(function(){
 		$('#saveChange').on("click", function(event){
 
                 $.ajax({
@@ -176,20 +176,22 @@
 							}else{
 								//alert(result[1]);
 								//alert(data);
+								alert("Done.");
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
      							$('#inputChangeListTbl').html(data);  
 							}
 						}else{
-							alert("There is a problem when save data, Please try to save again.");
+							alert("There is a problem when save Data, Please try to save again.");
 							return false; 
 						}
 					},
 					error: function(){
+						//alert(data);
 						alert("There is a problem when save data, Please try to save again.");
 						return false;
 					}
 				});
 		});
-	});
+	//});
 </script>

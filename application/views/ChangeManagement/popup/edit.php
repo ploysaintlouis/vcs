@@ -17,7 +17,9 @@
 				?>
 
 				<form method="post" id="changeInput_form" >
-				<input type="hidden" name="changetypeData" id="changetypeData" value=" <?php echo $typeData ?> ">
+								<input type="hidden" name="changeSchemaVersionId" id="changeSchemaVersionId" value="<?php echo $schemaVersionId ?> ">
+				<input type="hidden" name="changeSchemaId" id="changeSchemaId" value="<?php echo $schemaId ?> ">
+<input type="hidden" name="changetypeData" id="changetypeData" value=" <?php echo $typeData ?> ">
 				<input type="hidden" name="changeType" id="changeType" value="edit">
 				<input type="hidden" id="inputTableName" name="inputTableName" value= " <?php echo $refTableName ?> " >
 				<input type="hidden" id="inputColumnName" name="inputColumnName" value="<?php echo $refColumnName ?> ">
@@ -32,8 +34,6 @@
 				<input type="hidden" name="changeFunctionId" id="changeFunctionId" value="<?php echo $functionId ?> ">
 				<input type="hidden" name="changeFunction" id="changeFunction" value="<?php echo $functionVersion ?> ">
 				<input type="hidden" name="changedataId" id="changedataId" value="<?php echo $dataId ?> ">
-				<input type="hidden" name="changeSchemaVersionId" id="changeSchemaVersionId" value="<?php echo $schemaVersionId ?> ">
-				<input type="hidden" name="changeSchemaId" id="changeSchemaId" value="<?php echo $schemaId ?> ">
 
 				<input type="hidden" name="userId" id="userId"  value="<?php echo $_SESSION['userId'] ?> ">
 				<input type="hidden" name="user" id="user"  value="<?php echo $_SESSION['username'] ?> ">
@@ -208,13 +208,12 @@
      							$('#inputChangeListTbl').html(data);  
 							}
 						}else{
-							
 							alert("There is a problem when save data, Please try to save again.");
 							return false; 
 						}
 					},
 					error: function(){ 
-						alert("There is a problem when save data, Please try to save again.");
+						alert("There is a problem when save data");
 
 					return false;
 					}

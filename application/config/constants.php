@@ -89,7 +89,7 @@ define('BG_COLOR_ADD', '#D5F5E3');
 define('BG_COLOR_DELETE', '#FADBD8');
 
 define('ACTIVE_STATUS', 'Active');
-define('UNACTIVE_STATUS', 'Inactive');
+define('UNACTIVE_STATUS', 'Not Active');
 define('ACTIVE_CODE', 1);
 define('UNACTIVE_CODE', 0);
 

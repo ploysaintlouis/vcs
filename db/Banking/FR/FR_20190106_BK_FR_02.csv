@@ -1,0 +1,4 @@
+functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
+BK_FR_02,Check Balance Information,input,ACCOUNT,,,,CUSTOMER,ACCOUNT
+BK_FR_02,Check Balance Information,input,PRODUCT_ID,,,,PRODUCT,PRODUCT_ID
+BK_FR_02,Check Balance Information,output,BALANCE,,,,BALANCE,BALANCE

@@ -1,0 +1,4 @@
+functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
+HO_FR_02,View Patient Information,input,SSN,,,,Patient,SSN
+HO_FR_02,View Patient Information,output,FIRSTNAME,,,,Patient,FIRSTNAME
+HO_FR_02,View Patient Information,output,BIRTHDATE,,,,Patient,BIRTHDATE

@@ -1,0 +1,4 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,HO_TC_02,Test View Patient Information,Valid,input,SSN,126868
+2,HO_TC_02,Test View Patient Information,Valid,output,FIRSTNAME,AbcTed
+3,HO_TC_02,Test View Patient Information,Valid,output,BIRTHDATE,5/6/1991

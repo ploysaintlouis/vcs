@@ -97,10 +97,10 @@
                     //$("#divFunction").html(data);
                 
                         //$("#loadingPage").modal(hide);
-                     //       alert("Save Successful!");
+                            alert("Save Successful!");
                             //alert(data.FR_Description);
                             //alert(baseUrl);
-                    //    window.location  = baseUrl+"index.php/Dashboard";
+                        window.location  = baseUrl+"index.php/Dashboard";
                     //    $("#loadingPage").modal('hide');
                     }
                 });

@@ -20,19 +20,19 @@ class ChangeManagement_model extends CI_Model{
 	function searchTempFRInputChangeList($param){
 
 		if(!empty($param->functionId)){
-			$where[] = "functionId = $param->functionId";
+			$where[] = "functionId = '$param->functionId'";
 		}
 
 		if(!empty($param->functionVersion)){
-			$where[] = "functionVersion = $param->functionVersion";
+			$where[] = "functionVersion = '$param->functionVersion'";
 		}
 
 		if(!empty($param->dataId)){
-			$where[] = "dataId = $param->dataId";
+			$where[] = "dataId = '$param->dataId'";
 		}
 
 		if(!empty($param->schemaVersionId)){
-			$where[] = "schemaVersionId = $param->schemaVersionId";
+			$where[] = "schemaVersionId = '$param->schemaVersionId'";
 		}
 
 		//For Adding new input
@@ -50,7 +50,7 @@ class ChangeManagement_model extends CI_Model{
 			FROM T_TEMP_CHANGE_LIST
 			WHERE $where_clause
 			ORDER BY lineNumber";
-			//echo $sqlStr;
+		//	echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -242,11 +242,11 @@ class ChangeManagement_model extends CI_Model{
 				'$param->typeData',
 				'$param->dataName',
 				$schemaVersionId,
-				$dataType,
+				'$dataType',
 				$dataLength,
 				$scale,
-				$unique,
-				$notNull,
+				'$unique',
+				'$notNull',
 				$default,
 				$min,
 				$max,
@@ -760,9 +760,10 @@ class ChangeManagement_model extends CI_Model{
 		WHERE functionId = '$param->functionId'
 		AND functionversion ='$param->functionVersion'
 		AND tableName is NOT NULL
-		AND columnName is NOT  NULL ";
+		AND columnName is NOT  NULL 
+		ORDER BY changeType";
 		$result = $this->db->query($sqlStr);
-		echo $sqlStr ;
+		//echo $sqlStr ;
 		return $result->result_array();
 	}
 	function searchChangeRequestNotrelateSCHEMA($param){
@@ -815,16 +816,18 @@ class ChangeManagement_model extends CI_Model{
 		AND a.functionId <> b.functionId
 		AND b.activeflag = '1'";
 		*/
-		$sqlStr = " SELECT a.*,
-		b.dataName FR_NAME,b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO,c.functionDescription  FROth_Desc
+		$sqlStr = " SELECT a.changeType,
+		b.functionId FROth_Id,b.functionVersion FROth_Version,b.functionNo FROth_NO,c.functionDescription  FROth_Desc
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b,M_FN_REQ_HEADER c
 		WHERE a.confirmflag = 1 
-		AND a.tableName=b.refTableName 
+		AND a.tableName = b.refTableName 
 		AND a.columnName = b.refColumnName
 		AND b.functionId = c.functionId
 		AND b.functionVersion = c.functionversion
-		AND a.functionId <> '$param->functionId'
-		AND a.functionVersion <>'$param->functionVersion'
+		AND a.functionId =  '$param->functionId'
+		AND b.functionId <> '$param->functionId'
+		AND a.functionVersion = '$param->functionVersion'
+		AND c.activeflag = '1'
 		AND b.projectId = '$param->projectId'
 		AND b.projectId = c.projectId
 		AND b.activeflag = '1'";
@@ -843,7 +846,10 @@ class ChangeManagement_model extends CI_Model{
 		AND a.functionId = '$param->functionId'
 		AND a.functionVersion ='$param->functionVersion'
 		AND a.functionId <> b.functionId
-		AND b.activeflag = '1'";
+		AND b.activeflag = '1'
+		AND ((a.newdataType <> b.dataType)
+		OR (a.newdataType != 'INT' AND a.newdataType <> b.dataType AND a.newdataLength <> b.dataLength
+		OR a.newScaleLength <> b.decimalPoint))";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 		return $result->result_array();
@@ -857,44 +863,41 @@ class ChangeManagement_model extends CI_Model{
 		WHERE 1=2)";
 		$result = $this->db->query($sqlStr);
 
-		$sqlStr = " INSERT INTO tmp_existdb
-		SELECT a.*,b.dataName FR_NAME
+		$sqlStr = " SELECT a.*,b.dataName FR_NAME
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
-		WHERE a.confirmflag=1 
+		WHERE a.confirmflag='1' 
 		AND a.dataId = b.dataId
 		AND a.functionId = b.functionId
-		AND a.functionversion = b.functionversion
+		AND a.functionversion = b.functionVersion
 		AND a.functionId = '$param->functionId'
 		AND a.functionversion ='$param->functionVersion'
 		AND a.tableName is NULL
-		AND a.columnName is  NULL ";
-		$result = $this->db->query($sqlStr);
-		//echo $sqlStr ;
-
-		$sqlStr = " SELECT a.*,'' FR_NAME
+		AND a.columnName is  NULL 
+		UNION 
+		SELECT a.*,'' FR_NAME
 		FROM T_TEMP_CHANGE_LIST a
 		WHERE a.confirmflag = '1' 
 		AND a.changeType = 'add' 
 		AND a.functionId = '$param->functionId'
 		AND a.functionversion ='$param->functionVersion'
 		AND a.columnName is  NULL
-		UNION
-		SELECT *
-		FROM tmp_existdb";
+		";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}		
 	function checkSchemaAffted($param){
 
 		$sqlStr = " SELECT a.functionId,a.functionversion,a.changeType,
-		b.projectId,b.schemaVersionId,b.schemaVersionNumber,b.tableName,b.columnName
-		FROM T_TEMP_CHANGE_LIST a,M_DATABASE_SCHEMA_VERSION b
+		b.projectId,b.schemaVersionId,b.Version,b.tableName,b.columnName
+		FROM T_TEMP_CHANGE_LIST a,M_DATABASE_SCHEMA_INFO b
 		WHERE a.tableName = b.tableName
 		AND a.columnName = b.columnName 
 		AND a.functionId = '$param->functionId'
 		AND a.functionversion ='$param->functionVersion'
 		AND a.tableName is NOT NULL
-		AND a.columnName is NOT NULL";
+		AND a.columnName is NOT NULL
+		AND (a.newdataType <> b.dataType
+		OR a.newdataLength <> b.dataLength)";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 		return $result->result_array();
@@ -920,21 +923,22 @@ class ChangeManagement_model extends CI_Model{
 		return $result->result_array();
 	}	
 
-	function checkTestCaseAffected($param,$ListofChangeSchemaOthFr){
-
-		if (0 < count($ListofChangeSchemaOthFr)){
-			$FROth_No =  $ListofChangeSchemaOthFr[0]['FROth_NO'];
-			$FROth_Id =  $ListofChangeSchemaOthFr[0]['FROth_Id'];
-			$FROth_Version =  $ListofChangeSchemaOthFr[0]['FROth_Version'];
+	function checkTestCaseAffected($param,$paramothFR,$y){
+//echo $paramothFR->FROth_NO;
+		if (!empty($paramothFR)){
+				$FROth_No =  $paramothFR->FROth_NO;
+				$FROth_Id =  $paramothFR->FROth_Id;
+				$FROth_Version =  $paramothFR->FROth_Version;
 		}else{
 			$FROth_No =  "";
 			$FROth_Id =  "";
 			$FROth_Version =  "";
 		}
+
 //echo $FROth_No ;
 
 		//echo $FROth_Id;
-		if(null != $FROth_Id) {
+		if((null != $FROth_Id) && ($y=='1')) {
 			//echo "1";
 			$sqlStr = "SELECT a.testCaseId,b.testcaseVersion,b.testCaseNo,'' tctype
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
@@ -953,7 +957,7 @@ class ChangeManagement_model extends CI_Model{
 			AND a.projectId = b.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion		";
-		}else{
+		}else if ($FROth_Id == ""){
 			$sqlStr = "SELECT a.testCaseId,a.testcaseVersion,b.testCaseNo,'' tctype
 			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
 			WHERE a.functionId = '$param->functionId'
@@ -962,6 +966,15 @@ class ChangeManagement_model extends CI_Model{
 			AND a.projectId = b.projectId
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion ";
+		}else if((null != $FROth_Id) && ($y!='1')) {
+			$sqlStr = "	SELECT a.testCaseId,b.testcaseVersion,b.testCaseNo,'Oth' tctype
+			FROM M_RTM_VERSION a,M_TESTCASE_HEADER b
+			WHERE a.functionId = '$FROth_Id'
+			AND a.functionversion ='$FROth_Version' 
+			AND a.projectId ='$param->projectId' 
+			AND a.projectId = b.projectId
+			AND a.testCaseId = b.testCaseId
+			AND a.testCaseversion = b.testCaseversion	";
 		}
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();

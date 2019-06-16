@@ -79,7 +79,8 @@ class VersionManagement_TestCase extends CI_Controller{
 			if(null != $versionInfo && 0 < count($versionInfo)){
 				$param = (object) array(
 					'testCaseId' 	=> $testCaseId,
-					'targetDate' 	=> $versionInfo->effectiveStartDate);
+					'targetDate' 	=> $versionInfo->effectiveStartDate,
+					'testCaseVersion' => $testCaseVersion);
 				
 				$resultList = $this->mVerMng->searchTestCaseDetailByVersion($param);
 				$data['resultVersionInfo'] = $versionInfo;

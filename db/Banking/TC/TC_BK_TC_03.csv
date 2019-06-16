@@ -1,0 +1,4 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,BK_TC_03,Test Deposit,Valid,input,ACCOUNT,126868
+2,BK_TC_03,Test Deposit,Valid,input,PRODUCT_ID,1
+3,BK_TC_03,Test Deposit,Valid,input,BALANCE,100000

@@ -1,0 +1,6 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,HO_TC_01,Test Add Patient Information,Valid,input,SSN,123456
+2,HO_TC_01,Test Add Patient Information,Valid,input,FIRSTNAME,Nannaphat
+3,HO_TC_01,Test Add Patient Information,Valid,input,LASTNAME,Cherdsakulwong
+4,HO_TC_01,Test Add Patient Information,Valid,input,BIRTHDATE,5/9/1989
+5,HO_TC_01,Test Add Patient Information,Valid,input,ADDRESS,123 test Road

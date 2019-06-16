@@ -68,7 +68,7 @@
 								<?php 
 								if(null != $fnReqVersionCombo) { ?>
 	            						<?php	foreach($fnReqVersionCombo as $value): ?>
-	            							<option value="<?php echo $value['Id']; ?>" <?php echo set_select('inputVersion', $value['Id'], (!empty($fnReqVersionId) && $fnReqVersionId == $value['Id']? TRUE : FALSE )); ?>>
+	            							<option value="<?php echo $value['functionversion']; ?>" <?php echo set_select('inputVersion', $value['functionversion'], (!empty($fnReqVersionId) && $fnReqVersionId == $value['functionversion']? TRUE : FALSE )); ?>>
 		            								<?php echo 'Version '.$value['functionversion']; ?>
 		        						</option>
 									<?php endforeach; ?>
@@ -177,7 +177,7 @@
                 							<tr>
                 								<td><?php echo $define++; ?></td>
                 								<td>
-													<?php if ($value['typeData'] = '1' ){
+													<?php if ($value['typeData'] == '1' ){
 														echo "Input"; 
 													}else{
 														echo "Output"; 

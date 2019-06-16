@@ -1,0 +1,4 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,BK_TC_02,Test Check Balance Information,Valid,input,ACCOUNT,126868
+2,BK_TC_02,Test Check Balance Information,Valid,input,PRODUCT_ID,ABCedws
+3,BK_TC_02,Test Check Balance Information,Valid,output,BALANCE,100000

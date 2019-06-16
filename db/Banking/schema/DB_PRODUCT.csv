@@ -1,0 +1,4 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+3,Product,product_id,Y,int,,,N,,Y,,
+3,Product,product_name,N,varchar,100,,N,,Y,,
+3,Product,description,N,varchar,255,,N,,Y,,

@@ -24,12 +24,12 @@ class VersionManagement_model extends CI_Model{
 		$sqlStr = "SELECT 
 				functionId, 
 				functionNo, 
-				Id,
 				functionversion
 			FROM M_FN_REQ_HEADER fh
 			WHERE projectId = $param->projectId
 			AND functionId = $param->functionId
 			ORDER BY functionversion";
+			//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -79,15 +79,29 @@ class VersionManagement_model extends CI_Model{
 		FROM M_FN_REQ_HEADER fh
 		INNER JOIN M_FN_REQ_DETAIL fd
 		ON fh.functionId = fd.functionId
+		AND fh.functionVersion = fd.functionVersion 
 		INNER JOIN M_DATABASE_SCHEMA_INFO ds
 		ON ds.tableName = fd.refTableName
 		AND ds.columnName = fd.refColumnName
 		AND ds.Id = fd.schemaVersionId
+		AND ds.activeflag = '1'
 		WHERE fh.projectId = $param->projectId
 		AND fh.functionId = $param->functionId
-		AND  fd.effectiveStartDate <= '$param->targetDate'
-		AND ('$param->targetDate' <= fd.effectiveEndDate OR fd.effectiveEndDate is null)
-		AND (fd.effectiveEndDate != '$param->targetDate' OR fd.effectiveEndDate is null)" ;
+		ANd fh.functionversion = '$param->functionVersion'
+		UNION
+		SELECT fh.functionId, fh.functionNo, fh.functionDescription,fd.typeData, fd.dataId, fd.dataName, fd.schemaVersionId, 
+		'' tableName,'' columnName, fd.dataType, fd.dataLength, fd.decimalPoint, fd.constraintUnique,
+		fd.constraintNull, fd.constraintDefault, fd.constraintPrimaryKey, fd.constraintMinValue, fd.constraintMaxValue 
+		FROM M_FN_REQ_HEADER fh 
+		INNER JOIN M_FN_REQ_DETAIL fd 
+		ON fh.functionId = fd.functionId 
+		AND fh.functionVersion = fd.functionVersion 
+		AND (fd.refTableName Is NULL OR fd.refTableName = '')
+		AND (fd.refColumnName is NULL OR fd.refColumnName = '')
+		WHERE fh.projectId = $param->projectId
+		AND fh.functionId = $param->functionId
+		ANd fh.functionversion = '$param->functionVersion'
+		" ;
 
 		//print_r(	$sqlStr );
 		$result = $this->db->query($sqlStr);
@@ -204,9 +218,7 @@ class VersionManagement_model extends CI_Model{
 			ON th.testCaseId = td.testCaseId
 			WHERE th.testCaseId = $param->testCaseId
 			AND th.testCaseVersion = td.testCaseVersion
-			AND td.effectiveStartDate <= '$param->targetDate'
-			AND (td.effectiveEndDate  >= '$param->targetDate' OR td.effectiveEndDate is null)
-			AND (td.effectiveEndDate  != '$param->targetDate' OR td.effectiveEndDate is null)
+			AND th.testCaseVersion = '$param->testCaseVersion'
 			ORDER BY td.sequenceNo";
 			//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);

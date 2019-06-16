@@ -168,8 +168,10 @@
 														var url = baseUrl + "index.php/ChangeManagementRequest/edit_detail/"+id+"/"+functionVersion;
 														$.ajax({url: url, 
                                                         success: function(result){
+															
 															$("#loadPopup").html(result);
                                                             $("#edit_input_modal").modal("show");
+															//alert(result);
 														}});
 													});
 												});
@@ -188,8 +190,10 @@
 														var url = baseUrl + "index.php/ChangeManagementRequest/add_detail/"+projectId+"/"+functionId+"/"+functionVersion+"/"+schemaVersionId;
 														$.ajax({url: url, 
                                                         success: function(result){
+															//alert(functionVersion);
 															$("#loadPopup").html(result);
 															$('#edit_input_modal').modal('show');
+															//alert(result);
 														}});
 													});
 												});

@@ -174,7 +174,8 @@
 											<th>Test Data</th>
 										</tr>
 										<?php 
-	                						$define = 1;
+											$define = 1;
+											$lineout = 1;
 	                						foreach ($resultList as $value): ?>
 											<?php if ($value['typeData'] == 1) { ?>
 	                						<tr>
@@ -184,7 +185,7 @@
 	                						</tr>
 											<?php } ?>
 												<?php if ($value['typeData'] == 2) { 
-													$lineout = 1; ?>
+													?>
 
 													<?php if ($lineout==1){ ?>
 													<th>#</th>

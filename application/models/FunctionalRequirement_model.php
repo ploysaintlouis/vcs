@@ -8,7 +8,7 @@ class FunctionalRequirement_model extends CI_Model {
 
 	function searchFunctionalRequirementHeaderInfo($param){
 		if(isset($param->projectId) && !empty($param->projectId)){
-			$where[] = "FRH.projectId = ".$param->projectId;
+			$where[] = "FRH.projectId = '".$param->projectId."'";
 		}
 		
 		if(isset($param->status) && ("2" != $param->status)){
@@ -34,7 +34,7 @@ class FunctionalRequirement_model extends CI_Model {
 			FROM M_FN_REQ_HEADER FRH 
 			WHERE $where_clause 
 			ORDER BY FRH.functionNo, FRH.functionVersion";
-			//echo $queryStr;
+		//	echo $queryStr;
 		$result = $this->db->query($queryStr);
 		return $result->result_array();
 	}
@@ -229,6 +229,7 @@ class FunctionalRequirement_model extends CI_Model {
 		INNER JOIN M_DATABASE_SCHEMA_INFO db
 		ON v.refTableName = db.tableName
 		AND v.refColumnName = db.columnName
+		AND v.schemaVersionId = db.Id
 		AND db.activeflag = '1'
 		WHERE $where_clause
 		UNION
@@ -291,8 +292,8 @@ class FunctionalRequirement_model extends CI_Model {
 		if(null != $param->functionId && !empty($param->functionId)){
 			$where[] = "functionId = '$param->functionId'";
 		}
-		if(isset($param->functionversion) && !empty($param->functionversion)){
-			$where[] = "functionVersion = '$param->functionVersion'";
+		if(isset($param->Id) && !empty($param->Id)){
+			$where[] = "functionVersion = '$param->Id'";
 		}
 
 		$where_condition = implode(" AND ", $where);
@@ -301,6 +302,25 @@ class FunctionalRequirement_model extends CI_Model {
 			FROM M_FN_REQ_DETAIL
 			WHERE $where_condition";
 			//print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $result->row();
+	}
+	
+	function searchFRVersionByCriteria($param){
+
+		if(null != $param->functionId && !empty($param->functionId)){
+			$where[] = "functionId = '$param->functionId'";
+		}
+		if(isset($param->functionversion) && !empty($param->functionversion)){
+			$where[] = "functionVersion = '$param->functionVersion'";
+		}
+
+		$where_condition = implode(" AND ", $where);
+
+		$sqlStr = "SELECT DISTINCT functionId,functionVersion
+			FROM M_FN_REQ_DETAIL
+			WHERE $where_condition";
+		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->row();
 	}

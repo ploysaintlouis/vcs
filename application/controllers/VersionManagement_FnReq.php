@@ -56,7 +56,7 @@ class VersionManagement_FnReq extends CI_Controller{
 			$fnReqVersionList = $this->mVerMng->searchRelatedFunctionalRequirementVersion($criteria);
 			$output .= "<option value=''>".PLEASE_SELECT."</option>";
 			foreach($fnReqVersionList as $value){
-				$output .= "<option value='".$value['functionVersionId']."'>"."Version ".$value['functionVersionNumber']."</option>";
+				$output .= "<option value='".$value['functionversion']."'>"."Version ".$value['functionVersionNumber']."</option>";
 			}
 		}
 		echo $output;
@@ -75,13 +75,16 @@ class VersionManagement_FnReq extends CI_Controller{
 		if($this->FValidate->run()){
 			$criteria = (object) array(
 				'functionId' => $fnReqId, 'Id' => $fnReqVersionId);
+			//	echo $fnReqId;
 			$versionInfo = $this->mFR->searchFunctionalRequirementVersionByCriteria($criteria);
-
+			//echo $versionInfo->functionVersion;
 			if(null != $versionInfo && 0 < count($versionInfo)){
 				$param = (object) array(
 					'projectId' 	=> $projectId, 
 					'functionId' 	=> $fnReqId,
-					'targetDate' 	=> $versionInfo->effectiveStartDate);
+					'targetDate' 	=> $versionInfo->effectiveStartDate,
+					'functionVersion' 	=> $fnReqVersionId
+				);
 				$resultList = $this->mVerMng->searchFunctionalRequirementDetailsByVersion($param);
 				$data['resultVersionInfo'] = $versionInfo;
 			}	
@@ -90,6 +93,7 @@ class VersionManagement_FnReq extends CI_Controller{
 		$data['projectId'] = $projectId;
 		$data['fnReqId'] = $fnReqId;
 		$data['fnReqVersionId'] = $fnReqVersionId;
+		//echo $fnReqVersionId;
 
 		$this->initialComboBox($projectId, $fnReqId, $data);
 

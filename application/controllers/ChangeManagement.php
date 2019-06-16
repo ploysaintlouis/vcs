@@ -646,7 +646,7 @@ class ChangeManagement extends CI_Controller{
 	function saveTempFRInput_add(){
 		$output = '';
 		$error_message = '';
-		//print_r($_POST);
+		print_r($_POST);
 		if(!empty($_POST))
 		{
 			try{
@@ -832,8 +832,19 @@ class ChangeManagement extends CI_Controller{
 						'dataId' => $dataId,
 						'typeData' => $typeData,
 						'schemaVersionId' => $schemaVersionId);
+						//print_r($criteria);
 					$records = $this->mChange->searchTempFRInputChangeList($criteria);
-				
+					print_r(count($records));
+					if(0 == count($records)){
+						$param->unique = ($unique == $oldUnique)? "": $unique;
+						$param->notNull = ($notNull == $oldNotNull)? "": $notNull;
+						$param->changeType = CHANGE_TYPE_EDIT;
+						print_r($param);
+						$saveResult = $this->mChange->insertTempFRInputChange($param);
+
+					
+					}
+				/*
 					if(0 == count($records)){
 						
 						$param->unique = ($unique == $oldUnique)? "": $unique;
@@ -853,7 +864,7 @@ class ChangeManagement extends CI_Controller{
 					}else{
 						//Error already change
 						$output = 'error|'.ER_TRN_001;
-					}
+					}*/
 			}catch (Exception $error_message){
 				$output = 'error|'.ER_MSG_013.'<br/>'.$error_message;
 			}
