@@ -180,6 +180,8 @@
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
      							$('#inputChangeListTbl').html(data);  
+								 location.reload();
+
 							}
 						}else{
 							alert("There is a problem when save Data, Please try to save again.");

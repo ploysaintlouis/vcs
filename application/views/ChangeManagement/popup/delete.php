@@ -35,6 +35,8 @@
 									return false;
 								}else{
 									$('#inputChangeListTbl').html(data); 
+									location.reload();
+
 								}
 							}
 							return false;

@@ -194,6 +194,7 @@
 					method: "POST",
 					data: $("#changeInput_form").serialize(),
 					success: function(data){
+						debugger
 						if(null != data){
 							alert(data);
 							var result = data.split("|");
@@ -205,7 +206,7 @@
 								alert("Done.");
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
-     							$('#inputChangeListTbl').html(data);  
+								 location.reload();
 							}
 						}else{
 							alert("There is a problem when save data, Please try to save again.");
