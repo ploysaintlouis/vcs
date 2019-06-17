@@ -23,10 +23,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aff_fr`
+-- Table structure for table `AFF_FR`
 --
 
-CREATE TABLE `aff_fr` (
+CREATE TABLE `AFF_FR` (
   `id` int(11) NOT NULL,
   `projectId` int(11) NOT NULL,
   `ChangeRequestNo` varchar(10) NOT NULL,
@@ -37,10 +37,10 @@ CREATE TABLE `aff_fr` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `aff_fr`
+-- Dumping data for table `AFF_FR`
 --
 
-INSERT INTO `aff_fr` (`id`, `projectId`, `ChangeRequestNo`, `FR_Id`, `FR_No`, `FR_Version`, `changeType`) VALUES
+INSERT INTO `AFF_FR` (`id`, `projectId`, `ChangeRequestNo`, `FR_Id`, `FR_No`, `FR_Version`, `changeType`) VALUES
 (1, 2, 'CH01', 25, 'OS_FR_03', 1, 'delete'),
 (2, 2, 'CH01', 36, 'OS_FR_04', 1, 'edit'),
 (3, 2, 'CH02', 27, 'OS_FR_02', 1, 'delete'),
@@ -54,10 +54,10 @@ INSERT INTO `aff_fr` (`id`, `projectId`, `ChangeRequestNo`, `FR_Id`, `FR_No`, `F
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aff_rtm`
+-- Table structure for table `AFF_RTM`
 --
 
-CREATE TABLE `aff_rtm` (
+CREATE TABLE `AFF_RTM` (
   `id` int(11) NOT NULL,
   `ChangeRequestNo` char(10) NOT NULL,
   `functionId` int(10) NOT NULL,
@@ -69,10 +69,10 @@ CREATE TABLE `aff_rtm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `aff_rtm`
+-- Dumping data for table `AFF_RTM`
 --
 
-INSERT INTO `aff_rtm` (`id`, `ChangeRequestNo`, `functionId`, `functionNo`, `functionVersion`, `testcaseId`, `testcaseNo`, `testcaseVersion`) VALUES
+INSERT INTO `AFF_RTM` (`id`, `ChangeRequestNo`, `functionId`, `functionNo`, `functionVersion`, `testcaseId`, `testcaseNo`, `testcaseVersion`) VALUES
 (1, 'CH01', 25, 'OS_FR_03', 1, 16, 'OS_TC_03', 1),
 (2, 'CH01', 36, 'OS_FR_04', 1, 23, 'OS_TC_04', 1),
 (3, 'CH02', 27, 'OS_FR_02', 1, 18, 'OS_TC_02', 1),
@@ -86,10 +86,10 @@ INSERT INTO `aff_rtm` (`id`, `ChangeRequestNo`, `functionId`, `functionNo`, `fun
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aff_schema`
+-- Table structure for table `AFF_SCHEMA`
 --
 
-CREATE TABLE `aff_schema` (
+CREATE TABLE `AFF_SCHEMA` (
   `id` int(11) NOT NULL,
   `ChangeRequestNo` varchar(10) NOT NULL,
   `schemaVersionId` int(10) NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE `aff_schema` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `aff_schema`
+-- Dumping data for table `AFF_SCHEMA`
 --
 
 INSERT INTO `aff_schema` (`id`, `ChangeRequestNo`, `schemaVersionId`, `tableName`, `columnName`, `Version`, `changeType`) VALUES
@@ -113,10 +113,10 @@ INSERT INTO `aff_schema` (`id`, `ChangeRequestNo`, `schemaVersionId`, `tableName
 -- --------------------------------------------------------
 
 --
--- Table structure for table `aff_testcase`
+-- Table structure for table `AFF_TESTCASE`
 --
 
-CREATE TABLE `aff_testcase` (
+CREATE TABLE `AFF_TESTCASE` (
   `id` int(11) NOT NULL,
   `ChangeRequestNo` varchar(10) NOT NULL,
   `testcaseId` int(10) NOT NULL,
@@ -126,10 +126,10 @@ CREATE TABLE `aff_testcase` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `aff_testcase`
+-- Dumping data for table `AFF_TESTCASE`
 --
 
-INSERT INTO `aff_testcase` (`id`, `ChangeRequestNo`, `testcaseId`, `testcaseNo`, `testcaseVersion`, `changeType`) VALUES
+INSERT INTO `AFF_TESTCASE` (`id`, `ChangeRequestNo`, `testcaseId`, `testcaseNo`, `testcaseVersion`, `changeType`) VALUES
 (1, 'CH01', 16, 'OS_TC_03', 1, 'delete'),
 (2, 'CH01', 23, 'OS_TC_04', 1, 'edit'),
 (3, 'CH02', 18, 'OS_TC_02', 1, 'delete'),
@@ -143,10 +143,10 @@ INSERT INTO `aff_testcase` (`id`, `ChangeRequestNo`, `testcaseId`, `testcaseNo`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `map_fr_version`
+-- Table structure for table `MAP_FR_VERSION`
 --
 
-CREATE TABLE `map_fr_version` (
+CREATE TABLE `MAP_FR_VERSION` (
   `id` int(11) NOT NULL,
   `projectId` int(11) NOT NULL,
   `Old_FR_Id` int(10) NOT NULL,
@@ -158,10 +158,10 @@ CREATE TABLE `map_fr_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `map_fr_version`
+-- Dumping data for table `MAP_FR_VERSION`
 --
 
-INSERT INTO `map_fr_version` (`id`, `projectId`, `Old_FR_Id`, `Old_FR_No`, `Old_FR_Version`, `New_FR_Id`, `New_FR_No`, `New_FR_Version`) VALUES
+INSERT INTO `MAP_FR_VERSION` (`id`, `projectId`, `Old_FR_Id`, `Old_FR_No`, `Old_FR_Version`, `New_FR_Id`, `New_FR_No`, `New_FR_Version`) VALUES
 (1, 2, 25, 'OS_FR_03', 1, 37, 'OS_FR_05', 1),
 (2, 2, 36, 'OS_FR_04', 1, 36, 'OS_FR_04', 2),
 (3, 2, 27, 'OS_FR_02', 1, 38, 'OS_FR_06', 1),
@@ -175,10 +175,10 @@ INSERT INTO `map_fr_version` (`id`, `projectId`, `Old_FR_Id`, `Old_FR_No`, `Old_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `map_schema_version`
+-- Table structure for table `MAP_SCHEMA_VERSION`
 --
 
-CREATE TABLE `map_schema_version` (
+CREATE TABLE `MAP_SCHEMA_VERSION` (
   `id` int(11) NOT NULL,
   `projectId` int(11) NOT NULL,
   `Old_schemaVersionId` int(10) NOT NULL,
@@ -190,10 +190,10 @@ CREATE TABLE `map_schema_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `map_schema_version`
+-- Dumping data for table `MAP_SCHEMA_VERSION`
 --
 
-INSERT INTO `map_schema_version` (`id`, `projectId`, `Old_schemaVersionId`, `Old_TableName`, `Old_Schema_Version`, `New_schemaVersionId`, `New_TableName`, `New_Schema_Version`) VALUES
+INSERT INTO `MAP_SCHEMA_VERSION` (`id`, `projectId`, `Old_schemaVersionId`, `Old_TableName`, `Old_Schema_Version`, `New_schemaVersionId`, `New_TableName`, `New_Schema_Version`) VALUES
 (7, 2, 5, 'ORDER_DETAILS', 1, 5, 'ORDER_DETAILS', 2),
 (8, 2, 4, 'ORDERS', 1, 4, 'ORDERS', 2),
 (10, 4, 7, 'CUSTOMER', 1, 7, 'CUSTOMER', 2),
@@ -202,10 +202,10 @@ INSERT INTO `map_schema_version` (`id`, `projectId`, `Old_schemaVersionId`, `Old
 -- --------------------------------------------------------
 
 --
--- Table structure for table `map_tc_version`
+-- Table structure for table `MAP_TC_VERSION`
 --
 
-CREATE TABLE `map_tc_version` (
+CREATE TABLE `MAP_TC_VERSION` (
   `id` int(11) NOT NULL,
   `projectId` int(11) NOT NULL,
   `Old_TC_Id` int(10) NOT NULL,
@@ -217,10 +217,10 @@ CREATE TABLE `map_tc_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `map_tc_version`
+-- Dumping data for table `MAP_TC_VERSION`
 --
 
-INSERT INTO `map_tc_version` (`id`, `projectId`, `Old_TC_Id`, `Old_TC_No`, `Old_TC_Version`, `New_TC_Id`, `New_TC_No`, `New_TC_Version`) VALUES
+INSERT INTO `MAP_TC_VERSION` (`id`, `projectId`, `Old_TC_Id`, `Old_TC_No`, `Old_TC_Version`, `New_TC_Id`, `New_TC_No`, `New_TC_Version`) VALUES
 (1, 2, 16, 'OS_TC_03', 1, 24, 'OS_TC_05', 1),
 (2, 2, 23, 'OS_TC_04', 1, 23, 'OS_TC_04', 2),
 (3, 2, 18, 'OS_TC_02', 1, 25, 'OS_TC_06', 1),
@@ -234,10 +234,10 @@ INSERT INTO `map_tc_version` (`id`, `projectId`, `Old_TC_Id`, `Old_TC_No`, `Old_
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_database_schema_info`
+-- Table structure for table `M_DATABASE_SCHEMA_INFO`
 --
 
-CREATE TABLE `m_database_schema_info` (
+CREATE TABLE `M_DATABASE_SCHEMA_INFO` (
   `projectId` int(10) NOT NULL,
   `tableName` varchar(50) NOT NULL,
   `columnName` varchar(50) NOT NULL,
@@ -257,10 +257,10 @@ CREATE TABLE `m_database_schema_info` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_database_schema_info`
+-- Dumping data for table `M_DATABASE_SCHEMA_INFO`
 --
 
-INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `Id`, `schemaVersionId`, `Version`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `activeflag`) VALUES
+INSERT INTO `M_DATABASE_SCHEMA_INFO` (`projectId`, `tableName`, `columnName`, `Id`, `schemaVersionId`, `Version`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `activeflag`) VALUES
 (2, 'PRODUCTS', 'PRODUCT_ID', 25, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
 (2, 'PRODUCTS', 'PRODUCT_NAME', 26, 1, 1, 'varchar', '50', NULL, '', '', NULL, 'Y', NULL, NULL, 1),
 (2, 'PRODUCTS', 'CATEGORY_ID', 27, 1, 1, 'int', NULL, NULL, '', '', NULL, 'Y', NULL, NULL, 1),
@@ -331,10 +331,10 @@ INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `I
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_database_schema_version`
+-- Table structure for table `M_DATABASE_SCHEMA_VERSION`
 --
 
-CREATE TABLE `m_database_schema_version` (
+CREATE TABLE `M_DATABASE_SCHEMA_VERSION` (
   `projectId` int(11) NOT NULL,
   `Id` int(10) NOT NULL,
   `schemaVersionId` int(10) NOT NULL,
@@ -351,10 +351,10 @@ CREATE TABLE `m_database_schema_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_database_schema_version`
+-- Dumping data for table `M_DATABASE_SCHEMA_VERSION`
 --
 
-INSERT INTO `m_database_schema_version` (`projectId`, `Id`, `schemaVersionId`, `schemaVersionNumber`, `tableName`, `columnName`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
+INSERT INTO `M_DATABASE_SCHEMA_VERSION` (`projectId`, `Id`, `schemaVersionId`, `schemaVersionNumber`, `tableName`, `columnName`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
 (2, 25, 1, '1', 'PRODUCTS', 'PRODUCT_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
 (2, 26, 1, '1', 'PRODUCTS', 'PRODUCT_NAME', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
 (2, 27, 1, '1', 'PRODUCTS', 'CATEGORY_ID', '2019-01-07', NULL, '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
@@ -425,10 +425,10 @@ INSERT INTO `m_database_schema_version` (`projectId`, `Id`, `schemaVersionId`, `
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_fn_req_detail`
+-- Table structure for table `M_FN_REQ_DETAIL`
 --
 
-CREATE TABLE `m_fn_req_detail` (
+CREATE TABLE `M_FN_REQ_DETAIL` (
   `projectid` int(11) NOT NULL,
   `functionId` int(11) NOT NULL,
   `functionNo` char(10) NOT NULL,
@@ -458,7 +458,7 @@ CREATE TABLE `m_fn_req_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_fn_req_detail`
+-- Dumping data for table `M_FN_REQ_DETAIL`
 --
 
 INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functionVersion`, `typeData`, `dataId`, `dataName`, `schemaVersionId`, `refTableName`, `refColumnName`, `dataType`, `dataLength`, `decimalPoint`, `constraintPrimaryKey`, `constraintUnique`, `constraintDefault`, `constraintNull`, `constraintMinValue`, `constraintMaxValue`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`) VALUES
@@ -561,10 +561,10 @@ INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functio
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_fn_req_header`
+-- Table structure for table `M_FN_REQ_HEADER`
 --
 
-CREATE TABLE `m_fn_req_header` (
+CREATE TABLE `M_FN_REQ_HEADER` (
   `Id` int(11) NOT NULL,
   `functionId` int(11) NOT NULL,
   `functionNo` char(10) NOT NULL,
@@ -579,10 +579,10 @@ CREATE TABLE `m_fn_req_header` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_fn_req_header`
+-- Dumping data for table `M_FN_REQ_HEADER`
 --
 
-INSERT INTO `m_fn_req_header` (`Id`, `functionId`, `functionNo`, `functionversion`, `functionDescription`, `createDate`, `createUser`, `updateDate`, `updateUser`, `projectid`, `activeflag`) VALUES
+INSERT INTO `M_FN_REQ_HEADER` (`Id`, `functionId`, `functionNo`, `functionversion`, `functionDescription`, `createDate`, `createUser`, `updateDate`, `updateUser`, `projectid`, `activeflag`) VALUES
 (1, 25, 'OS_FR_03', '1', 'Create Order List', '2019-01-07', 'ploy', '2019-06-01', 'ploy', 2, 1),
 (2, 26, 'OS_FR_01', '1', 'Add A New Product Information', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 2, 1),
 (3, 27, 'OS_FR_02', '1', 'Create a New Order', '2019-01-07', 'ploy', '2019-05-23', 'ploy', 2, 0),
@@ -622,10 +622,10 @@ CREATE TABLE `m_miscellaneous` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_miscellaneous`
+-- Dumping data for table `M_MISCELLANEOUS`
 --
 
-INSERT INTO `m_miscellaneous` (`miscData`, `miscValue1`, `miscValue2`, `miscDescription`, `activeFlag`) VALUES
+INSERT INTO `M_MISCELLANEOUS` (`miscData`, `miscValue1`, `miscValue2`, `miscDescription`, `activeFlag`) VALUES
 ('inputDataType', 'CHAR', 'char', '', 1),
 ('inputDatatype', 'VARCHAR', 'varchar', '', 1),
 ('inputDatatype', 'DATE', 'date', '', 1),
@@ -637,10 +637,10 @@ INSERT INTO `m_miscellaneous` (`miscData`, `miscValue1`, `miscValue2`, `miscDesc
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_project`
+-- Table structure for table `M_PROJECT`
 --
 
-CREATE TABLE `m_project` (
+CREATE TABLE `M_PROJECT` (
   `projectId` int(11) NOT NULL,
   `projectName` varchar(50) NOT NULL,
   `projectNameAlias` varchar(50) NOT NULL,
@@ -661,7 +661,7 @@ CREATE TABLE `m_project` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_project`
+-- Dumping data for table `M_PROJECT`
 --
 
 INSERT INTO `m_project` (`projectId`, `projectName`, `projectNameAlias`, `effDate`, `endDate`, `customer`, `databaseName`, `hostname`, `port`, `username`, `password`, `startFlag`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`) VALUES
@@ -673,10 +673,10 @@ INSERT INTO `m_project` (`projectId`, `projectName`, `projectNameAlias`, `effDat
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_rtm_version`
+-- Table structure for table `M_RTM_VERSION`
 --
 
-CREATE TABLE `m_rtm_version` (
+CREATE TABLE `M_RTM_VERSION` (
   `Id` int(10) NOT NULL,
   `projectId` int(11) NOT NULL,
   `testCaseId` int(11) NOT NULL,
@@ -693,7 +693,7 @@ CREATE TABLE `m_rtm_version` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_rtm_version`
+-- Dumping data for table `M_RTM_VERSION`
 --
 
 INSERT INTO `m_rtm_version` (`Id`, `projectId`, `testCaseId`, `testCaseversion`, `functionId`, `functionVersion`, `effectiveStartDate`, `effectiveEndDate`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeFlag`) VALUES
@@ -724,17 +724,17 @@ INSERT INTO `m_rtm_version` (`Id`, `projectId`, `testCaseId`, `testCaseversion`,
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_running_ch`
+-- Table structure for table `M_RUNNING_CH`
 --
 
-CREATE TABLE `m_running_ch` (
+CREATE TABLE `M_RUNNING_CH` (
   `projectId` int(11) NOT NULL,
   `changeRequestNo` varchar(20) NOT NULL,
   `changeRequestId` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_running_ch`
+-- Dumping data for table `M_RUNNING_CH`
 --
 
 INSERT INTO `m_running_ch` (`projectId`, `changeRequestNo`, `changeRequestId`) VALUES
@@ -743,10 +743,10 @@ INSERT INTO `m_running_ch` (`projectId`, `changeRequestNo`, `changeRequestId`) V
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_running_prefix`
+-- Table structure for table `M_RUNNING_PREFIX`
 --
 
-CREATE TABLE `m_running_prefix` (
+CREATE TABLE `_RUNNING_PREFIX` (
   `prefix` char(20) DEFAULT NULL,
   `affix` char(10) DEFAULT NULL,
   `length` char(10) DEFAULT NULL
@@ -755,10 +755,10 @@ CREATE TABLE `m_running_prefix` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_testcase_detail`
+-- Table structure for table `M_TESTCASE_DETAIL`
 --
 
-CREATE TABLE `m_testcase_detail` (
+CREATE TABLE `M_TESTCASE_DETAIL` (
   `projectId` int(11) NOT NULL,
   `testCaseId` int(11) NOT NULL,
   `testCaseNo` char(10) NOT NULL,
@@ -778,10 +778,10 @@ CREATE TABLE `m_testcase_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_testcase_detail`
+-- Dumping data for table `M_TESTCASE_DETAIL`
 --
 
-INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `typeData`, `refdataId`, `refdataName`, `testData`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`, `sequenceNo`) VALUES
+INSERT INTO `M_TESTCASE_DETAIL` (`projectId`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `typeData`, `refdataId`, `refdataName`, `testData`, `effectiveStartDate`, `effectiveEndDate`, `activeFlag`, `createDate`, `createUser`, `updateDate`, `updateUser`, `sequenceNo`) VALUES
 (2, 16, 'OS_TC_03', '1', 1, 36, 'dOrder Id', '34', '2019-01-07', '2019-06-01', '1', '2019-01-07', 'ploy', '2019-06-01', 'ploy', 11),
 (2, 16, 'OS_TC_03', '1', 1, 37, 'dProduct Id', '1', '2019-01-07', '2019-06-01', '1', '2019-01-07', 'ploy', '2019-06-01', 'ploy', 12),
 (2, 16, 'OS_TC_03', '1', 1, 38, 'dUnit Price', '28900', '2019-01-07', '2019-06-01', '1', '2019-01-07', 'ploy', '2019-06-01', 'ploy', 13),
@@ -879,10 +879,10 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_testcase_header`
+-- Table structure for table `M_TESTCASE_HEADER`
 --
 
-CREATE TABLE `m_testcase_header` (
+CREATE TABLE `M_TESTCASE_HEADER` (
   `projectId` int(10) NOT NULL,
   `Id` int(11) NOT NULL,
   `testCaseId` int(11) NOT NULL,
@@ -898,10 +898,10 @@ CREATE TABLE `m_testcase_header` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_testcase_header`
+-- Dumping data for table `M_TESTCASE_HEADER`
 --
 
-INSERT INTO `m_testcase_header` (`projectId`, `Id`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `testCaseDescription`, `expectedResult`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeflag`) VALUES
+INSERT INTO `M_TESTCASE_HEADER` (`projectId`, `Id`, `testCaseId`, `testCaseNo`, `testcaseVersion`, `testCaseDescription`, `expectedResult`, `createDate`, `createUser`, `updateDate`, `updateUser`, `activeflag`) VALUES
 (2, 1, 16, 'OS_TC_03', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-06-01', 'ploy', 1),
 (2, 2, 17, 'OS_TC_01', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-01-07', 'ploy', 1),
 (2, 3, 18, 'OS_TC_02', '1', '', 'Valid', '2019-01-07', 'ploy', '2019-05-23', 'ploy', 0),
@@ -929,10 +929,10 @@ INSERT INTO `m_testcase_header` (`projectId`, `Id`, `testCaseId`, `testCaseNo`, 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `m_users`
+-- Table structure for table `M_USERS`
 --
 
-CREATE TABLE `m_users` (
+CREATE TABLE `M_USERS` (
   `userId` char(10) NOT NULL,
   `Firstname` char(10) NOT NULL,
   `lastname` char(10) NOT NULL,
@@ -943,20 +943,20 @@ CREATE TABLE `m_users` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `m_users`
+-- Dumping data for table `M_USERS`
 --
 
-INSERT INTO `m_users` (`userId`, `Firstname`, `lastname`, `username`, `password`, `status`, `staffflag`) VALUES
+INSERT INTO `M_USERS` (`userId`, `Firstname`, `lastname`, `username`, `password`, `status`, `staffflag`) VALUES
 ('1', 'ploy', 'ploy', 'ploy', '1234', '1', 3),
 ('2', 'sa', 'test', 'sa_test', 'qwerty123', '1', 2);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `temp_rollback`
+-- Table structure for table `TEMP_ROLLBACK`
 --
 
-CREATE TABLE `temp_rollback` (
+CREATE TABLE `TEMP_ROLLBACK` (
   `id` int(10) NOT NULL,
   `projectId` int(10) NOT NULL,
   `ChangeRequestNo` char(10) NOT NULL,
@@ -967,10 +967,10 @@ CREATE TABLE `temp_rollback` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `temp_rollback`
+-- Dumping data for table `TEMP_ROLLBACK`
 --
 
-INSERT INTO `temp_rollback` (`id`, `projectId`, `ChangeRequestNo`, `status`, `userId`, `requestDate`, `reason`) VALUES
+INSERT INTO `TEMP_ROLLBACK` (`id`, `projectId`, `ChangeRequestNo`, `status`, `userId`, `requestDate`, `reason`) VALUES
 (1, 2, 'CH01', 1, '2', '2019-05-31', 'test'),
 (2, 4, 'CH04', 1, '2', '2019-06-16', 'TEST_CH04'),
 (3, 1, 'CH05', 1, '2', '2019-06-16', 'TEST Rollback to HO_FR_02 Version1'),
@@ -980,10 +980,10 @@ INSERT INTO `temp_rollback` (`id`, `projectId`, `ChangeRequestNo`, `status`, `us
 -- --------------------------------------------------------
 
 --
--- Table structure for table `t_change_request_detail`
+-- Table structure for table `T_CHANGE_REQUEST_DETAIL`
 --
 
-CREATE TABLE `t_change_request_detail` (
+CREATE TABLE `T_CHANGE_REQUEST_DETAIL` (
   `changeRequestNo` char(10) NOT NULL,
   `sequenceNo` char(10) NOT NULL,
   `changeType` char(10) NOT NULL,
@@ -1005,10 +1005,10 @@ CREATE TABLE `t_change_request_detail` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `t_change_request_detail`
+-- Dumping data for table `T_CHANGE_REQUEST_DETAIL`
 --
 
-INSERT INTO `t_change_request_detail` (`changeRequestNo`, `sequenceNo`, `changeType`, `typeData`, `refdataId`, `refschemaId`, `refSchemaVersionId`, `dataName`, `dataType`, `dataLength`, `scale`, `constraintUnique`, `constraintNotNull`, `constraintDefault`, `constraintMin`, `constraintMax`, `refTableName`, `refColumnName`) VALUES
+INSERT INTO `T_CHANGE_REQUEST_DETAIL` (`changeRequestNo`, `sequenceNo`, `changeType`, `typeData`, `refdataId`, `refschemaId`, `refSchemaVersionId`, `dataName`, `dataType`, `dataLength`, `scale`, `constraintUnique`, `constraintNotNull`, `constraintDefault`, `constraintMin`, `constraintMax`, `refTableName`, `refColumnName`) VALUES
 ('CH01', '1', 'edit', '1', '40', NULL, '5', 'dDiscount', NULL, NULL, NULL, 'N', 'N', NULL, NULL, '100', 'ORDER_DETA', 'DISCOUNT'),
 ('CH01', '2', 'edit', '1', '38', NULL, '5', 'dUnit Pric', 'DECIMAL', NULL, '2', 'N', 'N', NULL, NULL, NULL, 'ORDER_DETA', 'UNIT_PRICE'),
 ('CH01', '3', 'delete', '2', '41', NULL, NULL, 'dPrice', 'decimal', '18', '2', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
@@ -1024,10 +1024,10 @@ INSERT INTO `t_change_request_detail` (`changeRequestNo`, `sequenceNo`, `changeT
 -- --------------------------------------------------------
 
 --
--- Table structure for table `t_change_request_header`
+-- Table structure for table `T_CHANGE_REQUEST_HEADER`
 --
 
-CREATE TABLE `t_change_request_header` (
+CREATE TABLE `T_CHANGE_REQUEST_HEADER` (
   `projectId` char(10) DEFAULT NULL,
   `changeRequestNo` char(10) DEFAULT NULL,
   `changeUserId` char(10) NOT NULL,
@@ -1044,10 +1044,10 @@ CREATE TABLE `t_change_request_header` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `t_change_request_header`
+-- Dumping data for table `T_CHANGE_REQUEST_HEADER`
 --
 
-INSERT INTO `t_change_request_header` (`projectId`, `changeRequestNo`, `changeUserId`, `changeDate`, `changeFunctionId`, `changeFunctionNo`, `changeFunctionVersion`, `changeStatus`, `createUser`, `createDate`, `updateUser`, `updateDate`, `reason`) VALUES
+INSERT INTO `T_CHANGE_REQUEST_HEADER` (`projectId`, `changeRequestNo`, `changeUserId`, `changeDate`, `changeFunctionId`, `changeFunctionNo`, `changeFunctionVersion`, `changeStatus`, `createUser`, `createDate`, `updateUser`, `updateDate`, `reason`) VALUES
 ('2', 'CH01', '1', '2019-05-22', '25', 'OS_FR_03', '1', '1', 'ploy', '2019-05-22', 'ploy', '2019-05-22', NULL),
 ('4', 'CH04', '1', '2019-06-16', '41', 'ST_FR_02', '1', '1', 'ploy', '2019-06-16', 'ploy', '2019-06-16', NULL),
 ('1', 'CH05', '1', '2019-06-16', '46', 'HO_FR_02', '1', '1', 'ploy', '2019-06-16', 'ploy', '2019-06-16', NULL),
@@ -1057,10 +1057,10 @@ INSERT INTO `t_change_request_header` (`projectId`, `changeRequestNo`, `changeUs
 -- --------------------------------------------------------
 
 --
--- Table structure for table `t_temp_change_list`
+-- Table structure for table `T_TEMP_CHANGE_LIST`
 --
 
-CREATE TABLE `t_temp_change_list` (
+CREATE TABLE `T_TEMP_CHANGE_LIST` (
   `lineNumber` int(11) NOT NULL,
   `userId` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
   `functionId` int(11) NOT NULL,
@@ -1088,10 +1088,10 @@ CREATE TABLE `t_temp_change_list` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `t_temp_change_list`
+-- Dumping data for table `T_TEMP_CHANGE_LIST`
 --
 
-INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaId`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
+INSERT INTO `T_TEMP_CHANGE_LIST` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaId`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
 (20, '1', 25, '1', 1, 'dDiscount', 48, 5, NULL, NULL, NULL, 'N', 'N', NULL, NULL, '100', 'ORDER_DETAILS', 'DISCOUNT', 'edit', 'ploy', '2019-04-08', 40, 1, NULL),
 (23, '2', 27, '1', 1, 'dId', NULL, NULL, 'VARCHAR', '20', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL, 'add', 'ploy', '2019-04-13', 53, 1, NULL),
 (24, '2', 27, '1', 1, 'Ship Address', 43, 4, 'VARCHAR', '50', NULL, 'N', 'N', NULL, NULL, NULL, 'ORDERS', 'SHIP_ADDRESS', 'edit', 'ploy', '2019-04-14', 52, 1, NULL),
@@ -1104,45 +1104,45 @@ INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functio
 --
 
 --
--- Indexes for table `aff_fr`
+-- Indexes for table `AFF_FR`
 --
-ALTER TABLE `aff_fr`
+ALTER TABLE `AFF_FR`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `aff_rtm`
+-- Indexes for table `AFF_RTM`
 --
-ALTER TABLE `aff_rtm`
+ALTER TABLE `AFF_RTM`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `aff_schema`
+-- Indexes for table `AFF_SCHEMA`
 --
-ALTER TABLE `aff_schema`
+ALTER TABLE `AFF_SCHEMA`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `aff_testcase`
+-- Indexes for table `AFF_TESTCASE`
 --
-ALTER TABLE `aff_testcase`
+ALTER TABLE `AFF_TESTCASE`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `map_fr_version`
+-- Indexes for table `MAP_FR_VERSION`
 --
-ALTER TABLE `map_fr_version`
+ALTER TABLE `MAP_FR_VERSION`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `map_schema_version`
+-- Indexes for table `MAP_SCHEMA_VERSION`
 --
-ALTER TABLE `map_schema_version`
+ALTER TABLE `MAP_SCHEMA_VERSION`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `map_tc_version`
+-- Indexes for table `MAP_TC_VERSION`
 --
-ALTER TABLE `map_tc_version`
+ALTER TABLE `MAP_TC_VERSION`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -1152,63 +1152,63 @@ ALTER TABLE `m_database_schema_info`
   ADD PRIMARY KEY (`Id`);
 
 --
--- Indexes for table `m_database_schema_version`
+-- Indexes for table `M_DATABASE_SCHEMA_VERSION`
 --
-ALTER TABLE `m_database_schema_version`
+ALTER TABLE `M_DATABASE_SCHEMA_VERSION`
   ADD PRIMARY KEY (`Id`);
 
 --
--- Indexes for table `m_fn_req_detail`
+-- Indexes for table `M_FN_REQ_DETAIL`
 --
-ALTER TABLE `m_fn_req_detail`
+ALTER TABLE `M_FN_REQ_DETAIL`
   ADD PRIMARY KEY (`dataId`);
 
 --
--- Indexes for table `m_fn_req_header`
+-- Indexes for table `M_FN_REQ_HEADER`
 --
-ALTER TABLE `m_fn_req_header`
+ALTER TABLE `M_FN_REQ_HEADER`
   ADD PRIMARY KEY (`Id`);
 
 --
--- Indexes for table `m_project`
+-- Indexes for table `M_PROJECT`
 --
-ALTER TABLE `m_project`
+ALTER TABLE `M_PROJECT`
   ADD PRIMARY KEY (`projectId`);
 
 --
--- Indexes for table `m_rtm_version`
+-- Indexes for table `M_RTM_VERSION`
 --
-ALTER TABLE `m_rtm_version`
+ALTER TABLE `M_RTM_VERSION`
   ADD PRIMARY KEY (`Id`);
 
 --
--- Indexes for table `m_testcase_detail`
+-- Indexes for table `M_TESTCASE_DETAIL`
 --
-ALTER TABLE `m_testcase_detail`
+ALTER TABLE `M_TESTCASE_DETAIL`
   ADD PRIMARY KEY (`sequenceNo`);
 
 --
--- Indexes for table `m_testcase_header`
+-- Indexes for table `M_TESTCASE_HEADER`
 --
-ALTER TABLE `m_testcase_header`
+ALTER TABLE `M_TESTCASE_HEADER`
   ADD PRIMARY KEY (`Id`);
 
 --
--- Indexes for table `m_users`
+-- Indexes for table `M_USERS`
 --
-ALTER TABLE `m_users`
+ALTER TABLE `M_USERS`
   ADD PRIMARY KEY (`userId`);
 
 --
--- Indexes for table `temp_rollback`
+-- Indexes for table `TEMP_ROLLBACK`
 --
-ALTER TABLE `temp_rollback`
+ALTER TABLE `TEMP_ROLLBACK`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indexes for table `t_temp_change_list`
+-- Indexes for table `T_TEMP_CHANGE_LIST`
 --
-ALTER TABLE `t_temp_change_list`
+ALTER TABLE `T_TEMP_CHANGE_LIST`
   ADD PRIMARY KEY (`lineNumber`);
 
 --
@@ -1216,89 +1216,89 @@ ALTER TABLE `t_temp_change_list`
 --
 
 --
--- AUTO_INCREMENT for table `aff_fr`
+-- AUTO_INCREMENT for table `AFF_FR`
 --
-ALTER TABLE `aff_fr`
+ALTER TABLE `AFF_FR`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT for table `aff_rtm`
+-- AUTO_INCREMENT for table `AFF_RTM`
 --
-ALTER TABLE `aff_rtm`
+ALTER TABLE `AFF_RTM`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT for table `aff_schema`
+-- AUTO_INCREMENT for table `AFF_SCHEMA`
 --
-ALTER TABLE `aff_schema`
+ALTER TABLE `AFF_SCHEMA`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 --
--- AUTO_INCREMENT for table `aff_testcase`
+-- AUTO_INCREMENT for table `AFF_TESTCASE`
 --
-ALTER TABLE `aff_testcase`
+ALTER TABLE `AFF_TESTCASE`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT for table `map_fr_version`
+-- AUTO_INCREMENT for table `MAP_FR_VERSION`
 --
-ALTER TABLE `map_fr_version`
+ALTER TABLE `MAP_FR_VERSION`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT for table `map_schema_version`
+-- AUTO_INCREMENT for table `MAP_SCHEMA_VERSION`
 --
-ALTER TABLE `map_schema_version`
+ALTER TABLE `MAP_SCHEMA_VERSION`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 --
--- AUTO_INCREMENT for table `map_tc_version`
+-- AUTO_INCREMENT for table `MAP_TC_VERSION`
 --
-ALTER TABLE `map_tc_version`
+ALTER TABLE `MAP_TC_VERSION`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 --
--- AUTO_INCREMENT for table `m_database_schema_info`
+-- AUTO_INCREMENT for table `M_DATABASE_SCHEMA_INFO`
 --
-ALTER TABLE `m_database_schema_info`
+ALTER TABLE `M_DATABASE_SCHEMA_INFO`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=110;
 --
--- AUTO_INCREMENT for table `m_database_schema_version`
+-- AUTO_INCREMENT for table `M_DATABASE_SCHEMA_VERSION`
 --
-ALTER TABLE `m_database_schema_version`
+ALTER TABLE `M_DATABASE_SCHEMA_VERSION`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=116;
 --
--- AUTO_INCREMENT for table `m_fn_req_detail`
+-- AUTO_INCREMENT for table `M_FN_REQ_DETAIL`
 --
-ALTER TABLE `m_fn_req_detail`
+ALTER TABLE `M_FN_REQ_DETAIL`
   MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=173;
 --
--- AUTO_INCREMENT for table `m_fn_req_header`
+-- AUTO_INCREMENT for table `M_FN_REQ_HEADER`
 --
-ALTER TABLE `m_fn_req_header`
+ALTER TABLE `M_FN_REQ_HEADER`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 --
--- AUTO_INCREMENT for table `m_project`
+-- AUTO_INCREMENT for table `M_PROJECT`
 --
-ALTER TABLE `m_project`
+ALTER TABLE `M_PROJECT`
   MODIFY `projectId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
--- AUTO_INCREMENT for table `m_rtm_version`
+-- AUTO_INCREMENT for table `M_RTM_VERSION`
 --
-ALTER TABLE `m_rtm_version`
+ALTER TABLE `M_RTM_VERSION`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 --
--- AUTO_INCREMENT for table `m_testcase_detail`
+-- AUTO_INCREMENT for table `M_TESTCASE_DETAIL`
 --
-ALTER TABLE `m_testcase_detail`
+ALTER TABLE `M_TESTCASE_DETAIL`
   MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=137;
 --
--- AUTO_INCREMENT for table `m_testcase_header`
+-- AUTO_INCREMENT for table `M_TESTCASE_HEADER`
 --
-ALTER TABLE `m_testcase_header`
+ALTER TABLE `M_TESTCASE_HEADER`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 --
--- AUTO_INCREMENT for table `temp_rollback`
+-- AUTO_INCREMENT for table `TEMP_ROLLBACK`
 --
-ALTER TABLE `temp_rollback`
+ALTER TABLE `TEMP_ROLLBACK`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
--- AUTO_INCREMENT for table `t_temp_change_list`
+-- AUTO_INCREMENT for table `T_TEMP_CHANGE_LIST`
 --
-ALTER TABLE `t_temp_change_list`
+ALTER TABLE `T_TEMP_CHANGE_LIST`
   MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
