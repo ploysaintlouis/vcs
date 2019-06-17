@@ -282,10 +282,10 @@ class ChangeManagement extends CI_Controller{
 
 	function addFRInputDetail(){
 		$output = '';
-		var_dump($this->input->post('projectId'));
-		var_dump($this->input->post('functionId'));
-		var_dump($this->input->post('functionVersion'));
-		var_dump($this->input->post('schemaVersionId'));
+		//var_dump($this->input->post('projectId'));
+		//var_dump($this->input->post('functionId'));
+		//var_dump($this->input->post('functionVersion'));
+		//var_dump($this->input->post('schemaVersionId'));
 	
 		$projectId = $this->input->post('projectId');
 		$functionId = $this->input->post('functionId');
@@ -646,7 +646,7 @@ class ChangeManagement extends CI_Controller{
 	function saveTempFRInput_add(){
 		$output = '';
 		$error_message = '';
-		print_r($_POST);
+		//print_r($_POST);
 		if(!empty($_POST))
 		{
 			try{
@@ -834,12 +834,12 @@ class ChangeManagement extends CI_Controller{
 						'schemaVersionId' => $schemaVersionId);
 						//print_r($criteria);
 					$records = $this->mChange->searchTempFRInputChangeList($criteria);
-					print_r(count($records));
+					//print_r(count($records));
 					if(0 == count($records)){
 						$param->unique = ($unique == $oldUnique)? "": $unique;
 						$param->notNull = ($notNull == $oldNotNull)? "": $notNull;
 						$param->changeType = CHANGE_TYPE_EDIT;
-						print_r($param);
+						//print_r($param);
 						$saveResult = $this->mChange->insertTempFRInputChange($param);
 
 					
