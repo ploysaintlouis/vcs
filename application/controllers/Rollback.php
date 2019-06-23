@@ -34,7 +34,7 @@ class Rollback extends CI_Controller{
 				$criteria = (object) array(
 					'projectId' 	=> $projectId,
 					'changeStatus' 	=> '1');
-				$changeList = $this->mRollback->searchChangesInformationForRollback($criteria);
+				$changeList = $this->mRollback->searchChangesInformationForCancelling($criteria);
 				if(0 == count($changeList)){
 					$error_message = ER_MSG_006;
 				}

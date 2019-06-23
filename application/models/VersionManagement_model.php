@@ -84,7 +84,6 @@ class VersionManagement_model extends CI_Model{
 		ON ds.tableName = fd.refTableName
 		AND ds.columnName = fd.refColumnName
 		AND ds.Id = fd.schemaVersionId
-		AND ds.activeflag = '1'
 		WHERE fh.projectId = $param->projectId
 		AND fh.functionId = $param->functionId
 		ANd fh.functionversion = '$param->functionVersion'

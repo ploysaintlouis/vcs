@@ -1,0 +1,7 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+4,ORDER,ORDERID,Y,INT,,,Y,,Y,,
+4,ORDER,ACCOUNT,N,VARCHAR,10,,N,,Y,,
+4,ORDER,SHAREID,N,INT,,,N,,Y,,
+4,ORDER,SHARECODE,N,VARCHAR,10,,N,,Y,,
+4,ORDER,UNIT,N,INT,,,N,,Y,,
+4,ORDER,PRICE,N,DECIMAL,3,2,N,,Y,,

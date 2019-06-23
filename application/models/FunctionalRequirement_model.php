@@ -257,8 +257,8 @@ class FunctionalRequirement_model extends CI_Model {
 		ON h.functionId = v.functionId
 		AND h.projectid = v.projectid
 		AND v.activeFlag = '1'
-		AND v.refTableName =''
-		AND v.refColumnName = ''
+		AND v.refTableName is NULL
+		AND v.refColumnName is NULL
 		LEFT JOIN M_DATABASE_SCHEMA_INFO db
 		ON v.refTableName = db.tableName
 		AND v.refColumnName = db.columnName		
@@ -384,8 +384,8 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 			createDate,createUser,updateDate,updateUser,functionId,functionNo,schemaVersionId,dataType,
 			effectiveStartDate,effectiveEndDate,activeFlag,functionVersion,
 			dataLength,decimalPoint,constraintPrimaryKey,constraintUnique,constraintDefault,constraintNull,constraintMinValue,constraintMaxValue)
-			VALUES ('{$param->projectId}','{$param->typeData}', '{$param->dataName}', '{$param->referTableName}',
-			'{$param->referColumnName}', '$currentDateTime', '{$param->user}', '$currentDateTime', 
+			VALUES ('{$param->projectId}','{$param->typeData}', '{$param->dataName}',NULL,
+			NULL, '$currentDateTime', '{$param->user}', '$currentDateTime', 
 			'{$param->user}','$functionId','$param->functionNo',NULL,'$param->dataType',
 			'$currentDateTime',NULL,'1','1',
 			'{$param->dataLength}','{$param->decimalPoint}',NULL,NULL,NULL,NULL,NULL,NULL)";   
@@ -661,18 +661,15 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 		ON h.functionId = v.functionId
 		AND h.projectid = v.projectid
 		AND v.activeFlag = '1'
-		AND v.refTableName =''
-		AND v.refColumnName = ''
-		LEFT JOIN M_DATABASE_SCHEMA_INFO db
-		ON v.refTableName = db.tableName
-		AND v.refColumnName = db.columnName		
+		AND v.refTableName is NULL
+		AND v.refColumnName is NULL	
 		WHERE h.projectId = '$param->projectId'
 		AND h.functionId = '$param->functionId'
 		AND v.functionVersion = '$param_new->functionVersion'
 		AND v.dataId = '$param->dataId'
 		ORDER BY dataId";
 
-		//var_dump($queryStr);
+		//echo $queryStr;
 		$result = $this->db->query($queryStr);
 		return $result->result_array();
 		}

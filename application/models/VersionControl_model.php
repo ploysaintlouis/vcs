@@ -376,11 +376,11 @@ class VersionControl_model extends CI_Model{
 		return $this->db->affected_rows();
     } 
     
-	function updateDatabaseSchemaInfo($param,$paramInsert){
+	function updateDatabaseSchemaInfo($schema_list_aff){
 
 		$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
 			SET activeflag = '0'
-            WHERE projectId = '$param->projectId'
+            WHERE projectId = '$schema_list_aff->projectId'
             AND schemaVersionId = '$schema_list_aff->schemaVersionId'
             AND Version = '$schema_list_aff->version'
             AND activeflag = '1' ";
@@ -1056,7 +1056,7 @@ class VersionControl_model extends CI_Model{
          SET a.schemaVersionId  = DB.Id
          WHERE  a.activeFlag = '1'
          AND a.functionId = '$New_param->functionId'
-         and a.functionVersion = '$New_param->functionVersion'
+         and a.functionVersion = '$New_param->functionversion'
          AND a.refColumnName = DB.columnName
          AND a.refTableName = DB.tableName";
 

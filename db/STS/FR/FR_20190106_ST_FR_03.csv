@@ -1,4 +1,4 @@
 functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
-ST_FR_03,Add securities Information,input,SHARE_ID,,,,STOCK,SHARE_ID
-ST_FR_03,Add securities Information,input,SHARECODE,,,,STOCK,SHARECODE
-ST_FR_03,Add securities Information,input,SHARENAME,,,,STOCK,SHARENAME
+ST_FR_03,Add Securities Information,input,SHARE_ID,,,,STOCK,SHARE_ID
+ST_FR_03,Add Securities Information,input,SHARECODE,,,,STOCK,SHARECODE
+ST_FR_03,Add Securities Information,input,SHARENAME,,,,STOCK,SHARENAME

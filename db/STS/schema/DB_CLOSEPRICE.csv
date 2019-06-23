@@ -1,0 +1,4 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+4,CLOSEPRICE,SHARE_ID,Y,INT,,,Y,,Y,,
+4,CLOSEPRICE,CLOSEDATE,N,DATE,,,N,,Y,,
+4,CLOSEPRICE,CLOSEPRICE,N,DECIMAL,3,2,N,,Y,,

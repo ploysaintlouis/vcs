@@ -217,10 +217,10 @@ class ChangeManagement_model extends CI_Model{
 	function insertTempFRInputChange($param){
 		$currentDateTime = date('Y-m-d H:i:s');
 
-		$schemaId = !empty($param->schemaId)? $param->schemaId : "NULL";
-		$schemaVersionId = !empty($param->schemaVersionId)? $param->schemaVersionId : "NULL";
+		$schemaId = !empty($param->schemaId)?  "'".$param->schemaId."'" : "NULL";
+		$schemaVersionId = !empty($param->schemaVersionId)? "'".$param->schemaVersionId."'" : "NULL";
 		$dataType = !empty($param->dataType)? "'".$param->dataType."'" : "NULL";
-		$dataLength = !empty($param->dataLength)? $param->dataLength : "NULL";
+		$dataLength = !empty($param->dataLength)? "'".$param->dataLength."'" : "NULL";
 		$scale = !empty($param->scaleLength)? $param->scaleLength : "NULL";
 		$unique = !empty($param->unique)? "'".$param->unique."'" : "NULL";
 		$notNull = !empty($param->notNull)? "'".$param->notNull."'" : "NULL";
@@ -906,7 +906,7 @@ class ChangeManagement_model extends CI_Model{
 	function checkNewSchemaAffted($param){
 
 		$sqlStr = " SELECT a.functionId,a.functionversion,a.changeType,
-		a.schemaVersionId,'' schemaVersionNumber,a.tableName,a.columnName
+		'' schemaVersionId,'' schemaVersionNumber,a.tableName,a.columnName
 		FROM T_TEMP_CHANGE_LIST a
 		WHERE ((a.tableName NOT IN (SELECT tableName FROM M_DATABASE_SCHEMA_VERSION ) 
 			AND a.columnName NOT IN (SELECT columnName FROM M_DATABASE_SCHEMA_VERSION )) or
