@@ -1,0 +1,5 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+1,Appointments,app_id,Y,VARCHAR,12,,Y,,Y,,
+1,Appointments,ssn,N,VARCHAR,10,,N,,Y,,
+1,Appointments,doctors_id,N,INT,,,N,,Y,,
+1,Appointments,app_date,N,DATE,,,N,,Y,,

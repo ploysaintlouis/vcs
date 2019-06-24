@@ -1,0 +1,1 @@
+{"title_panel":{"change_title":{"CH_NO":"CH03","FR_Request":"HO_FR_05","FR_Description":"View Patient Information","FR_Version":"1 ","username":"ploy"}},"aff_fr_panel":{"aff_fr_list":[]},"aff_testcase_panel":{"aff_testcase_list":[]},"aff_schema_panel":{"aff_schema_list":[]},"aff_rtm_panel":{"aff_rtm_list":[]}}

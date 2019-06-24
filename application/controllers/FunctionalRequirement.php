@@ -243,13 +243,19 @@ class FunctionalRequirement extends CI_Controller {
 						   //Check exist Table and Column Name in Database
 						if ( (null == $value[KEY_FR_INPUT_TYPE]) && (null == $value[KEY_FR_INPUT_LENGTH]) ){
 							if($hasTableName && $hasColumnName){
-								$resultSchemaInfo = $this->FR->searchExistFRInputsByTableAndColumnName($value[KEY_FR_INPUT_TABLE_NAME], $value[KEY_FR_INPUT_FIELD_NAME], $projectId, ACTIVE_CODE);
+								
+								$value[KEY_FR_INPUT_TABLE_NAME] = strtoupper($value[KEY_FR_INPUT_TABLE_NAME]);
+								$value[KEY_FR_INPUT_FIELD_NAME] = strtoupper($value[KEY_FR_INPUT_FIELD_NAME]);						
+								
+								/*$resultSchemaInfo = $this->FR->searchExistFRInputsByTableAndColumnName($value[KEY_FR_INPUT_TABLE_NAME],$value[KEY_FR_INPUT_FIELD_NAME], $projectId, ACTIVE_CODE);
 								if(0 < count($resultSchemaInfo)){
 									$resultUpload = $this->appendThings($resultUpload, 'ER_IMP_037', $lineNo);
 									$errorFlag = TRUE;
-								}
-								
-								$resultSchemaInfo = $this->mDbSchema->searchExistDatabaseSchemaInfo($value[KEY_FR_INPUT_TABLE_NAME], $value[KEY_FR_INPUT_FIELD_NAME], $projectId);
+								}*/
+			
+								//echo $value[KEY_FR_INPUT_FIELD_NAME];				
+								$resultSchemaInfo = $this->mDbSchema->searchExistDatabaseSchemaInfo($value[KEY_FR_INPUT_TABLE_NAME],$value[KEY_FR_INPUT_FIELD_NAME], $projectId);
+								//echo $resultSchemaInfo ;
 								if(null == $resultSchemaInfo || empty($resultSchemaInfo)){
 									$resultUpload = $this->appendThings($resultUpload, 'ER_IMP_038', $lineNo);
 									$errorFlag = TRUE;
@@ -285,7 +291,7 @@ class FunctionalRequirement extends CI_Controller {
 						'typeData' => $value[KEY_FR_TYPEDATE],
 	    				'dataId' => $dataId,
 	    				'dataName' => $value[KEY_FR_INPUT_NAME],
-						'dataType' =>  $value[KEY_FR_INPUT_TYPE],
+						'dataType' =>  strtoupper($value[KEY_FR_INPUT_TYPE]),
 						'dataLength' =>  $value[KEY_FR_INPUT_LENGTH],
 						'decimalPoint' =>  $value[KEY_FR_DECIMAL_POINT],
 	    				'referTableName' => strtoupper($value[KEY_FR_INPUT_TABLE_NAME]),

@@ -1,0 +1,1 @@
+{"title_panel":{"change_title":{"CH_NO":"CH02","FR_Request":"HO_FR_02","FR_Description":"View Patient Information","FR_Version":"1","username":"ploy"}},"change_panel":{"change_list":[]}}

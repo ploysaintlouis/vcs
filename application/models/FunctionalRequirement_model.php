@@ -153,6 +153,7 @@ class FunctionalRequirement_model extends CI_Model {
 			AND fi.refColumnName = '$columnName'
 			AND fi.projectId = $projectId
 			AND ($activeFlag is null or fi.activeFlag = $activeFlag)";
+		//	print_r($queryStr);
 		$result = $this->db->query($queryStr);
 		return $result->row();
 	}
@@ -367,6 +368,10 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 */
 	function insertFRInput($functionId,$param){
 		$currentDateTime = date('Y-m-d H:i:s');
+		$param->decimalPoint = !empty($param->decimalPoint)?  "'".$param->decimalPoint."'" : "NULL";
+		$param->constraintDefault = !empty($param->constraintDefault)?  "'".$param->constraintDefault."'" : "NULL";
+		$param->constraintMinValue = !empty($param->constraintMinValue)?  "'".$param->constraintMinValue."'" : "NULL";
+		$param->constraintMaxValue = !empty($param->constraintMaxValue)?  "'".$param->constraintMaxValue."'" : "NULL";
 
 		if ($param->referTableName !=null) {
 				$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,

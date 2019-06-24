@@ -1,0 +1,6 @@
+functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
+HO_FR_04,Add New Doctor Information,input,DOCTOR_ID,,,,Doctors,DOCTOR_ID
+HO_FR_04,Add New Doctor Information,input,DEP_ID,,,,Doctors,Dep_Id
+HO_FR_04,Add New Doctor Information,input,D_Firstname,,,,Doctors,D_Firstname
+HO_FR_04,Add New Doctor Information,input,D_Surname,,,,Doctors,D_Surname
+HO_FR_04,Add New Doctor Information,input,D_Salary,,,,Doctors,D_Salary

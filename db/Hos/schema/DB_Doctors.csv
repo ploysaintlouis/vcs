@@ -1,0 +1,7 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+1,Doctors,Doctor_Id,Y,INT,,,Y,,Y,,
+1,Doctors,Dep_id,N,INT,,,N,,Y,,
+1,Doctors,D_Firstname,N,VARCHAR,45,,N,,Y,,
+1,Doctors,D_Surname,N,VARCHAR,45,,N,,Y,,
+1,Doctors,D_Birthdate,N,DATE,,,N,,Y,,
+1,Doctors,D_Salary,N,DECIMAL,8,2,N,,N,,

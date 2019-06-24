@@ -66,7 +66,7 @@ class DatabaseSchema_model extends CI_Model{
 
 		$sqlStr = "SELECT di.*
 			FROM M_DATABASE_SCHEMA_INFO di,M_DATABASE_SCHEMA_VERSION dv
-			WHERE di.projectId = $projectId
+			WHERE di.projectId = '$projectId'
 			AND di.tableName  = '$tableName'
 			AND di.columnName = '$columnName'
 			AND dv.activeFlag = '1'

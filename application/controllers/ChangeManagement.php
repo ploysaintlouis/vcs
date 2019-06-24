@@ -735,13 +735,15 @@ class ChangeManagement extends CI_Controller{
 					}else{
 						$output = 'error|'.$error_message;
 					}
+				//return true;
 
 			}catch (Exception $error_message){
 				$output = 'error|'.ER_MSG_013.'<br/>'.$error_message;
 			}
+
 		}
-		//echo $output;
-		return false;
+		echo $output;
+		//return false;
 	}
 
 	function saveTempFRInput_edit(){
@@ -813,14 +815,16 @@ class ChangeManagement extends CI_Controller{
 					$oldMaxValue = $this->input->post('oldMax');
 
 					if($oldDataType == $dataType
-						|| (!empty($oldDataLength) && !empty($dataLength) && ((int)$dataLength == (int)$oldDataLength))
+						|| (!empty($oldDataLength) && !empty($dataLength) && ((int)$dataLength == (int)$oldDataLength) && !empty($oldScale) && !empty($scalePoint) && ((int)$scalePoint == (int)$oldScale))
 						|| (!empty($oldScale) && !empty($scalePoint) && ((int)$scalePoint == (int)$oldScale))
 						|| (!empty($oldDefaultValue) && !empty($defaultValue) && ($oldDefaultValue == $defaultValue))
 						|| (!empty($oldMinValue) && !empty($minValue) && ((int)$oldMinValue == (int)$minValue))
 						|| (!empty($oldMaxValue) && !empty($maxValue) && ((int)$oldMaxValue == (int)$maxValue)))
 						//return true;
 					{
-						echo 'error|'.ER_TRN_009;
+						//echo 'error|'.ER_TRN_009;
+						echo 'error|'.(int)$oldDataLength;
+
 						return false;
 					}
 
@@ -843,6 +847,9 @@ class ChangeManagement extends CI_Controller{
 						$saveResult = $this->mChange->insertTempFRInputChange($param);
 
 					
+					}else{
+						//Error already change
+						$output = 'error|'.ER_TRN_001;
 					}
 				/*
 					if(0 == count($records)){
@@ -869,7 +876,7 @@ class ChangeManagement extends CI_Controller{
 				$output = 'error|'.ER_MSG_013.'<br/>'.$error_message;
 			}
 		}
-		//echo $output;
+		echo $output;
 		return false;
 	}
 
@@ -1170,18 +1177,18 @@ class ChangeManagement extends CI_Controller{
 		//6. Validate New FR Input and Schema Info
 		$exceptInputSize = array("date", "datetime", "int", "float", "real");
 		//6.1 [Validate DataType]
-		if(!in_array($param->dataType, $exceptInputSize)){
+		if(!in_array(strtolower($param->dataType), $exceptInputSize)){
 			if(empty($param->dataLength)){
 				$errorMsg = ER_TRN_008;
 				return false;
 			}else{
 				$dataLength = (int)$param->dataLength;
-				if("char" == $param->dataType || "varchar" == $param->dataType){
+				if("char" == strtolower($param->dataType) || "varchar" == strtolower($param->dataType)){
 					if($dataLength < 1 || $dataLength > 8000){
 						$errorMsg = ER_IMP_015;
 						return false;
 					}
-				}else if("nchar" == $param->dataType || "nvarchar" == $param->dataType){
+				}else if("nchar" == strtolower($param->dataType) || "nvarchar" == strtolower($param->dataType) ){
 					if($dataLength< 1 || $dataLength > 4000 ){
 						$errorMsg = ER_IMP_016;
 						return false;

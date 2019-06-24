@@ -250,7 +250,7 @@ define('ER_IMP_055', "Can't start project because test case data doesn't exists.
 define('ER_IMP_056', "Can't start project because RTM data doesn't exists.");
 
 //Error Transaction
-define('ER_TRN_001', "Can't save because this Functional Requirement's Input already exist in Change List.");
+define('ER_TRN_001', "Can't save because this Functional Requirement's Data already exist in Change List.");
 define('ER_TRN_002', "Input Name is required.");
 define('ER_TRN_003', "Input Name length exceeded.");
 define('ER_TRN_004', "Table and Column that you enter does not match with current Input in database.");

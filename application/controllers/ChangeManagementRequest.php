@@ -1335,9 +1335,9 @@ class ChangeManagementRequest extends CI_Controller {
 								$new_testdata = rand($param_update_tc->newMinValue,$param_update_tc->newMaxValue);
 	
 									//print_r($param_update_tc->newDataLength);
-								if (($param_update_tc->newDataType == 'decimal') || ($param_update_tc->newDataType == 'DECIMAL')
-								|| ($param_update_tc->newDataType == 'float') || ($param_update_tc->newDataType == 'FLOAT')
-								|| ($param_update_tc->newDataType == 'double') || ($param_update_tc->newDataType == 'DOUBLE'))
+								if (($param_update_tc->newDataType == strtoupper('decimal') ) || ($param_update_tc->newDataType == 'DECIMAL')
+								|| ($param_update_tc->newDataType == strtoupper('float')) || ($param_update_tc->newDataType == 'FLOAT')
+								|| ($param_update_tc->newDataType == strtoupper('double')) || ($param_update_tc->newDataType == 'DOUBLE'))
 								{
 									if(($new_testdata == null) || ($new_testdata < $param_update_tc->newMaxValue) || ($new_testdata > $param_update_tc->newMinValue)){
 											$chars = "0123456789";

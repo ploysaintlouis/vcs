@@ -38,7 +38,7 @@ class VersionControl_model extends CI_Model{
 	function InsertNewRequirementsHeader($param){
         
 		$currentDateTime = date('Y-m-d H:i:s');
-        $FRMAXFuncNo = $this->searchFRMAXFuncNo();
+        $FRMAXFuncNo = $this->searchFRMAXFuncNo($param);
         $New_FRNO = substr($FRMAXFuncNo[0]['Max_FRNO'],0,7).(substr($FRMAXFuncNo[0]['Max_FRNO'],7,7)+1);
         $FRMAXFuncId = $this->searchFRMAXFuncId();
         foreach($FRMAXFuncId as $value){
@@ -97,10 +97,11 @@ class VersionControl_model extends CI_Model{
            return $resultId[0]->last_id;
         }
 
-    function searchFRMAXFuncNo() {
+    function searchFRMAXFuncNo($param) {
 
         $strsql = " SELECT max(functionNo) AS Max_FRNO 
-                    FROM M_FN_REQ_HEADER ";
+                    FROM M_FN_REQ_HEADER 
+                    WHERE projectId = '$param->projectId' ";
        //echo $strsql;
        $result = $this->db->query($strsql);
        //echo $sqlStr ;
@@ -266,6 +267,11 @@ class VersionControl_model extends CI_Model{
 
     function addChangeRequestDetail($param,$paramUpdate,$New_param) {
         $currentDateTime = date('Y-m-d H:i:s');
+		$paramUpdate->tableName = !empty($paramUpdate->tableName)? "'".$paramUpdate->tableName."'" : "NULL";
+		$paramUpdate->columnName = !empty($paramUpdate->columnName)? "'".$paramUpdate->columnName."'" : "NULL";
+		$paramUpdate->newMinValue = !empty($paramUpdate->newMinValue)? "'".$paramUpdate->newMinValue."'" : "NULL";
+		$paramUpdate->newMaxValue = !empty($paramUpdate->newMaxValue)? "'".$paramUpdate->newMaxValue."'" : "NULL";
+		$paramUpdate->newDefaultValue = !empty($paramUpdate->newDefaultValue)? "'".$paramUpdate->newDefaultValue."'" : "NULL";
 
         $strsql = "INSERT INTO M_FN_REQ_DETAIL 
         (projectid, functionId, functionNo, functionVersion, typeData, dataName, 
@@ -273,10 +279,10 @@ class VersionControl_model extends CI_Model{
         constraintDefault, constraintNull, constraintMinValue, constraintMaxValue, effectiveStartDate, effectiveEndDate, activeFlag,
         createDate, createUser, updateDate, updateUser)
         VALUES('$param->projectId','$New_param->functionId','$New_param->functionNo','$New_param->functionversion',
-        '$paramUpdate->typeData','$paramUpdate->dataName',NULL,'$paramUpdate->tableName',
-        '$paramUpdate->columnName','$paramUpdate->newDataType','$paramUpdate->newDataLength',
-        '$paramUpdate->newScaleLength','N','$paramUpdate->newUnique','$paramUpdate->newDefaultValue',
-        '$paramUpdate->newNotNull','$paramUpdate->newMinValue','$paramUpdate->newMaxValue',
+        '$paramUpdate->typeData','$paramUpdate->dataName',NULL,$paramUpdate->tableName,
+        $paramUpdate->columnName,'$paramUpdate->newDataType','$paramUpdate->newDataLength',
+        '$paramUpdate->newScaleLength','N','$paramUpdate->newUnique',$paramUpdate->newDefaultValue,
+        '$paramUpdate->newNotNull',$paramUpdate->newMinValue,$paramUpdate->newMaxValue,
         '$currentDateTime',NULL,'1','$currentDateTime','$param->user','$currentDateTime','$param->user')
         ";
 

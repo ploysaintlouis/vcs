@@ -1,0 +1,5 @@
+functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
+HO_FR_03,Make an appointment,input,APP_ID,,,,appointments,APP_ID
+HO_FR_03,Make an appointment,input,APP_DATE,,,,appointments,APP_DATE
+HO_FR_03,Make an appointment,input,SSN,,,,Patient,SSN
+HO_FR_03,Make an appointment,input,DOCTORS_ID,,,,Doctors,DOCTOR_ID

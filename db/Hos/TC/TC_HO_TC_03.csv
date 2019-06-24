@@ -1,0 +1,5 @@
+No,TestCaseID,TestCaseDescription,ExpectedResult,typeData,dataName,TestData
+1,HO_TC_03,Test Make an appointment,Valid,input,App_id,AP-00123
+2,HO_TC_03,Test Make an appointment,Valid,input,App_Date,09/05/2019
+3,HO_TC_03,Test Make an appointment,Valid,input,SSN,HN-0001
+4,HO_TC_03,Test Make an appointment,Valid,input,Doctor_Id,1

@@ -203,6 +203,7 @@
 								return false;
 							}else{
 								//alert(result[1]);
+								//debugger
 								alert("Done.");
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');

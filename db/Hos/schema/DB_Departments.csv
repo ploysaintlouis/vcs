@@ -1,0 +1,3 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+1,Departments,dep_id,Y,INT,,,Y,,Y,,
+1,Departments,dept_name,N,VARCHAR,100,,N,,Y,,

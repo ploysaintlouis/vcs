@@ -166,7 +166,8 @@
 					data: $("#changeInput_form").serialize(),
 					//alert(data);
 					success: function(data){
-						
+						debugger
+
 						if(null != data){
 							alert(data);
 							var result = data.split("|");
