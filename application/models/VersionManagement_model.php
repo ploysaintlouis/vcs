@@ -295,11 +295,10 @@ class VersionManagement_model extends CI_Model{
 	}
 
 	public function searchRelatedColumnVersion($param){
-		$sqlStr = "SELECT tableName, columnName, schemaVersionId, schemaVersionNumber
+		$sqlStr = "SELECT DISTINCT schemaVersionNumber
 			FROM M_DATABASE_SCHEMA_VERSION
 			WHERE projectId = $param->projectId
 			AND tableName= '$param->tableName'
-			AND columnName = '$param->columnName'
 			order by schemaVersionNumber";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();

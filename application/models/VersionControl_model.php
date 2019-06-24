@@ -774,7 +774,7 @@ class VersionControl_model extends CI_Model{
     function updateChangeTestCaseDetail($param,$param_update_tc,$New_TC_HEADER,$new_testdata) {
 
         $strsql = "UPDATE M_TESTCASE_DETAIL
-                set testdata = '$new_testdata'
+                set testData = '$new_testdata'
                 WHERE testcaseVersion = '$New_TC_HEADER->testcaseVersion' 
                 AND testCaseId = '$New_TC_HEADER->testCaseId'
                 and activeflag = '1' 

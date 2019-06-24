@@ -62,7 +62,7 @@
             					</select>
             					<?php echo form_error('inputTable', '<font color="red">','</font><br>'); ?>
         					</div>
-        					<label for="inputColumn" class="col-sm-2 control-label">
+        		<!--			<label for="inputColumn" class="col-sm-2 control-label">
  								Column Name :
         					</label>
         					<div class="col-sm-2">
@@ -78,7 +78,7 @@
             							} 
             						} ?>
             					</select>
-        					</div>
+        					</div> -->
         					<label for="inputSchemaVersion" class="col-sm-2 control-label">
  								Schema Version :
         					</label>

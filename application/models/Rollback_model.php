@@ -17,7 +17,7 @@ class Rollback_model extends CI_Model{
 		$this->load->model('RTM_model', 'mRTM');
 	}
 
-	public function searchChangesInformationForRollback($param){
+	public function searchApproveInformationForRollback($param){
 		
 		if(isset($param->projectId) && !empty($param->projectId)){
 			$where[] = "h.projectId = '$param->projectId' ";
@@ -77,11 +77,51 @@ class Rollback_model extends CI_Model{
 		ORDER BY h.changeDate desc
 		
 ";
-			//print_r($sqlStr);
+		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
-	
+
+	public function searchChangesInformationForRollback($param){
+		
+		if(isset($param->projectId) && !empty($param->projectId)){
+			$where[] = "h.projectId = '$param->projectId' ";
+		}
+
+		if(isset($param->changeRequestNo) && !empty($param->changeRequestNo)){
+			$where[] = "h.changeRequestNo = '$param->changeRequestNo'";
+		}
+
+		if(isset($param->changeStatus) && !empty($param->changeStatus)){
+			$where[] = "h.changeStatus = '$param->changeStatus'";
+		}
+		$where_condition = implode(" AND ", $where);
+
+			$sqlStr = "SELECT 
+			h.changeRequestNo,
+			h.changeDate,
+			CONCAT(u.firstname, '   ', u.lastname) as changeUser,
+			h.changeFunctionId,
+			h.changeFunctionNo,
+			h.changeFunctionVersion,
+			fh.functionDescription,
+			h.changeRequestNo,
+			h.changeStatus,
+			h.changeStatus as changeStatusMisc,
+			h.reason
+		FROM T_CHANGE_REQUEST_HEADER h ,M_USERS u ,M_FN_REQ_HEADER fh
+		WHERE h.changeUserId = u.userId
+					AND h.changeFunctionId = fh.functionId
+					AND h.changeFunctionVersion = fh.functionVersion
+		AND $where_condition
+		ORDER BY h.changeDate desc
+		
+";
+		//	print_r($sqlStr);
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
 	public function getChangeRequestInputList($changeRequestNo){
 		$sqlStr = "SELECT *
 			FROM T_CHANGE_REQUEST_DETAIL
@@ -146,6 +186,7 @@ class Rollback_model extends CI_Model{
 		AND m.New_TC_Id <> ht.testcaseId
 		WHERE ht.ChangeRequestNo = '$changeRequestNo'
 		ORDER BY testcaseNo";
+		echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();	
 	}
@@ -541,9 +582,12 @@ function updateTestcaseDetail($param_TC){
 		h.reason
 	FROM T_CHANGE_REQUEST_HEADER h ,M_USERS u ,M_FN_REQ_HEADER fh
 	WHERE h.changeUserId = u.userId
-				AND h.changeFunctionId = fh.functionId
-	AND  h.changeRequestNo IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1')
-	ORDER BY h.changeDate desc";
+	AND h.changeFunctionId = fh.functionId
+	AND h.changeFunctionVersion = fh.functionVersion
+	AND $where_condition
+	AND  h.changeRequestNo NOT IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1')
+  ORDER BY h.changeDate desc";
+	//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}

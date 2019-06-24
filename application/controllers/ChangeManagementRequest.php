@@ -555,6 +555,7 @@ class ChangeManagementRequest extends CI_Controller {
 				);		//print_r($paramothFR);
 				//print_r($ListofChangeSchemaOthFr);
 			$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$paramothFR,$y);
+
 		//	print_r($ListofTCAffected);
 			$i = 1;
 			$testNo = "";
@@ -1322,10 +1323,13 @@ class ChangeManagementRequest extends CI_Controller {
 									'tableName' => $value['tableName'],
 									'columnName' => $value['columnName']
 								);
-			//print_r($param_update_tc);
+		//	print_r($param_update_tc);
+						
 						//print_r($param_update_tc->changeType);		
 						if ($param_update_tc->changeType != 'delete'){
-								$new_testdata = '';
+
+							$new_testdata = '';
+							if (trim($param_update_tc->newDataType) == 'INT'){
 								if (isset($param_update_tc->newMaxValue) or ($param_update_tc->newMaxValue == null )){
 									$param_update_tc->newMaxValue = '100';
 								}
@@ -1333,47 +1337,41 @@ class ChangeManagementRequest extends CI_Controller {
 									$param_update_tc->newMinValue = '0';
 								}
 								$new_testdata = rand($param_update_tc->newMinValue,$param_update_tc->newMaxValue);
-	
-									//print_r($param_update_tc->newDataLength);
-								if (($param_update_tc->newDataType == strtoupper('decimal') ) || ($param_update_tc->newDataType == 'DECIMAL')
-								|| ($param_update_tc->newDataType == strtoupper('float')) || ($param_update_tc->newDataType == 'FLOAT')
-								|| ($param_update_tc->newDataType == strtoupper('double')) || ($param_update_tc->newDataType == 'DOUBLE'))
-								{
-									if(($new_testdata == null) || ($new_testdata < $param_update_tc->newMaxValue) || ($new_testdata > $param_update_tc->newMinValue)){
-											$chars = "0123456789";
-											$ret_char = "";
-											$num = strlen($chars);
-											for($i = 0; $i < $param_update_tc->newDataLength ; $i++) {
-												$ret_char.= $chars[rand()%$num];
-												$ret_char.= ""; 
-											}
-											$first_num = $ret_char;
-
-											$ret_char = "";
-											$chars = "0123456789";
-											$ret_char = "";
-											$num = strlen($chars);
-											for($i = 0; $i < $param_update_tc->newScaleLength ; $i++) {
-												$ret_char.= $chars[rand()%$num];
-												$ret_char.= ""; 
-											}
-											$round = $ret_char;
-										$new_testdata = $first_num.".".$round;
-										//echo $new_testdata;
-									}
-								}	
-							if(($param_update_tc->newDataType == 'date') || ($param_update_tc->newDataType == 'DATE') ){
-									$new_testdata = '05/06/1989';
+							}else if ((trim($param_update_tc->newDataType) == 'DECIMAL' ) || (trim($param_update_tc->newDataType) == 'FLOAT') || (trim($param_update_tc->newDataType) == 'DOUBLE')){
+								//	if(($new_testdata == null) || ($new_testdata < $param_update_tc->newMaxValue) || ($new_testdata > $param_update_tc->newMinValue)){
+								$chars = "0123456789";
+								$ret_char = "";
+								$num = strlen($chars);
+								for($i = 0; $i < $param_update_tc->newDataLength ; $i++) {
+									$ret_char.= $chars[rand()%$num];
+									$ret_char.= ""; 
 								}
-				
-								if (($param_update_tc->newDataType == 'char') || ($param_update_tc->newDataType == 'CHAR')
-								|| ($param_update_tc->newDataType == 'varchar') || ($param_update_tc->newDataType == 'VARCHAR')){
-									$chars = 'abcdefghijklmnopqrstuv56789wxyzABCDEFGH@IJKLMNOPQRSTUVWXYZ0123456789';
-									$value = '';
-									for ( $i = 0; $i < $param_update_tc->newDataLength; $i++ )
-										 $value .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
-									$new_testdata = $value;
-								}			
+								$first_num = $ret_char;
+
+								$ret_char = "";
+								$chars = "0123456789";
+								$ret_char = "";
+								$num = strlen($chars);
+								for($i = 0; $i < $param_update_tc->newScaleLength ; $i++) {
+									$ret_char.= $chars[rand()%$num];
+									$ret_char.= ""; 
+								}
+								$round = $ret_char;
+								$new_testdata = $first_num.".".$round;
+								//echo $new_testdata;
+								//}
+							}else if(trim($param_update_tc->newDataType) == 'DATE'){
+								$new_testdata = '05/06/1989';
+							}else if ((trim($param_update_tc->newDataType) == 'CHAR') || (trim($param_update_tc->newDataType) == 'VARCHAR')){
+								$chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+								$value = '';
+								for ( $i = 0; $i < $param_update_tc->newDataLength; $i++ )
+									 $value .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+								$new_testdata = $value;
+							}else{
+								//$new_testdata =strlen($param_update_tc->newDataType);
+
+							}								
 //echo $new_testdata;
 						}
 								if($param_update_tc->changeType == 'edit'){
@@ -1623,7 +1621,7 @@ class ChangeManagementRequest extends CI_Controller {
 
 		$data = array(
 			'success' => true,
-			'result'=> $schema_list_aff
+			'result'=> $param_update_tc
 		);
 		//echo json_encode($data);
 	}

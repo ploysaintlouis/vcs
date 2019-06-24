@@ -128,8 +128,8 @@ class VersionManagement_Schema extends CI_Controller{
 			$data['columnCombo'] = $columnList;
 		}
 
-		if(null != $columnName && !empty($columnName)){
-			$criteria = (object) array('projectId'  => $projectId, 'tableName'  => $tableName, 'columnName' => $columnName);
+		if(null != $tableName && !empty($tableName)){
+			$criteria = (object) array('projectId'  => $projectId, 'tableName'  => $tableName);
 			$versionList = $this->mVerMng->searchRelatedColumnVersion($criteria);
 			$data['schemaVersionCombo'] = $versionList;
 		}

@@ -847,9 +847,13 @@ class ChangeManagement_model extends CI_Model{
 		AND a.functionVersion ='$param->functionVersion'
 		AND a.functionId <> b.functionId
 		AND b.activeflag = '1'
-		AND ((a.newdataType <> b.dataType)
-		OR (a.newdataType != 'INT' AND a.newdataType <> b.dataType AND a.newdataLength <> b.dataLength
-		OR a.newScaleLength <> b.decimalPoint))";
+		AND (
+       		(a.newdataType IN ('VARCHAR','CHAR') AND UCASE(a.newdataType)  = UCASE(b.dataType)  AND a.newdataLength <> b.dataLength)
+		OR(a.newdataType = 'INT' AND  UCASE(a.newdataType)  = UCASE(b.dataType) AND a.newdataLength <> b.dataLength)
+		OR (a.newdataType IN ('DECIMAL','FLOAT','DOUBLE') AND  UCASE(a.newdataType)  = UCASE(b.dataType) AND a.newdataLength <> b.dataLength)
+		OR (a.newdataType IN ('DECIMAL','FLOAT','DOUBLE') AND  UCASE(a.newdataType)  = UCASE(b.dataType) AND a.newdataLength = b.dataLength AND a.newScaleLength <> b.decimalPoint)
+			)
+		";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 		return $result->result_array();
