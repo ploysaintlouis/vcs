@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2019 at 07:30 PM
+-- Generation Time: Jun 25, 2019 at 09:14 PM
 -- Server version: 10.1.16-MariaDB
 -- PHP Version: 5.6.24
 
@@ -179,11 +179,11 @@ INSERT INTO `map_rtm` (`id`, `projectId`, `changeRequestNo`, `functionId`, `func
 (2, 1, 'CH02', 7, 1, 7, 1, 0),
 (3, 1, 'CH02', 8, 1, 8, 1, 0),
 (4, 1, 'CH02', 9, 1, 9, 1, 0),
-(5, 1, 'CH02', 10, 1, 7, 1, 0),
+(5, 1, 'CH02', 7, 1, 10, 1, 0),
 (6, 1, 'CH03', 6, 1, 6, 1, 0),
 (7, 1, 'CH03', 8, 1, 8, 1, 0),
 (8, 1, 'CH03', 9, 1, 9, 1, 0),
-(9, 1, 'CH03', 10, 1, 11, 1, 0),
+(9, 1, 'CH03', 7, 1, 11, 1, 0),
 (10, 1, 'CH03', 10, 1, 12, 1, 0),
 (11, 1, NULL, 8, 1, 8, 1, 1),
 (12, 1, NULL, 9, 1, 9, 1, 1),
