@@ -177,6 +177,81 @@
                 								</td>
 						                	</tr>
 						                <?php endforeach ?>
+										</tbody>
+	                			</table>
+								<h4>Functional Requirement Detail</h4>
+
+										<table class="table table-striped" cellpadding="1px" cellspacing="1px">
+	                					<tbody>
+	                					<tr>
+												<th>#</th>
+	                							<th>Type of Data</th>
+												<th>Data Name</th>
+	                							<th>Data Type</th>
+	                							<th>Data Length</th>
+	                							<th>Scale</th>
+	                							<th>Unique</th>
+	                							<th>NOT NULL</th>
+	                							<th>Default</th>
+	                							<th>Min</th>
+	                							<th>Max</th>
+	                							<th>Table</th>
+	                							<th>Column</th>
+	                							<th> 
+	                					</tr>
+										<!--FR list -->
+										<?php 
+						                $define = 1;
+						                foreach($FRdetailInfo as $value): ?>
+						                	<tr>
+						                		<td>
+							                		<?php echo $define++; ?>
+							                	</td>
+						                		<?php 
+												if ($value['typeData'] == 1) { 
+													$value["typeData"] = "Input"; 
+												}
+												if ($value['typeData'] == 2) { 
+													$value["typeData"] = "Output"; 
+												}?>
+												<td><?php echo $value['typeData']; ?> 
+												</td>
+                								<td>
+                									<?php echo $value['dataName']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['dataType']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['dataLength']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['decimalPoint']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['constraintUnique']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['constraintNull']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['constraintDefault']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['constraintMinValue']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['constraintMaxValue']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['refTableName']; ?>
+                								</td>
+                								<td>
+                									<?php echo $value['refColumnName']; ?> 
+                								</td>
+						                	</tr>
+						                <?php endforeach ?>
+
 	                				</tbody>
 	                			</table>
 	                		</div>
@@ -209,24 +284,35 @@
 										<th class="col-md-1">#</th>
 										<th class="col-md-3">Functional Requirement ID</th>
 										<th class="col-md-4">Description</th>
-										<th class="col-md-2">Old Version</th>
-										<th class="col-md-2">New Version</th>
+										<th class="col-md-2">Action</th>
+										<th class="col-md-2">Version</th>
 									</tr>
 									<?php 
 									$i = 1; 
 									foreach($affectedFnReqList as $value){ ?>
 									<tr>
 										<td><?php echo $i++ ?></td>
-										<td><?php echo $value['FR_No'] ?></td>
+										<td><?php echo $value['functionNo'] ?></td>
 										<td><?php echo $value['functionDescription'] ?></td>
+
 										<td class="hidden-sm hidden-xs">
-											<small class="label label-default"><?php echo $value['FR_Version'] ?></small>
-										</td>
-										<?php if($value['New_FR_Id'] == $value['FR_Id'] ){ ?>
-										<td class="hidden-sm hidden-xs">
-											<small class="label label-success"><?php echo $value['New_FR_Version'] ?></small>
-										</td>
+										<?php if($value['activeflag'] == '0' ){  ?>
+											<small class="label label-default"><?php echo $value['functionVersion'] ?></small>
+											<?php } 
+										if($value['activeflag'] == '1' ){  ?>
+												<small class="label label-success"><?php echo $value['functionVersion'] ?></small>
 										<?php } ?>
+										</td>
+										<td class="hidden-sm hidden-xs">
+
+										<?php if($value['activeflag'] == '0' ){  ?>
+											<small class="label label-default"><?php echo 'Not Active' ?></small>
+										<?php } 
+										if($value['activeflag'] == '1' ){  ?>
+											<small class="label label-success"><?php echo 'Re-Active' ?></small>
+										<?php } ?>
+
+										</td>										
 									</tr>
 									<?php } ?>
 								</tbody>
@@ -248,32 +334,37 @@
 										<th class="col-md-1">#</th>
 										<th class="col-md-2">Test Case ID</th>
 									<!--	<th class="col-md-3">Related Requirement ID</th>  -->
-										<th class="col-md-2">Change Type</th>
-										<th class="col-md-2">Old Version</th>
-										<th class="col-md-2">New Version</th>
+										<th class="col-md-2">Description</th>
+										<th class="col-md-2">Action</th>
+										<th class="col-md-2">Version</th>
 									</tr>
 									<?php 
 									$tcCount = 1;
 									foreach($affectedTCList as $value){ ?>
 										<tr>
 											<td><?php echo $tcCount++ ?></td>
-											<td><?php echo $value['testcaseNo'] ?></td>
-										<!--	<td><?php echo $value['functionNo'] ?></td>  -->
-											<td>
-												<?php
-												$label = "add" == $value['changeType']? "text-green" : ("edit" == $value['changeType']? "text-yellow" : "text-red");
-												?>
-												<i class="fa fa-circle-o <?php echo $label; ?>"></i>
-												<span><?php echo $value['changeType'] ?></span>
-											</td>
+											<td><?php echo $value['testCaseNo'] ?></td>
+											<td><?php echo $value['testCaseDescription'] ?></td>  
+
 											<td class="hidden-sm hidden-xs">
+											<?php if($value['activeflag'] == '0' ){  ?>
 												<small class="label label-default"><?php echo $value['testcaseVersion'] ?></small>
-											</td>
-											<?php if($value['New_TC_Id'] == $value['testcaseId'] ){ ?>
-											<td class="hidden-sm hidden-xs">
-												<small class="label label-success"><?php echo $value['New_TC_Version'] ?></small>
-											</td>
+												<?php } 
+											if($value['activeflag'] == '1' ){  ?>
+													<small class="label label-success"><?php echo $value['testcaseVersion'] ?></small>
 											<?php } ?>
+											</td>			
+
+											<td class="hidden-sm hidden-xs">
+
+											<?php if($value['activeflag'] == '0' ){  ?>
+												<small class="label label-default"><?php echo 'Not Active' ?></small>
+											<?php } 
+											if($value['activeflag'] == '1' ){  ?>
+												<small class="label label-success"><?php echo 'Re-Active' ?></small>
+											<?php } ?>
+
+											</td>												
 										</tr>
 									<?php } ?>
 	            				</tbody>
@@ -294,10 +385,9 @@
 	            					<tr>
 										<th class="col-md-1">#</th>
 										<th class="col-md-2">Table Name</th>
-										<th class="col-md-3">Column Name</th>
-										<th class="col-md-2">Change Type</th>
-										<th class="col-md-2">Old Version</th>
-										<th class="col-md-2">New Version</th>
+										<th class="col-md-2">Version</th>
+										<th class="col-md-3">Action</th>
+
 									</tr>
 									<?php 
 									$dbCount = 1;
@@ -305,23 +395,24 @@
 									<tr>
 										<td><?php echo $dbCount++ ?></td>
 										<td><?php echo $value['tableName'] ?></td>
-										<td><?php echo $value['columnName'] ?></td>
-										<td>
-										<?php
-											$label = "add" == $value['changeType']? "text-green" : ("edit" == $value['changeType']? "text-yellow" : "text-red");
-											?>
-											<i class="fa fa-circle-o <?php echo $label; ?>"></i>
-											<span><?php echo $value['changeType'] ?></span>
-										</td>
+
 										<td class="hidden-sm hidden-xs">
-											<?php if(empty($value['newSchemaVersionNumber'])){ ?>
-											<small class="label label-success"><?php echo $value['Version'] ?></small>
-											<?php }else{ ?>
-											<small class="label label-default"><?php echo $value['oldSchemaVersionNumber'] ?></small>
-											<?php } ?>
-										</td>
+										<?php if($value['activeflag'] == '0' ){  ?>
+											<small class="label label-default"><?php echo $value['schemaVersionNumber'] ?></small>
+											<?php } 
+										if($value['activeflag'] == '1' ){  ?>
+												<small class="label label-success"><?php echo $value['schemaVersionNumber'] ?></small>
+										<?php } ?>
+										</td>	
 										<td class="hidden-sm hidden-xs">
-											<small class="label label-success"><?php echo $value['New_Schema_Version'] ?></small>
+
+										<?php if($value['activeflag'] == '0' ){  ?>
+											<small class="label label-default"><?php echo 'Not Active' ?></small>
+										<?php } 
+										if($value['activeflag'] == '1' ){  ?>
+											<small class="label label-success"><?php echo 'Re-Active' ?></small>
+										<?php } ?>
+
 										</td>
 									</tr>
 									<?php } ?>
@@ -365,14 +456,18 @@
 										<td><?php echo $row++ ?></td>
 										<td><?php echo $value['functionNo'] ?></td>
 										<td><?php echo $value['functionVersion'] ?></td>
-										<td><?php echo $value['testcaseNo'] ?></td>
+										<td><?php echo $value['testCaseNo'] ?></td>
 										<td><?php echo $value['testcaseVersion'] ?></td>
-									<!--	<td><?php
-											$label = "add" == $value['changeType']? "text-green" : ("edit" == $value['changeType']? "text-yellow" : "text-red");
-											?>
-											<i class="fa fa-circle-o <?php echo $label; ?>"></i>
-											<span><?php echo $value['changeType'] ?></span>
-										</td> -->
+										<td class="hidden-sm hidden-xs">
+
+										<?php if($value['activeflag'] == '0' ){  ?>
+											<small class="label label-default"><?php echo 'Not Active' ?></small>
+										<?php } 
+										if($value['activeflag'] == '1' ){  ?>
+											<small class="label label-success"><?php echo 'Re-Active' ?></small>
+										<?php } ?>
+
+										</td>
 									</tr>
 									<?php } ?>
 	            				</tbody>

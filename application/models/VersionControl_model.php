@@ -973,6 +973,34 @@ class VersionControl_model extends CI_Model{
     
     }
 
+    function updateMAPRTM($param){
+
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE MAP_RTM
+			SET activeflag = '0',
+				changeRequestNo 	 = '$param->changeRequestNo'
+			WHERE  activeflag = '1'
+            AND changeRequestNo IS NULL ";
+			//print_r($sqlStr);
+            $result = $this->db->query($sqlStr);
+            return $this->db->affected_rows();
+    
+    }
+
+    function updateDBMAP($param){
+
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$sqlStr = "UPDATE MAP_SCHEMA
+			SET changeRequestNo 	 = '$param->changeRequestNo'
+			WHERE  changeRequestNo IS NULL ";
+			//print_r($sqlStr);
+            $result = $this->db->query($sqlStr);
+            return $this->db->affected_rows();
+    
+    }
+
     function deleteTempChange($param){
 
         $strsql = "DELETE FROM T_TEMP_CHANGE_LIST
@@ -1076,5 +1104,45 @@ class VersionControl_model extends CI_Model{
         //print_r($strsql);
         return $this->db->affected_rows();
      }
+
+
+     function insertRTMMAP($param){
+
+		$sqlStr = "INSERT INTO MAP_RTM 
+        (changeRequestNo,projectId,functionId,functionVersion,testcaseId,testcaseVersion,activeflag) 
+        SELECT NULL,projectId,functionId,functionVersion,testcaseId,testcaseVersion,'1'
+         FROM M_RTM_VERSION
+        WHERE projectId = '$param->projectId'
+        AND activeflag = '1'
+        ";
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(Id) as last_id FROM MAP_RTM");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    } 
+
+    function insertDBMAP($param){
+
+		$sqlStr = "INSERT INTO MAP_SCHEMA
+        (schemaVersionId,schemaVersion,tableName,changeRequestNo,projectId)
+        SELECT DISTINCT schemaVersionId,Version,tableName,NULL,'$param->projectId'
+         FROM M_DATABASE_SCHEMA_INFO
+        WHERE projectId = '$param->projectId'
+        AND activeflag = '1'
+        ";
+
+		$result = $this->db->query($sqlStr);
+		if($result){
+			$query = $this->db->query("SELECT MAX(Id) as last_id FROM MAP_RTM");
+			$resultId = $query->result();
+			return $resultId[0]->last_id;
+		}
+		return NULL;
+    } 
+
 }
 ?>

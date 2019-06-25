@@ -106,6 +106,7 @@ class DatabaseSchema_model extends CI_Model{
 				$value->schemaVersionId = $result;
 				$this->insertDatabaseSchemaInfo($value, $projectId,$schemaVersionId);
 			}
+			$this->insertDatabaseSchemaMAP($value, $projectId,$schemaVersionId);
 		}
 		
     	$trans_status = $this->db->trans_status();
@@ -165,6 +166,16 @@ class DatabaseSchema_model extends CI_Model{
 		VALUES ('{$param->tableName}', '{$param->columnName}', {$schemaVersionId},
 		 '{$dataType}', $dataLength, {$scale}, '{$param->primaryKey}', '{$param->unique}' ,
 		  {$defaultValue}, '{$param->null}', {$minValue}, {$maxValue}, $projectId,{$param->schemaVersionNo},'1')";
+
+		$result = $this->db->query($sqlStr);
+		return $result;
+	}
+
+	function insertDatabaseSchemaMAP($param, $projectId,$schemaVersionId){
+
+		$sqlStr = "INSERT INTO MAP_SCHEMA 
+		(chagneRequestNo,tableName, schemaVersionId,projectId,schemaVersion) 
+		VALUES (NULL,'{$param->tableName}', {$schemaVersionId},$projectId,{$param->schemaVersionNo})";
 
 		$result = $this->db->query($sqlStr);
 		return $result;

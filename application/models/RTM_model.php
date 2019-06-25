@@ -147,6 +147,18 @@ class RTM_model extends CI_Model{
 		return $result;
 	}
 
+	function insertMapRTM($param, $user){
+		$previousVersionId = !empty($param->previousVersionId)? $param->previousVersionId : 'NULL';
+
+		$sqlStr = "INSERT INTO MAP_RTM (projectId, testcaseId,testcaseversion,
+		functionId,functionVersion,activeFlag)
+		VALUES ($param->projectId, '$param->testCaseId','$param->testCaseversion',
+		'$param->functionId','$param->functionversion',
+		'$param->activeFlag')";
+		$result = $this->db->query($sqlStr);
+		return $result;
+	}
+
 	function searchExistTestCaseHeader($projectId, $testCaseId){
 		if(null != $projectId && !empty($projectId)){
 			$where[] = "th.projectId = '$projectId'";
@@ -195,7 +207,8 @@ class RTM_model extends CI_Model{
 			//print_r($param[$i]);
 
 			$resultInsertRTMVersion = $this->insertRTMVersion($param[$i], $user);
-		
+			$resultInsertMapRTM= $this->insertMapRTM($param[$i], $user);
+
 		}
 
     	$trans_status = $this->db->trans_status();

@@ -131,6 +131,139 @@ class Rollback_model extends CI_Model{
 		return $result->result_array();
 	}
 
+	public function getFRList($headerInfo){
+		$functionId = $headerInfo['fnReqId'];
+		$functionVersion = $headerInfo['fnReqVer'];	
+		$sqlStr = "SELECT * 
+			FROM M_FN_REQ_DETAIL
+			WHERE functionId = '$functionId' 
+			AND functionVersion = '$functionVersion'  ";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getFRRollbackList($param){
+
+		$sqlStr = "SELECT DISTINCT functionId,functionVersion
+				FROM MAP_RTM
+				WHERE changeRequestNo = '$param->changeRequestNo'
+				AND projectId = '$param->projectId'
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getTCRollbackList($param){
+
+		$sqlStr = "SELECT DISTINCT testcaseId,testcaseVersion
+				FROM MAP_RTM
+				WHERE changeRequestNo = '$param->changeRequestNo'
+				AND projectId = '$param->projectId'
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+		public function getDBRollbackList($param){
+
+		$sqlStr = "SELECT DISTINCT schemaVersionId,schemaVersion,tableName
+				FROM MAP_SCHEMA
+				WHERE changeRequestNo = '$param->changeRequestNo'
+				AND projectId = '$param->projectId'
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getRTMRollbackList($param){
+
+		$sqlStr = "SELECT DISTINCT b.functionNo,b.functionVersion,c.testCaseNo,c.testcaseVersion,'1' activeflag
+				FROM MAP_RTM a,M_FN_REQ_HEADER b,M_TESTCASE_HEADER c
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.functionId = b.functionId
+				AND a.functionVersion = b.functionVersion
+				AND a.projectId = b.projectId
+				AND a.testcaseId = c.testCaseId
+				AND a.testcaseVersion = c.testcaseVersion
+				AND a.projectId = c.projectId
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getAffFR($param){
+
+		$sqlStr = "SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'0' activeflag
+				FROM  MAP_RTM a,M_FN_REQ_HEADER b
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.projectId = b.projectId
+				AND a.functionId = b.functionId
+				AND a.functionVersion = b.functionVersion
+				AND b.activeflag = '1'
+				UNION
+				SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'1' activeflag
+				FROM  MAP_RTM a,M_FN_REQ_HEADER b
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.projectId = b.projectId
+				AND a.functionId = b.functionId
+				AND a.functionVersion = b.functionVersion
+				AND b.activeflag = '0'
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+	
+	public function getAffTC($param){
+
+		$sqlStr = "SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'0' activeflag
+				FROM  MAP_RTM a,M_TESTCASE_HEADER b
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.projectId = b.projectId
+				AND a.testcaseId = b.testCaseId
+				AND a.testcaseVersion = b.testcaseVersion
+				AND b.activeflag = '1'
+				UNION
+				SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'1' activeflag
+				FROM  MAP_RTM a,M_TESTCASE_HEADER b
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.projectId = b.projectId
+				AND a.testcaseId = b.testCaseId
+				AND a.testcaseVersion = b.testcaseVersion
+				AND b.activeflag = '0'
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getAffDB($param){
+
+		$sqlStr = "SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'0' activeflag
+				FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.projectId = b.projectId
+				AND a.schemaVersionId <> b.schemaVersionId
+				AND a.schemaVersion <> b.schemaVersionNumber
+				AND b.activeflag = '1'
+				UNION
+				SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'1' activeflag
+				FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
+				WHERE a.changeRequestNo = '$param->changeRequestNo'
+				AND a.projectId = '$param->projectId'
+				AND a.projectId = b.projectId
+				AND a.schemaVersionId = b.schemaVersionId
+				AND a.schemaVersion = b.schemaVersionNumber
+				AND b.activeflag = '0'
+				ORDER BY 1,2";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
 	function getChangeHistoryFnReqHeaderList($changeRequestNo){
 		$sqlStr = "SELECT c.*,m.New_FR_Id,m.Old_FR_Version,m.NEW_FR_No,m.New_FR_Version,
 		f.functionDescription 
@@ -186,7 +319,7 @@ class Rollback_model extends CI_Model{
 		AND m.New_TC_Id <> ht.testcaseId
 		WHERE ht.ChangeRequestNo = '$changeRequestNo'
 		ORDER BY testcaseNo";
-		echo $sqlStr;
+		//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();	
 	}

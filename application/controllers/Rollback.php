@@ -101,14 +101,60 @@ class Rollback extends CI_Controller{
 
 			//search change detail
 			$detailInfo = $this->mRollback->getChangeRequestInputList($changeRequestNo);
+	//	echo 	$headerInfo['fnReqId'];
+			$FRdetailInfo = $this->mRollback->getFRList($headerInfo);
 
-			$affectedFnReqList = $this->mRollback->getChangeHistoryFnReqHeaderList($changeRequestNo);
+			//** FR
+			$FnList = $this->mRollback->getFRRollbackList($criteria);
+			if (0 < count($FnList)){
+				foreach ($FnList as $value){
+					$FRHistoryList = (object) array(
+						'changeRequestNo' => $changeRequestNo,
+						'projectId' 	  => $projectId,
+						'functionId' => $value["functionId"],
+						'functionVersion'	=> $value["functionVersion"]
+					);			
+					$affectedFnReqList = $this->mRollback->getAffFR($FRHistoryList);
+				}
+			}
+			//print_r($FnList[0]['functionId']);
 
-			$affectedTCList = $this->mRollback->getChangeHistoryTestCaseList($changeRequestNo);
+			//$affectedFnReqList = $this->mRollback->getChangeHistoryFnReqHeaderList($changeRequestNo);
+	
+			//** TC
+			$TCList = $this->mRollback->getTCRollbackList($criteria);
+			if (0 < count($TCList)){
+				foreach ($TCList as $value){
+					$TCHistoryList = (object) array(
+						'changeRequestNo' => $changeRequestNo,
+						'projectId' 	  => $projectId,
+						'testcaseId' => $value["testcaseId"],
+						'testcaseVersion'	=> $value["testcaseVersion"]
+					);			
+					$affectedTCList = $this->mRollback->getAffTC($TCHistoryList);
+				}
+			}
+			//$affectedTCList = $this->mRollback->getChangeHistoryTestCaseList($changeRequestNo);
 
-			$affectedSchemaList = $this->mRollback->getChangeHistoryDatabaseSchemaList($changeRequestNo);
+			//** DB */
+			$DBList = $this->mRollback->getDBRollbackList($criteria);
+			if (0 < count($DBList)){
+				foreach ($DBList as $value){
+					$DBHistoryList = (object) array(
+						'changeRequestNo' => $changeRequestNo,
+						'projectId' 	  => $projectId,
+						'schemaVersionId' => $value["schemaVersionId"],
+						'schemaVersion'	=> $value["schemaVersion"],
+						'tableName'			=> $value["tableName"]
+					);			
+					$affectedSchemaList = $this->mRollback->getAffDB($DBHistoryList);
+				}
+			}
+			//$affectedSchemaList = $this->mRollback->getChangeHistoryDatabaseSchemaList($changeRequestNo);
 
-			$affectedRTMList = $this->mRollback->getChangeHistoryRTM($changeRequestNo);
+			//** RTM
+			$affectedRTMList = $this->mRollback->getRTMRollbackList($criteria);
+			//$affectedRTMList = $this->mRollback->getChangeHistoryRTM($changeRequestNo);
 
 		}else{
 			$error_message = ER_MSG_017;
@@ -117,6 +163,7 @@ class Rollback extends CI_Controller{
 
 		$data['headerInfo'] = $headerInfo;
 		$data['detailInfo'] = $detailInfo;
+		$data['FRdetailInfo'] = $FRdetailInfo;
 
 		$data['affectedFnReqList'] = $affectedFnReqList;
 		$data['affectedTCList'] = $affectedTCList;

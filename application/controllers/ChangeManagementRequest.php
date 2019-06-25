@@ -1480,6 +1480,7 @@ class ChangeManagementRequest extends CI_Controller {
 		//** Control Version SCHEMA
 		$affSchemalist = $this->bind_data_aff_schema($param);
 		$y=1;
+		if (0 < count($affSchemalist)){
 	foreach($affSchemalist as $land => $data){
 			foreach($data as $detail => $value)
 			{
@@ -1584,15 +1585,22 @@ class ChangeManagementRequest extends CI_Controller {
 					}
 				}
 			}	
+			$updateMapDB = $this->mVersion->updateDBMAP($param);
+			$CompleteDB = $this->mVersion->insertDBMAP($param);
+		}
+	}else{
+			$updateMapDB = $this->mVersion->updateDBMAP($param);
+			$CompleteDB = $this->mVersion->insertDBMAP($param);		
 		}		
 
 		//** Control Version RTM */
 		$Map_RTM = $this->mVersion->searchAffRTM($param);
 		if (0 < count($Map_RTM)){
-			echo "0";
+			//echo "0";
 			foreach($Map_RTM as $value){
 				$rtm_relate = (object) array(
 					'projectId' 	  	=> $prjId,
+					'changeRequestNo' 		=> $CH_NO,
 					'functionId'			=> $value['functionId'],
 					'functionNo'			=> $value['functionNo'],
 					'functionVersion'	=> $value['functionVersion'],
@@ -1637,6 +1645,8 @@ class ChangeManagementRequest extends CI_Controller {
 					$DeleteTemp_change = $this->mVersion->deleteTempChange($param);
 				}
 			}
+			$updateMapRTM = $this->mVersion->updateMAPRTM($param);
+			$CompleteMAP = $this->mVersion->insertRTMMAP($param);
 		}		
 	}
 	echo $output;

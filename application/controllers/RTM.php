@@ -119,7 +119,7 @@ class RTM extends CI_Controller{
        		    		$successMessage = ER_MSG_009;
        		    	}else{
        		    		$errorMessage = ER_MSG_008;
-       		    	}
+					   }
        		    }
        		    $incorrectRecord = $totalRecord - $correctRecord;
            		$data['totalRecords'] = $totalRecord;
