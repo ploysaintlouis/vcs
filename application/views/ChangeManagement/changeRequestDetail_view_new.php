@@ -213,7 +213,14 @@
 															var url = baseUrl + "index.php/ChangeManagementRequest/delete_detail/"+id;
 															$.ajax({url: url, 
 															success: function(result){
-																$("#loadPopup").html(result);
+																debugger
+																if(null != result){
+																	alert(result);
+																	location.reload();
+																}else{
+																	alert(result);
+																	location.reload();
+																}
 															}});
 														}
 													});

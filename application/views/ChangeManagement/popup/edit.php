@@ -196,7 +196,7 @@
 					success: function(data){
 						debugger
 						if(null != data){
-							alert(data);
+							//alert(data);
 							var result = data.split("|");
 							if("error" == result[0]){
 								alert(result[1]);
@@ -204,7 +204,7 @@
 							}else{
 								//alert(result[1]);
 								//debugger
-								alert("Done.");
+								alert(data);
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
 								 location.reload();

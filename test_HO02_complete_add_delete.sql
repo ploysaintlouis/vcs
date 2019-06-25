@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 25, 2019 at 12:10 PM
+-- Generation Time: Jun 25, 2019 at 07:12 AM
 -- Server version: 10.1.36-MariaDB
 -- PHP Version: 5.6.38
 
@@ -44,9 +44,7 @@ CREATE TABLE `aff_fr` (
 
 INSERT INTO `aff_fr` (`id`, `projectId`, `ChangeRequestNo`, `FR_Id`, `FR_No`, `FR_Version`, `changeType`) VALUES
 (1, 4, 'CH01', 2, 'ST_FR_02', 1, 'delete'),
-(2, 1, 'CH02', 7, 'HO_FR_02', 1, 'delete'),
-(3, 1, 'CH03', 10, 'HO_FR_05', 1, 'delete'),
-(4, 1, 'CH03', 6, 'HO_FR_01', 1, 'edit');
+(2, 1, 'CH02', 7, 'HO_FR_02', 1, 'delete');
 
 -- --------------------------------------------------------
 
@@ -72,10 +70,7 @@ CREATE TABLE `aff_rtm` (
 INSERT INTO `aff_rtm` (`id`, `ChangeRequestNo`, `functionId`, `functionNo`, `functionVersion`, `testcaseId`, `testcaseNo`, `testcaseVersion`) VALUES
 (1, 'CH01', 2, 'ST_FR_02', 1, 2, 'ST_TC_02', 1),
 (2, 'CH02', 7, 'HO_FR_02', 1, 7, 'HO_TC_02', 1),
-(3, 'CH02', 7, 'HO_FR_02', 1, 10, 'HO_TC_05', 1),
-(4, 'CH03', 10, 'HO_FR_05', 1, 11, 'HO_TC_06', 1),
-(5, 'CH03', 10, 'HO_FR_05', 1, 12, 'HO_TC_07', 1),
-(6, 'CH03', 6, 'HO_FR_01', 1, 6, 'HO_TC_01', 1);
+(3, 'CH02', 7, 'HO_FR_02', 1, 10, 'HO_TC_05', 1);
 
 -- --------------------------------------------------------
 
@@ -98,8 +93,7 @@ CREATE TABLE `aff_schema` (
 --
 
 INSERT INTO `aff_schema` (`id`, `ChangeRequestNo`, `schemaVersionId`, `tableName`, `columnName`, `Version`, `changeType`) VALUES
-(1, 'CH01', 1, 'CUSTOMER', 'EMAIL', 1, 'add'),
-(2, 'CH03', 5, 'PATIENT', 'FIRSTNAME', 1, 'edit');
+(1, 'CH01', 1, 'CUSTOMER', 'EMAIL', 1, 'add');
 
 -- --------------------------------------------------------
 
@@ -123,10 +117,7 @@ CREATE TABLE `aff_testcase` (
 INSERT INTO `aff_testcase` (`id`, `ChangeRequestNo`, `testcaseId`, `testcaseNo`, `testcaseVersion`, `changeType`) VALUES
 (1, 'CH01', 2, 'ST_TC_02', 1, 'delete'),
 (2, 'CH02', 7, 'HO_TC_02', 1, 'delete'),
-(3, 'CH02', 10, 'HO_TC_05', 1, 'delete'),
-(4, 'CH03', 11, 'HO_TC_06', 1, 'delete'),
-(5, 'CH03', 12, 'HO_TC_07', 1, 'delete'),
-(6, 'CH03', 6, 'HO_TC_01', 1, 'edit');
+(3, 'CH02', 10, 'HO_TC_05', 1, 'delete');
 
 -- --------------------------------------------------------
 
@@ -151,9 +142,7 @@ CREATE TABLE `map_fr_version` (
 
 INSERT INTO `map_fr_version` (`id`, `projectId`, `Old_FR_Id`, `Old_FR_No`, `Old_FR_Version`, `New_FR_Id`, `New_FR_No`, `New_FR_Version`) VALUES
 (1, 4, 2, 'ST_FR_02', 1, 5, 'ST_FR_05', 1),
-(2, 1, 7, 'HO_FR_02', 1, 10, 'HO_FR_05', 1),
-(3, 1, 10, 'HO_FR_05', 1, 11, 'HO_FR_06', 1),
-(4, 1, 6, 'HO_FR_01', 1, 6, 'HO_FR_01', 2);
+(2, 1, 7, 'HO_FR_02', 1, 10, 'HO_FR_05', 1);
 
 -- --------------------------------------------------------
 
@@ -177,8 +166,7 @@ CREATE TABLE `map_schema_version` (
 --
 
 INSERT INTO `map_schema_version` (`id`, `projectId`, `Old_schemaVersionId`, `Old_TableName`, `Old_Schema_Version`, `New_schemaVersionId`, `New_TableName`, `New_Schema_Version`) VALUES
-(1, 4, 1, 'CUSTOMER', 1, 1, 'CUSTOMER', 2),
-(2, 1, 5, 'PATIENT', 1, 5, 'PATIENT', 2);
+(1, 4, 1, 'CUSTOMER', 1, 1, 'CUSTOMER', 2);
 
 -- --------------------------------------------------------
 
@@ -204,10 +192,7 @@ CREATE TABLE `map_tc_version` (
 INSERT INTO `map_tc_version` (`id`, `projectId`, `Old_TC_Id`, `Old_TC_No`, `Old_TC_Version`, `New_TC_Id`, `New_TC_No`, `New_TC_Version`) VALUES
 (1, 4, 2, 'ST_TC_02', 1, 5, 'ST_TC_05', 1),
 (2, 1, 7, 'HO_TC_02', 1, 11, 'HO_TC_06', 1),
-(3, 1, 10, 'HO_TC_05', 1, 12, 'HO_TC_07', 1),
-(4, 1, 11, 'HO_TC_06', 1, 13, 'HO_TC_08', 1),
-(5, 1, 12, 'HO_TC_07', 1, 14, 'HO_TC_09', 1),
-(6, 1, 6, 'HO_TC_01', 1, 6, 'HO_TC_01', 2);
+(3, 1, 10, 'HO_TC_05', 1, 12, 'HO_TC_07', 1);
 
 -- --------------------------------------------------------
 
@@ -262,11 +247,11 @@ INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `I
 (4, 'CUSTOMER', 'ADDRESS', 130, 1, 2, 'varchar', '100', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 0),
 (4, 'CUSTOMER', 'PHONE', 131, 1, 2, 'varchar', '10', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 0),
 (4, 'CUSTOMER', 'EMAIL', 134, 1, 2, 'VARCHAR ', '30', '', 'N', 'N', '', 'N', '', '', 0),
-(1, 'PATIENT', 'SSN', 135, 5, 1, 'varchar', '10', NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 0),
-(1, 'PATIENT', 'FIRSTNAME', 136, 5, 1, 'varchar', '50', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 0),
-(1, 'PATIENT', 'LASTNAME', 137, 5, 1, 'varchar', '50', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 0),
-(1, 'PATIENT', 'BIRTHDATE', 138, 5, 1, 'date', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 0),
-(1, 'PATIENT', 'ADDRESS', 139, 5, 1, 'varchar', '100', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 0),
+(1, 'PATIENT', 'SSN', 135, 5, 1, 'varchar', '10', NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 1),
+(1, 'PATIENT', 'FIRSTNAME', 136, 5, 1, 'varchar', '50', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
+(1, 'PATIENT', 'LASTNAME', 137, 5, 1, 'varchar', '50', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
+(1, 'PATIENT', 'BIRTHDATE', 138, 5, 1, 'date', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
+(1, 'PATIENT', 'ADDRESS', 139, 5, 1, 'varchar', '100', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
 (1, 'DOCTORS', 'DOCTOR_ID', 140, 6, 1, 'int', NULL, NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 1),
 (1, 'DOCTORS', 'DEP_ID', 141, 6, 1, 'int', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
 (1, 'DOCTORS', 'D_FIRSTNAME', 142, 6, 1, 'varchar', '45', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
@@ -278,12 +263,7 @@ INSERT INTO `m_database_schema_info` (`projectId`, `tableName`, `columnName`, `I
 (1, 'APPOINTMENTS', 'APP_ID', 151, 8, 1, 'varchar', '12', NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 1),
 (1, 'APPOINTMENTS', 'SSN', 152, 8, 1, 'varchar', '10', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
 (1, 'APPOINTMENTS', 'DOCTORS_ID', 153, 8, 1, 'int', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
-(1, 'APPOINTMENTS', 'APP_DATE', 154, 8, 1, 'date', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
-(1, 'PATIENT', 'SSN', 155, 5, 2, 'varchar', '10', NULL, 'Y', 'Y', NULL, 'Y', NULL, NULL, 1),
-(1, 'PATIENT', 'FIRSTNAME', 156, 5, 2, 'VARCHAR ', '30', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
-(1, 'PATIENT', 'LASTNAME', 157, 5, 2, 'varchar', '50', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
-(1, 'PATIENT', 'BIRTHDATE', 158, 5, 2, 'date', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1),
-(1, 'PATIENT', 'ADDRESS', 159, 5, 2, 'varchar', '100', NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1);
+(1, 'APPOINTMENTS', 'APP_DATE', 154, 8, 1, 'date', NULL, NULL, 'N', 'N', NULL, 'Y', NULL, NULL, 1);
 
 -- --------------------------------------------------------
 
@@ -335,11 +315,11 @@ INSERT INTO `m_database_schema_version` (`projectId`, `Id`, `schemaVersionId`, `
 (4, 136, 1, '2', 'CUSTOMER', 'ADDRESS', '2019-06-23', '2019-06-23', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 0),
 (4, 137, 1, '2', 'CUSTOMER', 'PHONE', '2019-06-23', '2019-06-23', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 0),
 (4, 140, 1, '2', 'CUSTOMER', 'EMAIL', '2019-06-23', '2019-06-23', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 0),
-(1, 141, 5, '1', 'PATIENT', 'SSN', '2019-06-24', '2019-06-25', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(1, 142, 5, '1', 'PATIENT', 'FIRSTNAME', '2019-06-24', '2019-06-25', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(1, 143, 5, '1', 'PATIENT', 'LASTNAME', '2019-06-24', '2019-06-25', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(1, 144, 5, '1', 'PATIENT', 'BIRTHDATE', '2019-06-24', '2019-06-25', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(1, 145, 5, '1', 'PATIENT', 'ADDRESS', '2019-06-24', '2019-06-25', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
+(1, 141, 5, '1', 'PATIENT', 'SSN', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
+(1, 142, 5, '1', 'PATIENT', 'FIRSTNAME', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
+(1, 143, 5, '1', 'PATIENT', 'LASTNAME', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
+(1, 144, 5, '1', 'PATIENT', 'BIRTHDATE', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
+(1, 145, 5, '1', 'PATIENT', 'ADDRESS', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 146, 6, '1', 'DOCTORS', 'DOCTOR_ID', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 147, 6, '1', 'DOCTORS', 'DEP_ID', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 148, 6, '1', 'DOCTORS', 'D_FIRSTNAME', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
@@ -351,12 +331,7 @@ INSERT INTO `m_database_schema_version` (`projectId`, `Id`, `schemaVersionId`, `
 (1, 157, 8, '1', 'APPOINTMENTS', 'APP_ID', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 158, 8, '1', 'APPOINTMENTS', 'SSN', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 159, 8, '1', 'APPOINTMENTS', 'DOCTORS_ID', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
-(1, 160, 8, '1', 'APPOINTMENTS', 'APP_DATE', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
-(1, 161, 5, '2', 'PATIENT', 'SSN', '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(1, 162, 5, '2', 'PATIENT', 'FIRSTNAME', '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(1, 163, 5, '2', 'PATIENT', 'LASTNAME', '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(1, 164, 5, '2', 'PATIENT', 'BIRTHDATE', '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(1, 165, 5, '2', 'PATIENT', 'ADDRESS', '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1);
+(1, 160, 8, '1', 'APPOINTMENTS', 'APP_DATE', '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -419,35 +394,27 @@ INSERT INTO `m_fn_req_detail` (`projectid`, `functionId`, `functionNo`, `functio
 (4, 5, 'ST_FR_05', 1, '1', 19, 'BIRTHDATE', '129', 'CUSTOMER', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-23', '2019-06-23', 0, '2019-06-23', 'ploy', '2019-06-23', 'ploy'),
 (4, 5, 'ST_FR_05', 1, '2', 20, 'AGE', NULL, NULL, NULL, 'DECIMAL ', '3', '2', NULL, 'N', NULL, 'N', NULL, NULL, '2019-06-23', '2019-06-23', 0, '2019-06-23', 'ploy', '2019-06-23', 'ploy'),
 (4, 5, 'ST_FR_05', 1, '2', 24, 'EMAIL', '134', 'CUSTOMER', 'EMAIL', 'VARCHAR ', '30', '', 'N', 'N', '', 'N', '', '', '2019-06-23', '2019-06-23', 0, '2019-06-23', 'ploy', '2019-06-23', 'ploy'),
-(1, 6, 'HO_FR_01', 1, '1', 25, 'SSN', '135', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 1, '1', 26, 'FIRSTNAME', '136', 'PATIENT', 'FIRSTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 1, '1', 27, 'LASTNAME', '137', 'PATIENT', 'LASTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 1, '1', 28, 'BIRTHDATE', '138', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 1, '1', 29, 'ADDRESS', '139', 'PATIENT', 'ADDRESS', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
+(1, 6, 'HO_FR_01', 1, '1', 25, 'SSN', '135', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 6, 'HO_FR_01', 1, '1', 26, 'FIRSTNAME', '136', 'PATIENT', 'FIRSTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 6, 'HO_FR_01', 1, '1', 27, 'LASTNAME', '137', 'PATIENT', 'LASTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 6, 'HO_FR_01', 1, '1', 28, 'BIRTHDATE', '138', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 6, 'HO_FR_01', 1, '1', 29, 'ADDRESS', '139', 'PATIENT', 'ADDRESS', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 7, 'HO_FR_02', 1, '1', 30, 'SSN', '135', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', '2019-06-24', 0, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 7, 'HO_FR_02', 1, '2', 31, 'FIRSTNAME', '136', 'PATIENT', 'FIRSTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-24', 0, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 7, 'HO_FR_02', 1, '2', 32, 'BIRTHDATE', '138', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-24', 0, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 8, 'HO_FR_03', 1, '1', 34, 'APP_ID', '151', 'APPOINTMENTS', 'APP_ID', 'varchar', '12', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 8, 'HO_FR_03', 1, '1', 35, 'APP_DATE', '154', 'APPOINTMENTS', 'APP_DATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
-(1, 8, 'HO_FR_03', 1, '1', 36, 'SSN', '155', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 8, 'HO_FR_03', 1, '1', 36, 'SSN', '135', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 8, 'HO_FR_03', 1, '1', 37, 'DOCTORS_ID', '140', 'DOCTORS', 'DOCTOR_ID', 'int', '', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 9, 'HO_FR_04', 1, '1', 38, 'DOCTOR_ID', '140', 'DOCTORS', 'DOCTOR_ID', 'int', '', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 9, 'HO_FR_04', 1, '1', 39, 'DEP_ID', '141', 'DOCTORS', 'DEP_ID', 'int', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 9, 'HO_FR_04', 1, '1', 40, 'D_Firstname', '142', 'DOCTORS', 'D_FIRSTNAME', 'varchar', '45', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 9, 'HO_FR_04', 1, '1', 41, 'D_Surname', '143', 'DOCTORS', 'D_SURNAME', 'varchar', '45', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
 (1, 9, 'HO_FR_04', 1, '1', 42, 'D_Salary', '145', 'DOCTORS', 'D_SALARY', 'decimal', '8', '2', 'N', 'N', '', 'N', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
-(1, 10, 'HO_FR_05', 1, '1', 43, 'SSN', '135', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 10, 'HO_FR_05', 1, '2', 44, 'FIRSTNAME', '136', 'PATIENT', 'FIRSTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 10, 'HO_FR_05', 1, '2', 45, 'BIRTHDATE', '138', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 10, 'HO_FR_05', 1, '2', 46, 'AGE', NULL, NULL, NULL, 'INT ', '3', '', 'N', 'N', NULL, 'N', NULL, NULL, '2019-06-24', '2019-06-25', 0, '2019-06-24', 'ploy', '2019-06-25', 'ploy'),
-(1, 11, 'HO_FR_06', 1, '1', 47, 'SSN', '155', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 11, 'HO_FR_06', 1, '2', 48, 'FIRSTNAME', '156', 'PATIENT', 'FIRSTNAME', 'VARCHAR ', '30', '', 'N', 'N', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 11, 'HO_FR_06', 1, '2', 49, 'BIRTHDATE', '158', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 2, '1', 54, 'SSN', '155', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 2, '1', 55, 'FIRSTNAME', '156', 'PATIENT', 'FIRSTNAME', 'VARCHAR ', '30', '', 'N', 'N', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 2, '1', 56, 'LASTNAME', '157', 'PATIENT', 'LASTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 2, '1', 57, 'BIRTHDATE', '158', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy'),
-(1, 6, 'HO_FR_01', 2, '1', 58, 'ADDRESS', '159', 'PATIENT', 'ADDRESS', 'varchar', '100', '', 'N', 'N', '', 'Y', '', '', '2019-06-25', NULL, 1, '2019-06-25', 'ploy', '2019-06-25', 'ploy');
+(1, 10, 'HO_FR_05', 1, '1', 43, 'SSN', '135', 'PATIENT', 'SSN', 'varchar', '10', '', 'Y', 'Y', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 10, 'HO_FR_05', 1, '2', 44, 'FIRSTNAME', '136', 'PATIENT', 'FIRSTNAME', 'varchar', '50', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 10, 'HO_FR_05', 1, '2', 45, 'BIRTHDATE', '138', 'PATIENT', 'BIRTHDATE', 'date', '', '', 'N', 'N', '', 'Y', '', '', '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy'),
+(1, 10, 'HO_FR_05', 1, '2', 46, 'AGE', NULL, NULL, NULL, 'INT ', '3', '', 'N', 'N', NULL, 'N', NULL, NULL, '2019-06-24', NULL, 1, '2019-06-24', 'ploy', '2019-06-24', 'ploy');
 
 -- --------------------------------------------------------
 
@@ -479,13 +446,11 @@ INSERT INTO `m_fn_req_header` (`Id`, `functionId`, `functionNo`, `functionversio
 (67, 3, 'ST_FR_03', '1', 'Add Securities Information', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 4, 1),
 (68, 4, 'ST_FR_04', '1', 'Buy/Sell', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 4, 1),
 (69, 5, 'ST_FR_05', '1', 'View Customer Information', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 4, 0),
-(70, 6, 'HO_FR_01', '1', 'Add Patient Information', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 1, 0),
+(70, 6, 'HO_FR_01', '1', 'Add Patient Information', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1, 1),
 (71, 7, 'HO_FR_02', '1', 'View Patient Information', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1, 0),
 (72, 8, 'HO_FR_03', '1', 'Make an appointment', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1, 1),
 (73, 9, 'HO_FR_04', '1', 'Add New Doctor Information', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1, 1),
-(74, 10, 'HO_FR_05', '1', 'View Patient Information', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 1, 0),
-(75, 11, 'HO_FR_06', '1', 'View Patient Information', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1, 1),
-(76, 6, 'HO_FR_01', '2', 'Add Patient Information', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1, 1);
+(74, 10, 'HO_FR_05', '1', 'View Patient Information', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -582,16 +547,13 @@ INSERT INTO `m_rtm_version` (`Id`, `projectId`, `testCaseId`, `testCaseversion`,
 (65, 4, 3, 1, 3, 1, '2019-06-23', NULL, '2019-06-23', 'ploy', '2019-06-23', 'ploy', 1),
 (66, 4, 4, 1, 4, 1, '2019-06-23', NULL, '2019-06-23', 'ploy', '2019-06-23', 'ploy', 1),
 (67, 4, 5, 1, 5, 1, '2019-06-23', NULL, '2019-06-23', 'ploy', '2019-06-23', 'ploy', 1),
-(68, 1, 6, 1, 6, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
+(68, 1, 6, 1, 6, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (69, 1, 7, 1, 7, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 0),
 (70, 1, 8, 1, 8, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (71, 1, 9, 1, 9, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (72, 1, 10, 1, 7, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 0),
-(73, 1, 11, 1, 10, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(74, 1, 12, 1, 10, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(75, 1, 13, 1, 11, 1, '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(76, 1, 14, 1, 11, 1, '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(77, 1, 6, 2, 6, 2, '2019-06-25', NULL, '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1);
+(73, 1, 11, 1, 10, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
+(74, 1, 12, 1, 10, 1, '2019-06-24', NULL, '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -610,7 +572,7 @@ CREATE TABLE `m_running_ch` (
 --
 
 INSERT INTO `m_running_ch` (`projectId`, `changeRequestNo`, `changeRequestId`) VALUES
-(2, 'CH', 4);
+(2, 'CH', 3);
 
 -- --------------------------------------------------------
 
@@ -675,11 +637,11 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 (4, 5, 'ST_TC_05', '1', 1, 175, 'BIRTHDATE', '05/06/1991', '2019-06-23', '2019-06-23', '0', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 155),
 (4, 5, 'ST_TC_05', '1', 2, 181, 'AGE', '23', '2019-06-23', '2019-06-23', '0', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 156),
 (4, 5, 'ST_TC_05', '1', 2, 999999, 'EMAIL', '56', '2019-06-23', '2019-06-23', '0', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 160),
-(1, 6, 'HO_TC_01', '1', 1, 25, 'SSN', '123456', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 161),
-(1, 6, 'HO_TC_01', '1', 1, 26, 'FIRSTNAME', 'Nannaphat', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 162),
-(1, 6, 'HO_TC_01', '1', 1, 27, 'LASTNAME', 'Cherdsakulwong', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 163),
-(1, 6, 'HO_TC_01', '1', 1, 28, 'BIRTHDATE', '5/9/1989', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 164),
-(1, 6, 'HO_TC_01', '1', 1, 29, 'ADDRESS', '123 test Road', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 165),
+(1, 6, 'HO_TC_01', '1', 1, 25, 'SSN', '123456', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 161),
+(1, 6, 'HO_TC_01', '1', 1, 26, 'FIRSTNAME', 'Nannaphat', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 162),
+(1, 6, 'HO_TC_01', '1', 1, 27, 'LASTNAME', 'Cherdsakulwong', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 163),
+(1, 6, 'HO_TC_01', '1', 1, 28, 'BIRTHDATE', '5/9/1989', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 164),
+(1, 6, 'HO_TC_01', '1', 1, 29, 'ADDRESS', '123 test Road', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 165),
 (1, 7, 'HO_TC_02', '1', 1, 25, 'SSN', 'HN-001268', '2019-06-24', '2019-06-24', '0', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 166),
 (1, 7, 'HO_TC_02', '1', 2, 26, 'FIRSTNAME', 'Peter', '2019-06-24', '2019-06-24', '0', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 167),
 (1, 7, 'HO_TC_02', '1', 2, 28, 'BIRTHDATE', '02/08/1989', '2019-06-24', '2019-06-24', '0', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 168),
@@ -695,25 +657,14 @@ INSERT INTO `m_testcase_detail` (`projectId`, `testCaseId`, `testCaseNo`, `testc
 (1, 10, 'HO_TC_05', '1', 1, 25, 'SSN', 'HN-00111', '2019-06-24', '2019-06-24', '0', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 183),
 (1, 10, 'HO_TC_05', '1', 2, 26, 'FIRSTNAME', 'Paul', '2019-06-24', '2019-06-24', '0', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 184),
 (1, 10, 'HO_TC_05', '1', 2, 28, 'BIRTHDATE', '28/02/1990', '2019-06-24', '2019-06-24', '0', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 185),
-(1, 11, 'HO_TC_06', '1', 1, 25, 'SSN', 'HN-001268', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 186),
-(1, 11, 'HO_TC_06', '1', 2, 26, 'FIRSTNAME', 'Peter', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 187),
-(1, 11, 'HO_TC_06', '1', 2, 28, 'BIRTHDATE', '02/08/1989', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 188),
-(1, 11, 'HO_TC_06', '1', 2, 999999, 'AGE', '32', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 189),
-(1, 12, 'HO_TC_07', '1', 1, 25, 'SSN', 'HN-00111', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 190),
-(1, 12, 'HO_TC_07', '1', 2, 26, 'FIRSTNAME', 'Paul', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 191),
-(1, 12, 'HO_TC_07', '1', 2, 28, 'BIRTHDATE', '28/02/1990', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 192),
-(1, 12, 'HO_TC_07', '1', 2, 999999, 'AGE', '88', '2019-06-24', '2019-06-25', '0', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 193),
-(1, 13, 'HO_TC_08', '1', 1, 25, 'SSN', 'HN-001268', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 194),
-(1, 13, 'HO_TC_08', '1', 2, 26, 'FIRSTNAME', 'mJadJPJ6NrJilRy0S0KRAAxf3C6OYi', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 195),
-(1, 13, 'HO_TC_08', '1', 2, 28, 'BIRTHDATE', '02/08/1989', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 196),
-(1, 14, 'HO_TC_09', '1', 1, 25, 'SSN', 'HN-00111', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 201),
-(1, 14, 'HO_TC_09', '1', 2, 26, 'FIRSTNAME', 'e3mpf63BNsaSLDwBtCsHhsN3rS2kcV', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 202),
-(1, 14, 'HO_TC_09', '1', 2, 28, 'BIRTHDATE', '28/02/1990', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 203),
-(1, 6, 'HO_TC_01', '2', 1, 25, 'SSN', '123456', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 208),
-(1, 6, 'HO_TC_01', '2', 1, 26, 'FIRSTNAME', 'jPJIzFrvJxQ8TxBSbZJlkgqRzKQ0IC', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 209),
-(1, 6, 'HO_TC_01', '2', 1, 27, 'LASTNAME', 'Cherdsakulwong', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 210),
-(1, 6, 'HO_TC_01', '2', 1, 28, 'BIRTHDATE', '5/9/1989', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 211),
-(1, 6, 'HO_TC_01', '2', 1, 29, 'ADDRESS', '123 test Road', '2019-06-25', NULL, '1', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 212);
+(1, 11, 'HO_TC_06', '1', 1, 25, 'SSN', 'HN-001268', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 186),
+(1, 11, 'HO_TC_06', '1', 2, 26, 'FIRSTNAME', 'Peter', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 187),
+(1, 11, 'HO_TC_06', '1', 2, 28, 'BIRTHDATE', '02/08/1989', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 188),
+(1, 11, 'HO_TC_06', '1', 2, 999999, 'AGE', '32', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 189),
+(1, 12, 'HO_TC_07', '1', 1, 25, 'SSN', 'HN-00111', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 190),
+(1, 12, 'HO_TC_07', '1', 2, 26, 'FIRSTNAME', 'Paul', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 191),
+(1, 12, 'HO_TC_07', '1', 2, 28, 'BIRTHDATE', '28/02/1990', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 192),
+(1, 12, 'HO_TC_07', '1', 2, 999999, 'AGE', '88', '2019-06-24', NULL, '1', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 193);
 
 -- --------------------------------------------------------
 
@@ -746,16 +697,13 @@ INSERT INTO `m_testcase_header` (`projectId`, `Id`, `testCaseId`, `testCaseNo`, 
 (4, 49, 3, 'ST_TC_03', '1', 'Test Add securities Information', 'Valid', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 1),
 (4, 50, 4, 'ST_TC_04', '1', 'Test Buy/Sell', 'Valid', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 1),
 (4, 51, 5, 'ST_TC_05', '1', 'Test View Customer Information', 'Valid', '2019-06-23', 'ploy', '2019-06-23', 'ploy', 0),
-(1, 52, 6, 'HO_TC_01', '1', 'Test Add Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
+(1, 52, 6, 'HO_TC_01', '1', 'Test Add Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 53, 7, 'HO_TC_02', '1', 'Test View Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 0),
 (1, 54, 8, 'HO_TC_03', '1', 'Test Make an appointment', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 55, 9, 'HO_TC_04', '1', 'Test Add New Doctor Information', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
 (1, 56, 10, 'HO_TC_05', '1', 'Test View Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 0),
-(1, 57, 11, 'HO_TC_06', '1', 'Test View Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(1, 58, 12, 'HO_TC_07', '1', 'Test View Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-25', 'ploy', 0),
-(1, 59, 13, 'HO_TC_08', '1', 'Test View Patient Information', 'Valid', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(1, 60, 14, 'HO_TC_09', '1', 'Test View Patient Information', 'Valid', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1),
-(1, 61, 6, 'HO_TC_01', '2', 'Test Add Patient Information', 'Valid', '2019-06-25', 'ploy', '2019-06-25', 'ploy', 1);
+(1, 57, 11, 'HO_TC_06', '1', 'Test View Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1),
+(1, 58, 12, 'HO_TC_07', '1', 'Test View Patient Information', 'Valid', '2019-06-24', 'ploy', '2019-06-24', 'ploy', 1);
 
 -- --------------------------------------------------------
 
@@ -838,9 +786,7 @@ CREATE TABLE `t_change_request_detail` (
 INSERT INTO `t_change_request_detail` (`changeRequestNo`, `sequenceNo`, `changeType`, `typeData`, `refdataId`, `refschemaId`, `refSchemaVersionId`, `dataName`, `dataType`, `dataLength`, `scale`, `constraintUnique`, `constraintNotNull`, `constraintDefault`, `constraintMin`, `constraintMax`, `refTableName`, `refColumnName`) VALUES
 ('CH01', '1', 'add', '2', '999999', NULL, '1', 'EMAIL', 'VARCHAR', '30', NULL, 'N', 'N', NULL, NULL, NULL, 'CUSTOMER', 'EMAIL'),
 ('CH01', '2', 'edit', '2', '9', NULL, NULL, 'AGE', 'DECIMAL', '3', '2', 'N', 'N', NULL, NULL, NULL, NULL, NULL),
-('CH02', '1', 'add', '2', '999999', NULL, NULL, 'AGE', 'INT', '3', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL),
-('CH03', '1', 'delete', '2', '46', NULL, NULL, 'AGE', 'INT', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-('CH03', '2', 'edit', '2', '44', NULL, '5', 'FIRSTNAME', 'VARCHAR', '30', NULL, 'N', 'Y', NULL, NULL, NULL, 'PATIENT', 'FIRSTNAME');
+('CH02', '1', 'add', '2', '999999', NULL, NULL, 'AGE', 'INT', '3', NULL, 'N', 'N', NULL, NULL, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -870,8 +816,7 @@ CREATE TABLE `t_change_request_header` (
 
 INSERT INTO `t_change_request_header` (`projectId`, `changeRequestNo`, `changeUserId`, `changeDate`, `changeFunctionId`, `changeFunctionNo`, `changeFunctionVersion`, `changeStatus`, `createUser`, `createDate`, `updateUser`, `updateDate`, `reason`) VALUES
 (4, 'CH01', '1', '2019-06-23', '2', 'ST_FR_02', '1 ', 1, 'ploy', '2019-06-23', 'ploy', '2019-06-23', NULL),
-(1, 'CH02', '1', '2019-06-24', '7', 'HO_FR_02', '1', 1, 'ploy', '2019-06-24', 'ploy', '2019-06-24', NULL),
-(1, 'CH03', '1', '2019-06-25', '10', 'HO_FR_05', '1', 1, 'ploy', '2019-06-25', 'ploy', '2019-06-25', NULL);
+(1, 'CH02', '1', '2019-06-24', '7', 'HO_FR_02', '1', 1, 'ploy', '2019-06-24', 'ploy', '2019-06-24', NULL);
 
 -- --------------------------------------------------------
 
@@ -905,6 +850,14 @@ CREATE TABLE `t_temp_change_list` (
   `confirmflag` int(11) DEFAULT NULL,
   `approveflag` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `t_temp_change_list`
+--
+
+INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaId`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
+(9, '1', 10, '1', 2, 'AGE', 0, 0, 'INT ', '', '', '', '', '', '', '', '', '', 'delete', 'ploy', '2019-06-25', 46, 1, NULL),
+(10, '1', 10, '1 ', 2, 'FIRSTNAME', 136, 5, 'VARCHAR ', '30', NULL, 'N', 'Y', NULL, NULL, NULL, 'PATIENT', 'FIRSTNAME', 'edit', 'ploy', '2019-06-25', 44, 1, NULL);
 
 --
 -- Indexes for dumped tables
@@ -1026,67 +979,67 @@ ALTER TABLE `t_temp_change_list`
 -- AUTO_INCREMENT for table `aff_fr`
 --
 ALTER TABLE `aff_fr`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `aff_rtm`
 --
 ALTER TABLE `aff_rtm`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `aff_schema`
 --
 ALTER TABLE `aff_schema`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `aff_testcase`
 --
 ALTER TABLE `aff_testcase`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `map_fr_version`
 --
 ALTER TABLE `map_fr_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `map_schema_version`
 --
 ALTER TABLE `map_schema_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `map_tc_version`
 --
 ALTER TABLE `map_tc_version`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `m_database_schema_info`
 --
 ALTER TABLE `m_database_schema_info`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=162;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
 
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=168;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
 
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
 ALTER TABLE `m_fn_req_detail`
-  MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `m_project`
@@ -1098,19 +1051,19 @@ ALTER TABLE `m_project`
 -- AUTO_INCREMENT for table `m_rtm_version`
 --
 ALTER TABLE `m_rtm_version`
-  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=78;
+  MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `m_testcase_detail`
 --
 ALTER TABLE `m_testcase_detail`
-  MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=215;
+  MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=194;
 
 --
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
 
 --
 -- AUTO_INCREMENT for table `temp_rollback`
@@ -1122,7 +1075,7 @@ ALTER TABLE `temp_rollback`
 -- AUTO_INCREMENT for table `t_temp_change_list`
 --
 ALTER TABLE `t_temp_change_list`
-  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

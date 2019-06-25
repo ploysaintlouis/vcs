@@ -254,12 +254,15 @@ class VersionControl_model extends CI_Model{
      } 
     
     function deleteChangeRequestDetail($param,$paramUpdate,$New_param) {
+    $dataName = trim($paramUpdate->dataName);
+    $functionversion = trim($New_param->functionversion);
+    $functionId = trim($New_param->functionId);
 
         $strsql = "DELETE FROM M_FN_REQ_DETAIL
-                WHERE functionId = '$New_param->functionId' 
-                AND functionVersion = '$New_param->functionversion' 
+                WHERE functionId = '$functionId' 
+                AND functionVersion = '$functionversion' 
                 AND activeflag = '1' 
-                AND dataName = '$paramUpdate->dataName'
+                AND dataName = '$dataName'
                 AND projectid = '$param->projectId' ";
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
@@ -475,12 +478,13 @@ class VersionControl_model extends CI_Model{
     }
 
     function SearchDatabaseSchemaDetail($param,$paramInsert) {
-    
+        $tableName = trim($paramInsert->tableName);
+
         $strsql = "SELECT DISTINCT tableName,schemaVersionId,schemaVersionNumber
                 FROM M_DATABASE_SCHEMA_VERSION
                 WHERE activeflag = '1' 
                 AND projectid = '$param->projectId' 
-                AND tableName = '$paramInsert->tableName'
+                AND tableName = '$tableName'
         ";
        $result = $this->db->query($strsql);
        //echo $sqlStr ;
@@ -509,6 +513,8 @@ class VersionControl_model extends CI_Model{
         VALUES('$Old_param_DB->projectId','$Old_param_DB->schemaVersionId','$Old_param_DB->tableName','$Old_param_DB->schemaVersionNumber',
         '$New_param_DB->schemaVersionId','$New_param_DB->tableName','$New_param_DB->schemaVersionNumber')
         ";
+
+        
 		$result = $this->db->query($strsql);
         return $this->db->affected_rows();
 
@@ -537,13 +543,15 @@ class VersionControl_model extends CI_Model{
             $fieldName .= " ConstraintMaxValue = '$paramUpdate_DB->newMaxValue' ,";
         }					
         $condition = $fieldName;
-
+        $tableName = trim($paramUpdate_DB->tableName);
+        $columnName = trim($paramUpdate_DB->columnName);
+       
         $strsql = "UPDATE M_DATABASE_SCHEMA_INFO
                 set $condition 
                 constraintUnique = '$paramUpdate_DB->newUnique',
                 constraintNull = '$paramUpdate_DB->newNotNull'
-                WHERE tableName = '$paramUpdate_DB->tableName' 
-                AND columnName = '$paramUpdate_DB->columnName' 
+                WHERE tableName = '$tableName' 
+                AND columnName = '$columnName' 
                 AND activeflag = '1'
                 AND schemaVersionId = '$New_param_DB->schemaVersionId'
                 AND Version = '$New_param_DB->schemaVersionNumber'
@@ -1061,8 +1069,6 @@ class VersionControl_model extends CI_Model{
                  AND activeflag = '1') AS DB
          SET a.schemaVersionId  = DB.Id
          WHERE  a.activeFlag = '1'
-         AND a.functionId = '$New_param->functionId'
-         and a.functionVersion = '$New_param->functionversion'
          AND a.refColumnName = DB.columnName
          AND a.refTableName = DB.tableName";
 

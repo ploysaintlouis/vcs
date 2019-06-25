@@ -222,14 +222,20 @@ class ChangeManagementRequest extends CI_Controller {
 				);
 			}
 
-			$recordDelete = $this->deleteTempFRInputChangeList($param,$paramdetail);
-			if(0 < $recordDelete){
-			//	refresh Change List
-				$output = 'Done';
+			$records = $this->mChange->searchTempFRInputChangeList($param);
+			//echo count($records);
+			if(0 == count($records)){
+				$saveResult = $this->deleteTempFRInputChangeList($param,$paramdetail);
+				if($saveResult){
+					//	refresh Change List
+					$output = 'Done';
+				}else{
+					$output = 'error|'.ER_MSG_013;
+				}
 			}else{
-				$output = 'error|'.ER_MSG_015;
+				$output = 'error|'.ER_TRN_001;
 			}
-
+			echo $output;
     }	
 
 		function deleteTempFRInputChangeList($param,$paramdetail){
@@ -1146,6 +1152,10 @@ class ChangeManagementRequest extends CI_Controller {
 		$user = $this->session->userdata('username');
 		$rowResult = $this->mRunning->Update_Running_ch();
 
+		$output = '';
+		//print_r($_POST);
+	if(!empty($_POST))
+	{
 		$param = (object) array(
 			'projectId' 	  => $prjId ,
 			'functionId' 	  => $funId,
@@ -1453,13 +1463,13 @@ class ChangeManagementRequest extends CI_Controller {
 			//print_r($paramUpdate->dataName);
 						//print_r($paramUpdate->changeType);		
 
-								if($paramUpdate->changeType == 'edit'){
+								if(trim($paramUpdate->changeType) == 'edit'){
 									$recordUpdate = $this->mVersion->updateChangeRequestDetail($param,$paramUpdate,$New_param);		
 								}
-								if(($paramUpdate->changeType == 'delete') && ($fr_list_aff->changeType == 'delete')){
+								if((trim($paramUpdate->changeType) == 'delete') && (trim($fr_list_aff->changeType) == 'delete')){
 									$recordDelete = $this->mVersion->deleteChangeRequestDetail($param,$paramUpdate,$New_param);		
 								}
-								if(($paramUpdate->changeType == 'add') && ($fr_list_aff->changeType == 'delete')){
+								if((trim($paramUpdate->changeType) == 'add') && (trim($fr_list_aff->changeType) == 'delete')){
 									$recordAdd = $this->mVersion->addChangeRequestDetail($param,$paramUpdate,$New_param);		
 								}					
 							}
@@ -1502,16 +1512,21 @@ class ChangeManagementRequest extends CI_Controller {
 						}
 					}
 					//** save MAP DB
-					$NewDB = $this->mVersion->SearchDatabaseSchemaDetail($param,$paramInsert);
-					foreach($NewDB as $value){
-						$New_param_DB = (object) array(
-							'projectId' 	  			=> $prjId,
-							'tableName'			=> $value['tableName'],
-							'schemaVersionNumber' => $value['schemaVersionNumber'],
-							'schemaVersionId'			=> $value['schemaVersionId'],
-							'user'								=> $user
-						);
+					$NewDB = $this->mVersion->SearchDatabaseSchemaDetail($param,$schema_list_aff);
+					if(0 < count($NewDB)){
+						foreach($NewDB as $value){
+							$New_param_DB = (object) array(
+								'projectId' 	  			=> $prjId,
+								'tableName'						=> $value['tableName'],
+								'schemaVersionNumber' => $value['schemaVersionNumber'],
+								'schemaVersionId'			=> $value['schemaVersionId'],
+								'user'								=> $user
+							);
+						}
+					}else{
+						$output = 'error|'.ER_TRN_013;
 					}
+
 					$OldDB = $this->mVersion->SearchDatabaseSchemaOldDetail($schema_list_aff,$paramInsert);
 					foreach($OldDB as $value){
 						$Old_param_DB = (object) array(
@@ -1523,6 +1538,11 @@ class ChangeManagementRequest extends CI_Controller {
 					}
 					//print_r($Old_param_DB);
 						$MAP_FR = $this->mVersion->MapDBVersion($Old_param_DB,$New_param_DB);
+						if($MAP_FR){
+							$output = 'Done';
+						}else{
+							$output = 'error|'.ER_TRN_013;
+						}
 					$y++;
 				}
 
@@ -1618,12 +1638,9 @@ class ChangeManagementRequest extends CI_Controller {
 				}
 			}
 		}		
-
-		$data = array(
-			'success' => true,
-			'result'=> $param_update_tc
-		);
-		//echo json_encode($data);
 	}
+	echo $output;
+	}
+	
 }
 	

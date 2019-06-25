@@ -845,8 +845,11 @@ class ChangeManagement extends CI_Controller{
 						$param->changeType = CHANGE_TYPE_EDIT;
 						//print_r($param);
 						$saveResult = $this->mChange->insertTempFRInputChange($param);
-
-					
+						if($saveResult){
+							$output = 'Done';
+						}else{
+							$output = 'error|'.ER_MSG_013;
+						}
 					}else{
 						//Error already change
 						$output = 'error|'.ER_TRN_001;

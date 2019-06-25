@@ -90,14 +90,18 @@
                         FR_Version : FR_Version, 
                         FR_Description : FR_Description
                     },
-                    success: function(data){
+                    success: function(result){
                         debugger
-                        //alert(data);
+                        if(null != result){
+                            alert(result);
+                        }else{
+                            alert("Save Successful!");
+                        }
                         //$("#loadingPage").modal(data);
                     //$("#divFunction").html(data);
                 
                         //$("#loadingPage").modal(hide);
-                            alert("Save Successful!");
+                            
                             //alert(data.FR_Description);
                             //alert(baseUrl);
                         window.location  = baseUrl+"index.php/Dashboard";

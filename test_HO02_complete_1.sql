@@ -1,13 +1,15 @@
 -- phpMyAdmin SQL Dump
--- version 4.5.1
--- http://www.phpmyadmin.net
+-- version 4.8.3
+-- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 24, 2019 at 07:30 PM
--- Server version: 10.1.16-MariaDB
--- PHP Version: 5.6.24
+-- Generation Time: Jun 25, 2019 at 07:39 AM
+-- Server version: 10.1.36-MariaDB
+-- PHP Version: 5.6.38
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -854,8 +856,8 @@ CREATE TABLE `t_temp_change_list` (
 --
 
 INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaId`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
-(4, '1', 10, '1 ', 2, 'AGE', 0, 0, 'DECIMAL ', '3', '2', 'N', 'N', NULL, NULL, NULL, NULL, NULL, 'edit', 'ploy', '2019-06-24', 46, 1, NULL),
-(5, '1', 10, '1 ', 2, 'FIRSTNAME', 136, 5, 'VARCHAR ', '30', NULL, 'N', 'Y', NULL, NULL, NULL, 'PATIENT', 'FIRSTNAME', 'edit', 'ploy', '2019-06-24', 44, 1, NULL);
+(5, '1', 10, '1 ', 2, 'FIRSTNAME', 136, 5, 'VARCHAR ', '30', NULL, 'N', 'Y', NULL, NULL, NULL, 'PATIENT', 'FIRSTNAME', 'edit', 'ploy', '2019-06-24', 44, 1, NULL),
+(7, '1', 10, '1', 2, 'AGE', 0, 0, 'INT ', '', '', '', '', '', '', '', '', '', 'delete', 'ploy', '2019-06-25', 46, 1, NULL);
 
 --
 -- Indexes for dumped tables
@@ -978,86 +980,104 @@ ALTER TABLE `t_temp_change_list`
 --
 ALTER TABLE `aff_fr`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- AUTO_INCREMENT for table `aff_rtm`
 --
 ALTER TABLE `aff_rtm`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT for table `aff_schema`
 --
 ALTER TABLE `aff_schema`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT for table `aff_testcase`
 --
 ALTER TABLE `aff_testcase`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT for table `map_fr_version`
 --
 ALTER TABLE `map_fr_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
 --
 -- AUTO_INCREMENT for table `map_schema_version`
 --
 ALTER TABLE `map_schema_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT for table `map_tc_version`
 --
 ALTER TABLE `map_tc_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
 --
 -- AUTO_INCREMENT for table `m_database_schema_info`
 --
 ALTER TABLE `m_database_schema_info`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=155;
+
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=161;
+
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
 ALTER TABLE `m_fn_req_detail`
   MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+
 --
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+
 --
 -- AUTO_INCREMENT for table `m_project`
 --
 ALTER TABLE `m_project`
   MODIFY `projectId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
 --
 -- AUTO_INCREMENT for table `m_rtm_version`
 --
 ALTER TABLE `m_rtm_version`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+
 --
 -- AUTO_INCREMENT for table `m_testcase_detail`
 --
 ALTER TABLE `m_testcase_detail`
   MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=194;
+
 --
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+
 --
 -- AUTO_INCREMENT for table `temp_rollback`
 --
 ALTER TABLE `temp_rollback`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT for table `t_temp_change_list`
 --
 ALTER TABLE `t_temp_change_list`
-  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+COMMIT;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
