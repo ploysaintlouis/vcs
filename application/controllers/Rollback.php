@@ -153,7 +153,24 @@ class Rollback extends CI_Controller{
 			//$affectedSchemaList = $this->mRollback->getChangeHistoryDatabaseSchemaList($changeRequestNo);
 
 			//** RTM
-			$affectedRTMList = $this->mRollback->getRTMRollbackList($criteria);
+			$RTMList = $this->mRollback->getRTMRollbackList($criteria);
+			if (0 < count($RTMList)){
+				foreach ($RTMList as $value){
+					$RTMHistoryList = (object) array(
+						'changeRequestNo' => $changeRequestNo,
+						'projectId' 	  => $projectId,
+						'functionId' => $value["functionId"],
+						'functionVersion'	=> $value["functionVersion"],
+						'testcaseId' => $value["testcaseId"],
+						'testcaseVersion'	=> $value["testcaseVersion"]
+					);			
+					$affectedRTMList = $this->mRollback->getAffRTM($RTMHistoryList);
+				}
+			}
+
+			$reasonRollback = $this->mRollback->RollbackReason($changeRequestNo,$projectId);
+
+			//$affectedRTMList = $this->mRollback->getRTMRollbackList($criteria);
 			//$affectedRTMList = $this->mRollback->getChangeHistoryRTM($changeRequestNo);
 
 		}else{
@@ -164,6 +181,7 @@ class Rollback extends CI_Controller{
 		$data['headerInfo'] = $headerInfo;
 		$data['detailInfo'] = $detailInfo;
 		$data['FRdetailInfo'] = $FRdetailInfo;
+		$data['reasonRollback'] = $reasonRollback;
 
 		$data['affectedFnReqList'] = $affectedFnReqList;
 		$data['affectedTCList'] = $affectedTCList;
@@ -209,77 +227,71 @@ class Rollback extends CI_Controller{
 
 		try{
 
+			$param = (object) array(
+				'projectId' 	  => $projectId,
+				'changeRequestNo' => $changeRequestNo);
+
 				/** 1. Get FR Change Details */
-				$changeFRInfo = $this->mRollback->getChangeRequestFunctionalRequirement($changeRequestNo);
+				$changeFRInfo = $this->mRollback->getChangeRequestFunctionalRequirement($param);
 				//print_r($changeFRInfo);
 				foreach ($changeFRInfo as $value) {
 					$param_FR = (object) array(
 						'projectId'  => $projectId,
-						'status' 	 => 1,
 						'user'		=>$user,
 						'changeRequestNo' => $changeRequestNo,
-						'functionId' => $value['FR_Id'],
-						'functionNo' 	  => $value['FR_No'],
-						'functionVersion' => $value['FR_Version'],
-						'New_FR_Id'	=>$value['New_FR_Id'],
-						'New_FR_Version' =>$value['New_FR_Version']
+						'functionId' => $value['functionId'],
+						'functionNo' 	  => $value['functionNo'],
+						'functionVersion' => $value['functionVersion'],
+						'activeflag'	=>$value['activeflag']
 						);
 						//print_r($param_FR);
 						if (0 < count($param_FR)){
-							$UpdateStatusFR_New = $this->mRollback->updateRollback_FRHeader($param_FR);
-							$UpdateStatusFR_Old = $this->mRollback->updateRequirementsHeader($param_FR);
-							$UpdateStatusFRDetail_New = $this->mRollback->updateRollback_FRDetail($param_FR);
-							$UpdateStatusFRDetail_Old = $this->mRollback->updateRequirementsDetail($param_FR);
+							$UpdateStatusFR = $this->mRollback->updateRollback_FRHeader($param_FR);
+							$UpdateStatusFRDetail = $this->mRollback->updateRollback_FRDetail($param_FR);
 						}
 				}
 				//print_r($param_FR->user);
 
 				/** 2. Get TC Change Details */
-				$changeTCInfo = $this->mRollback->getChangeRequestTestCase($changeRequestNo);
+				$changeTCInfo = $this->mRollback->getChangeRequestTestCase($param);
 				foreach ($changeTCInfo as $value) {
 					$param_TC = (object) array(
 						'projectId'  => $projectId,
 						'status' 	 => 1,
 						'user'		=>$user,
 						'changeRequestNo' => $changeRequestNo,
-						'testCaseId' => $value['testcaseId'],
-						'testcaseNo' 	  => $value['testcaseNo'],
+						'testCaseId' => $value['testCaseId'],
+						'testcaseNo' 	  => $value['testCaseNo'],
 						'testcaseVersion' => $value['testcaseVersion'],
-						'New_testCaseId' => $value['New_TC_Id'],
-						'New_testcaseVersion' => $value['New_TC_Version']		
+						'activeflag' => $value['activeflag']
 						);		
 						if (0 < count($param_TC)){
-							$UpdateStatusTC_New = $this->mRollback->updateRollback_TCHeader($param_TC);
-							$UpdateStatusTC_Old = $this->mRollback->updateTestcaseHeader($param_TC);
-							$UpdateStatusTCDetail_New = $this->mRollback->updateRollback_TCDetail($param_TC);
-							$UpdateStatusTCDetail_Old = $this->mRollback->updateTestcaseDetail($param_TC);
+							$UpdateStatusTC = $this->mRollback->updateRollback_TCHeader($param_TC);
+							$UpdateStatusTCDetail = $this->mRollback->updateRollback_TCDetail($param_TC);
 						}	
 				}		
 			
 				/** 3. Get SCHEMA Change Details */
-				$changeDBInfo = $this->mRollback->getChangeRequestSchema($changeRequestNo);
+				$changeDBInfo = $this->mRollback->getChangeRequestSchema($param);
 				foreach ($changeDBInfo as $value) {
 					$param_DB = (object) array(
 						'projectId'  => $projectId,
 						'status' 	 => 1,
 						'user'		=>$user,
 						'changeRequestNo' => $changeRequestNo,
-						'SchemaVersionId' => $value['SchemaVersionId'],
+						'SchemaVersionId' => $value['schemaVersionId'],
 						'tableName' 	  => $value['tableName'],
-						'Version' => $value['Version'],
-						'New_SchemaVersionId' => $value['New_SchemaVersionId'],
-						'New_Version' => $value['New_Schema_Version']
+						'Version' => $value['schemaVersionNumber'],
+						'activeflag' => $value['activeflag']
 						);
 						if (0 < count($param_DB)){
-							$UpdateStatusDB_New = $this->mRollback->updateRollback_DBHeader($param_DB);
-							$UpdateStatusDB_Old = $this->mRollback->updateSchemaHeader($param_DB);
-							$UpdateStatusDBDetail_New = $this->mRollback->updateRollback_DBDetail($param_DB);
-							$UpdateStatusDBDetail_Old = $this->mRollback->updateSchemaDetail($param_DB);
+							$UpdateStatusDB = $this->mRollback->updateRollback_DBHeader($param_DB);
+							$UpdateStatusDBDetail = $this->mRollback->updateRollback_DBDetail($param_DB);
 						}
 					}	
 
 				/** 4. Get RTM Change Details */
-				$changeRTMInfo = $this->mRollback->getChangeRequestSRTM($changeRequestNo);
+				$changeRTMInfo = $this->mRollback->getChangeRequestRTM($param);
 				foreach ($changeRTMInfo as $value) {	
 					$param_RTM = (object) array(
 						'projectId'  => $projectId,
@@ -289,11 +301,12 @@ class Rollback extends CI_Controller{
 						'functionId' => $value['functionId'],
 						'functionVersion' 	  => $value['functionVersion'],
 						'testCaseId' => $value['testcaseId'],
-						'testcaseVersion' => $value['testcaseVersion']
+						'testcaseVersion' => $value['testcaseVersion'],
+						'activeflag' => $value['activeflag']
+
 						);	
 						if (0 < count($param_RTM)){
 							$UpdateStatusRTM_New = $this->mRollback->updateRollback_RTMHeader($param_RTM);
-							$UpdateStatusRTM_Old = $this->mRollback->updateRTMDetail($param_TC,$param_FR);
 						}
 				}
 
@@ -315,6 +328,20 @@ class Rollback extends CI_Controller{
 		$this->openView($data, 'view');*/
 	}
 	
+	
+	function delete_detail($changeRequestNo){
+		$output = null;
+		$saveResult = $this->mRollback->deleteTempRollbackList($changeRequestNo);
+		if(0 < count($saveResult)){
+				//	refresh Change List
+				$output = '';
+		}else{
+				$output = 'error|'.ER_TRN_014;
+			}
+
+		echo $output;
+	}	
+
 	private function displayResult($changeRequestNo, $projectId){
 		$success_message = '';
 		$error_message = '';
@@ -327,22 +354,23 @@ class Rollback extends CI_Controller{
 				'changeStatus' 	  => '1',
 				'changeRequestNo' => $changeRequestNo);
 		$Update_Rollback = $this->mRollback->updatestatusRolback($criteria);
-		$changeHeaderResult = $this->mRollback->searchChangesInformationForCancelling($criteria);
+		$changeHeaderResult = $this->mRollback->searchChangesInformation($criteria);
 		if(0 < count($changeHeaderResult)){
 			$headerInfo = array(
 				'changeRequestNo' 	=> $changeHeaderResult[0]['changeRequestNo'],
 				'changeUser' 		=> $changeHeaderResult[0]['changeUser'],
 				'changeDate' 		=> $changeHeaderResult[0]['changeDate'],
 				'changeStatus'		=> $changeHeaderResult[0]['changeStatus'],
+				'fnReqId' 			=> $changeHeaderResult[0]['changeFunctionId'],			
 				'fnReqNo' 			=> $changeHeaderResult[0]['changeFunctionNo'],
 				'fnReqVer' 			=> $changeHeaderResult[0]['changeFunctionVersion'],
 				'fnReqDesc' 		=> $changeHeaderResult[0]['functionDescription'],
 				);
 			
 			$reason = $Rollback_reason[0]['reason'];
-			
 			//search change detail
-			$detailInfo = $this->mRollback->getChangeRequestInputList($changeRequestNo);
+		//	$detailInfo = $this->mRollback->getChangeRequestInputList($changeRequestNo);
+			$detailInfo = $this->mRollback->getFRList($headerInfo);
 
 			$success_message = IF_MSG_001;
 		}else{

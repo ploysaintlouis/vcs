@@ -264,6 +264,7 @@ define('ER_TRN_010', "Change process fail. Please enter Functional Requirement's
 define('ER_TRN_011', "Change process fail. This Functional Requirement is changed by another user.");
 define('ER_TRN_012', "Change process fail. The latest functional requirement data not found.");
 define('ER_TRN_013', "Change process fail. Unable to connect to database target. Please check the access to the database.");
+define('ER_TRN_014', "Delete Rollback Fail");
 
 //**INFORMATION MESSAGE
 define('IF_MSG_001', 'This change request has been successfully cancelled.');

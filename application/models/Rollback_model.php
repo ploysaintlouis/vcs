@@ -176,7 +176,7 @@ class Rollback_model extends CI_Model{
 	}
 
 	public function getRTMRollbackList($param){
-
+/*
 		$sqlStr = "SELECT DISTINCT b.functionNo,b.functionVersion,c.testCaseNo,c.testcaseVersion,'1' activeflag
 				FROM MAP_RTM a,M_FN_REQ_HEADER b,M_TESTCASE_HEADER c
 				WHERE a.changeRequestNo = '$param->changeRequestNo'
@@ -188,20 +188,28 @@ class Rollback_model extends CI_Model{
 				AND a.testcaseVersion = c.testcaseVersion
 				AND a.projectId = c.projectId
 				ORDER BY 1,2";
+				*/
+				$sqlStr = "SELECT DISTINCT functionId,functionVersion,testcaseId,testcaseVersion
+				FROM MAP_RTM
+				WHERE changeRequestNo = '$param->changeRequestNo'
+				AND projectId = '$param->projectId'
+				ORDER BY 1,2";
+
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
 	public function getAffFR($param){
 
-		$sqlStr = "SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'0' activeflag
-				FROM  MAP_RTM a,M_FN_REQ_HEADER b
-				WHERE a.changeRequestNo = '$param->changeRequestNo'
+		$sqlStr = "SELECT DISTINCT a.functionId,a.functionNo,a.functionVersion,a.functionDescription,'0' activeflag
+					FROM M_FN_REQ_HEADER a
+					WHERE  NOT EXISTS (SELECT b.* FROM MAP_RTM b 
+															WHERE a.functionId = b.functionId
+							AND a.functionVersion = b.functionVersion
+							AND b.activeflag = '0'
+							AND b.changeRequestNo = '$param->changeRequestNo')
 				AND a.projectId = '$param->projectId'
-				AND a.projectId = b.projectId
-				AND a.functionId = b.functionId
-				AND a.functionVersion = b.functionVersion
-				AND b.activeflag = '1'
+				AND a.activeflag = '1'
 				UNION
 				SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'1' activeflag
 				FROM  MAP_RTM a,M_FN_REQ_HEADER b
@@ -211,7 +219,8 @@ class Rollback_model extends CI_Model{
 				AND a.functionId = b.functionId
 				AND a.functionVersion = b.functionVersion
 				AND b.activeflag = '0'
-				ORDER BY 1,2";
+				ORDER BY activeflag desc,2,3";
+			//	echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -235,7 +244,8 @@ class Rollback_model extends CI_Model{
 				AND a.testcaseId = b.testCaseId
 				AND a.testcaseVersion = b.testcaseVersion
 				AND b.activeflag = '0'
-				ORDER BY 1,2";
+				ORDER BY activeflag desc,2,3";
+				echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -259,7 +269,45 @@ class Rollback_model extends CI_Model{
 				AND a.schemaVersionId = b.schemaVersionId
 				AND a.schemaVersion = b.schemaVersionNumber
 				AND b.activeflag = '0'
-				ORDER BY 1,2";
+				ORDER BY activeflag desc,2,3";
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	public function getAffRTM($param){
+
+		$sqlStr = "SELECT a.functionId,c.functionNo,a.functionVersion,a.testcaseId,d.testCaseNo,a.testcaseVersion,'1' activeflag
+							FROM MAP_RTM a,M_FN_REQ_HEADER c,M_TESTCASE_HEADER d
+								WHERE NOT EXISTS (SELECT b.* FROM M_RTM_VERSION b WHERE a.functionId = b.functionId
+										AND a.functionVersion = b.functionVersion
+										AND a.testcaseId = b.testCaseId
+										AND a.testcaseVersion = b.testcaseVersion
+										AND b.functionId = a.functionId 
+										AND b.activeflag = '1')
+								AND a.projectId = '$param->projectId'
+								AND a.changeRequestNo = '$param->changeRequestNo'
+								AND a.functionId = c.functionId
+								AND a.functionVersion = c.functionVersion
+								AND a.testcaseId = d.testCaseId
+								AND a.testcaseVersion = d.testcaseVersion
+							UNION
+							SELECT a.functionId,c.functionNo,a.functionVersion,a.testcaseId,d.testCaseNo,a.testcaseVersion,'0' activeflag
+	 							FROM M_RTM_VERSION a,M_FN_REQ_HEADER c,M_TESTCASE_HEADER d
+								WHERE  NOT EXISTS (SELECT b.* FROM MAP_RTM b WHERE a.functionId = b.functionId
+											AND a.functionVersion = b.functionVersion
+											AND a.testcaseId = b.testCaseId
+											AND a.testcaseVersion = b.testcaseVersion
+											AND b.functionId = a.functionId 
+											AND a.testcaseVersion = b.testcaseVersion
+											AND b.activeflag = '0'
+											AND b.changeRequestNo = '$param->changeRequestNo')
+								AND a.projectId = '$param->projectId'
+								AND a.activeflag = '1'
+								AND a.functionId = c.functionId
+								AND a.functionVersion = c.functionVersion
+								AND a.testcaseId = d.testCaseId
+								AND a.testcaseVersion = d.testcaseVersion
+								ORDER BY activeflag desc,2,3";
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
@@ -386,48 +434,115 @@ class Rollback_model extends CI_Model{
 		return $result->result_array();
 	}
 
-	public function getChangeRequestFunctionalRequirement($changeRequestNo){
+	public function getChangeRequestFunctionalRequirement($param){
 
-			$sqlStr = "SELECT h.*,fh.New_FR_Id,fh.New_FR_Version
-			FROM AFF_FR h,MAP_FR_VERSION fh
-			WHERE h.FR_Id = fh.Old_FR_Id
-			AND h.FR_Version = fh.Old_FR_Version
-			AND h.ChangeRequestNo = '$changeRequestNo'";
+			$sqlStr = "SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'0' activeflag
+			FROM  MAP_RTM a,M_FN_REQ_HEADER b
+			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			AND a.projectId = '$param->projectId'
+			AND a.projectId = b.projectId
+			AND a.functionId = b.functionId
+			AND a.functionVersion = b.functionVersion
+			AND b.activeflag = '1'
+			UNION
+			SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'1' activeflag
+			FROM  MAP_RTM a,M_FN_REQ_HEADER b
+			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			AND a.projectId = '$param->projectId'
+			AND a.projectId = b.projectId
+			AND a.functionId = b.functionId
+			AND a.functionVersion = b.functionVersion
+			AND b.activeflag = '0'
+			ORDER BY activeflag desc,2,3 ";
 		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 	
-	public function getChangeRequestTestCase($changeRequestNo){
+	public function getChangeRequestTestCase($param){
 
-			$sqlStr = "SELECT h.*,fh.New_TC_Id,fh.New_TC_Version
-			FROM AFF_TESTCASE h,MAP_TC_VERSION fh
-			WHERE h.testcaseId = fh.Old_TC_ID
-			AND h.testcaseVersion = fh.Old_TC_Version
-			AND h.ChangeRequestNo = '$changeRequestNo'";
+			$sqlStr = "SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'0' activeflag
+			FROM  MAP_RTM a,M_TESTCASE_HEADER b
+			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			AND a.projectId = '$param->projectId'
+			AND a.projectId = b.projectId
+			AND a.testcaseId = b.testCaseId
+			AND a.testcaseVersion = b.testcaseVersion
+			AND b.activeflag = '1'
+			UNION
+			SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'1' activeflag
+			FROM  MAP_RTM a,M_TESTCASE_HEADER b
+			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			AND a.projectId = '$param->projectId'
+			AND a.projectId = b.projectId
+			AND a.testcaseId = b.testCaseId
+			AND a.testcaseVersion = b.testcaseVersion
+			AND b.activeflag = '0'
+			ORDER BY activeflag desc,2,3";
 		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
-	public function getChangeRequestSchema($changeRequestNo){
+	public function getChangeRequestSchema($param){
 
-			$sqlStr = "SELECT DISTINCT a.SchemaVersionId,a.tableName,a.Version,
-			b.New_SchemaVersionId,b.New_Schema_Version
-			FROM AFF_SCHEMA a,MAP_SCHEMA_VERSION b
-			WHERE b.Old_SchemaVersionId = a.SchemaVersionId 
-			AND b.Old_Schema_Version = a.Version
-			AND a.ChangeRequestNo = '$changeRequestNo' ";
+			$sqlStr = "SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'0' activeflag
+			FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
+			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			AND a.projectId = '$param->projectId'
+			AND a.projectId = b.projectId
+			AND a.schemaVersionId <> b.schemaVersionId
+			AND a.schemaVersion <> b.schemaVersionNumber
+			AND b.activeflag = '1'
+			UNION
+			SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'1' activeflag
+			FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
+			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			AND a.projectId = '$param->projectId'
+			AND a.projectId = b.projectId
+			AND a.schemaVersionId = b.schemaVersionId
+			AND a.schemaVersion = b.schemaVersionNumber
+			AND b.activeflag = '0'
+			ORDER BY activeflag desc,2,3 ";
 		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
-	public function getChangeRequestSRTM($changeRequestNo){
+	public function getChangeRequestRTM($param){
 
-			$sqlStr = "SELECT *
-			FROM AFF_RTM
-			WHERE ChangeRequestNo = '$changeRequestNo'";
+			$sqlStr = "SELECT a.functionId,c.functionNo,a.functionVersion,a.testcaseId,d.testCaseNo,a.testcaseVersion,'1' activeflag
+			FROM MAP_RTM a,M_FN_REQ_HEADER c,M_TESTCASE_HEADER d
+				WHERE NOT EXISTS (SELECT b.* FROM M_RTM_VERSION b WHERE a.functionId = b.functionId
+						AND a.functionVersion = b.functionVersion
+						AND a.testcaseId = b.testCaseId
+						AND a.testcaseVersion = b.testcaseVersion
+						AND b.functionId = a.functionId 
+						AND b.activeflag = '1')
+				AND a.projectId = '$param->projectId'
+				AND a.changeRequestNo = '$param->changeRequestNo'
+				AND a.functionId = c.functionId
+				AND a.functionVersion = c.functionVersion
+				AND a.testcaseId = d.testCaseId
+				AND a.testcaseVersion = d.testcaseVersion
+			UNION
+			SELECT a.functionId,c.functionNo,a.functionVersion,a.testcaseId,d.testCaseNo,a.testcaseVersion,'0' activeflag
+				 FROM M_RTM_VERSION a,M_FN_REQ_HEADER c,M_TESTCASE_HEADER d
+				WHERE  NOT EXISTS (SELECT b.* FROM MAP_RTM b WHERE a.functionId = b.functionId
+							AND a.functionVersion = b.functionVersion
+							AND a.testcaseId = b.testCaseId
+							AND a.testcaseVersion = b.testcaseVersion
+							AND b.functionId = a.functionId 
+							AND a.testcaseVersion = b.testcaseVersion
+							AND b.activeflag = '0'
+							AND b.changeRequestNo = '$param->changeRequestNo')
+				AND a.projectId = '$param->projectId'
+				AND a.activeflag = '1'
+				AND a.functionId = c.functionId
+				AND a.functionVersion = c.functionVersion
+				AND a.testcaseId = d.testCaseId
+				AND a.testcaseVersion = d.testcaseVersion
+				ORDER BY activeflag desc,2,3";
 		//	print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
@@ -439,7 +554,7 @@ class Rollback_model extends CI_Model{
 		FROM TEMP_ROLLBACK
 		WHERE ChangeRequestNo = '$changeRequestNo'
 		AND projectId = '$projectId' ";
-	//	print_r($sqlStr);
+		//print_r($sqlStr);
 	$result = $this->db->query($sqlStr);
 	return $result->result_array();
 }
@@ -449,13 +564,13 @@ class Rollback_model extends CI_Model{
 		$currentDateTime = date('Y-m-d H:i:s');
 
 		$sqlStr = "UPDATE M_FN_REQ_HEADER
-			SET activeflag = '1',
+			SET activeflag = '$param_FR->activeflag',
 				updateDate 	 = '$currentDateTime',
 				updateUser 	 = '$param_FR->user'
 			WHERE functionId = '$param_FR->functionId'
 			AND functionversion = '$param_FR->functionVersion'
 			AND projectid = '$param_FR->projectId'
-      AND activeflag = '0' ";
+       ";
 			//print_r($sqlStr);
             $result = $this->db->query($sqlStr);
             return $this->db->affected_rows();
@@ -487,10 +602,9 @@ class Rollback_model extends CI_Model{
 					SET effectiveEndDate = '$currentDateTime',
 					updateDate = '$currentDateTime',
 					updateUser = '$param_FR->user',
-					activeFlag = '1'
+					activeFlag = '$param_FR->activeflag'
 					WHERE functionVersion = '$param_FR->functionVersion' 
 					AND functionId = '$param_FR->functionId'
-					AND activeflag = '0' 
 					AND projectid = '$param_FR->projectId' 
 			";
 			$result = $this->db->query($strsql);
@@ -533,7 +647,7 @@ class Rollback_model extends CI_Model{
 		$currentDateTime = date('Y-m-d H:i:s');
 
 		$sqlStr = "UPDATE M_TESTCASE_HEADER
-				SET activeFlag = '1', 
+				SET activeFlag = '$param_TC->activeflag' ,
 				updateDate = '$currentDateTime', 
 				updateUser = '$param_TC->user' 
 				WHERE projectId = '$param_TC->projectId'
@@ -549,12 +663,12 @@ class Rollback_model extends CI_Model{
 
 		$sqlStr = "UPDATE M_TESTCASE_DETAIL
 			SET effectiveEndDate = '$currentDateTime', 
-				activeFlag = '0', 
+				activeFlag = '$param_TC->activeflag' ,
 				updateDate = '$currentDateTime', 
 				updateUser = '$param_TC->user' 
 						WHERE projectId = '$param_TC->projectId'
-						AND testCaseId = '$param_TC->New_testCaseId'
-						AND testcaseVersion = '$param_TC->New_testcaseVersion' ";
+						AND testCaseId = '$param_TC->testCaseId'
+						AND testcaseVersion = '$param_TC->testcaseVersion' ";
 		//print_r($sqlStr);
 				$result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
@@ -581,13 +695,13 @@ function updateTestcaseDetail($param_TC){
 
 	$sqlStr = "UPDATE M_DATABASE_SCHEMA_VERSION
 	SET effectiveEndDate = '$currentDateTime', 
-		activeFlag = '1', 
+		activeFlag = '$param_DB->activeflag', 
 		updateDate = '$currentDateTime', 
 		updateUser = '$param_DB->user' 
 				WHERE projectId = '$param_DB->projectId'
 				AND schemaVersionId = '$param_DB->SchemaVersionId'
 				AND schemaVersionNumber = '$param_DB->Version'
-				AND activeflag = '0' ";
+				 ";
 	//print_r($sqlStr);
 		$result = $this->db->query($sqlStr);
 	return $this->db->affected_rows();
@@ -613,11 +727,11 @@ function updateTestcaseDetail($param_TC){
 	function updateRollback_DBDetail($param_DB){
 
 		$sqlStr = "UPDATE M_DATABASE_SCHEMA_INFO
-			SET activeflag = '1'
+			SET activeflag = '$param_DB->activeflag'
             WHERE projectId = '$param_DB->projectId'
 						AND schemaVersionId = '$param_DB->SchemaVersionId'
 						AND Version = '$param_DB->Version'
-            AND activeflag = '0' ";
+             ";
 //print_r($sqlStr);
         $result = $this->db->query($sqlStr);
 		return $this->db->affected_rows();
@@ -640,7 +754,7 @@ function updateTestcaseDetail($param_TC){
 		$currentDateTime = date('Y-m-d H:i:s');
 		
 		$sqlStr = "UPDATE M_RTM_VERSION
-			SET activeflag = '1',
+			SET activeFlag = '$param_RTM->activeflag',
 				updateDate 	 = '$currentDateTime',
 				updateUser 	 = '$param_RTM->user'
 			WHERE functionId = '$param_RTM->functionId'
@@ -648,7 +762,7 @@ function updateTestcaseDetail($param_TC){
 			AND projectid = '$param_RTM->projectId'
 			AND testCaseId = '$param_RTM->testCaseId'
 			AND testCaseversion = '$param_RTM->testcaseVersion'
-			AND activeflag = '0' ";
+			 ";
 					//print_r($sqlStr);
 			$result = $this->db->query($sqlStr);
 			return $this->db->affected_rows();
@@ -720,6 +834,57 @@ function updateTestcaseDetail($param_TC){
 	AND $where_condition
 	AND  h.changeRequestNo NOT IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1')
   ORDER BY h.changeDate desc";
+	echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
+
+	function deleteTempRollbackList($changeRequestNo){
+		$changeRequestNo  = trim($changeRequestNo);
+
+		$strsql = "DELETE FROM TEMP_ROLLBACK
+					 WHERE ChangeRequestNo ='$changeRequestNo'
+					 AND status = '0' ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+		//return $strsql;
+	}   
+
+	public function searchChangesInformation($param){
+		
+		if(isset($param->projectId) && !empty($param->projectId)){
+			$where[] = "h.projectId = $param->projectId";
+		}
+
+		if(isset($param->changeRequestNo) && !empty($param->changeRequestNo)){
+			$where[] = "h.changeRequestNo = '$param->changeRequestNo'";
+		}
+
+		if(isset($param->changeStatus) && !empty($param->changeStatus)){
+			$where[] = "h.changeStatus = '$param->changeStatus'";
+		}
+		$where_condition = implode(" AND ", $where);
+
+				$sqlStr = "SELECT 
+				h.changeRequestNo,
+				h.changeDate,
+				CONCAT(u.firstname, '   ', u.lastname) as changeUser,
+				h.changeFunctionId,
+				h.changeFunctionNo,
+				h.changeFunctionVersion,
+				fh.functionDescription,
+				h.changeRequestNo,
+				h.changeStatus,
+				h.changeStatus as changeStatusMisc,
+				h.reason
+			FROM T_CHANGE_REQUEST_HEADER h ,M_USERS u ,M_FN_REQ_HEADER fh
+			WHERE h.changeUserId = u.userId
+			AND h.changeFunctionId = fh.functionId
+			AND h.changeFunctionVersion = fh.functionVersion
+			AND $where_condition
+			AND  h.changeRequestNo  IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1')
+			ORDER BY h.changeDate desc";
 	//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();

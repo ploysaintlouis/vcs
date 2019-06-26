@@ -239,6 +239,8 @@
 															$.ajax({url: url, 
 															success: function(result){
 																$("#loadPopup").html(result);
+																location.reload();
+
 															}});
 														}
 													});

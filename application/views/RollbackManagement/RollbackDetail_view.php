@@ -25,6 +25,7 @@
 				<?php echo $error_message; ?>
 			</div>
 			<?php } ?>
+			<input type="hidden" id="headerchangeRequestNo" name="headerchangeRequestNo" value="<?php echo $headerInfo['changeRequestNo'] ?>">
 
 			<div class="box box-solid">
                 <div class="box-body">
@@ -284,8 +285,8 @@
 										<th class="col-md-1">#</th>
 										<th class="col-md-3">Functional Requirement ID</th>
 										<th class="col-md-4">Description</th>
-										<th class="col-md-2">Action</th>
 										<th class="col-md-2">Version</th>
+										<th class="col-md-2">Action</th>
 									</tr>
 									<?php 
 									$i = 1; 
@@ -335,8 +336,8 @@
 										<th class="col-md-2">Test Case ID</th>
 									<!--	<th class="col-md-3">Related Requirement ID</th>  -->
 										<th class="col-md-2">Description</th>
-										<th class="col-md-2">Action</th>
 										<th class="col-md-2">Version</th>
+										<th class="col-md-2">Action</th>
 									</tr>
 									<?php 
 									$tcCount = 1;
@@ -447,7 +448,7 @@
 										<th class="col-md-2">Functional Version</th>
 										<th class="col-md-2">Test Case ID</th>
 										<th class="col-md-2">Test Case Version</th>
-										<th class="col-md-2">Status</th> 
+										<th class="col-md-2">Action</th> 
 									</tr>
 									<?php 
 									$row = 1;
@@ -495,7 +496,7 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group" id="_inputForm">
-				        			<label>Please provide in this entry the reason for cancelling the change.</label>
+				        			<label>Please provide in this entry the reason for rollback the change.</label>
 
 				        			<input type="text" class="form-control" id="inputReason" name="inputReason" value="<?php echo $reason ?>">
 				        			<?php echo form_error('inputReason', '<font color="red">','</font><br>'); ?>
@@ -510,6 +511,34 @@
 					</div>
 				</div>
 	      	</form>	
+		</div>
+	</div>
+	<?php } ?>
+
+	<?php if ($_SESSION['staffflag'] == '3') { ?>
+	<div class="row">
+		<div class="col-md-12">
+				<input type="hidden" name="changeRequestNo" value="<?php echo $keyParam['changeRequestNo'] ?>">
+        		<input type="hidden" name="projectId" value="<?php echo $keyParam['projectId'] ?>">
+				<input type="hidden" name="userId" value="<?php echo $_SESSION['userId'] ?>">
+				<div class="box box-solid" style="margin-top: 10px;">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-sm-12">
+								<div class="form-group" id="_inputForm">
+				        			<label>The reason for rollback the change.</label>
+								</div>
+								<div>
+											<?php	foreach($reasonRollback as $value){ ?>
+
+											<input type="text" name="reason" id="reason" class="form-control" value= "<?php echo $value['reason'] ?>" disabled>
+
+											<?php } ?>
+				        		</div>
+							</div>
+						</div>
+					</div>
+				</div>
 		</div>
 	</div>
 	<?php } ?>
@@ -555,9 +584,13 @@
 						<div class="row">
 							<div class="col-sm-12">
 								<div class="form-group" id="_inputForm">
-				        			<button type="submit" class="btn btn-danger" onclick="changeCancellation()" style="margin-top: 5px;">
+
+												<button type="button" name="delete" id="<?php echo $keyParam['changeRequestNo'] ; ?>" class="btn btn-danger " style="margin-top: 5px;" >
+												<i class="fa fa-fw fa-undo"></i>Not Approve Rollback Change</button> 
+
+				        			<button type="submit" class="btn btn-success" onclick="changeCancellation()" style="margin-top: 5px;">
 					            		<i class="fa fa-fw fa-undo"></i>
-					            		Rollback Change
+					            		Approve Rollback Change
 					            	</button>
 				        		</div>
 							</div>
@@ -568,5 +601,31 @@
 		</div>
 	</div>
 <?php } ?>
+
+</script>
+											<script type="text/javascript">
+												$(function() {
+
+													$("button[name='delete']").bind( "click", function() {
+														var msg = "Are you sure to Not Approve a Rollback Change ";
+														if(confirm(msg))
+														{
+															var changeRequestNo = $('#headerchangeRequestNo').val();
+															var url = baseUrl + "index.php/Rollback/delete_detail/"+changeRequestNo;
+															$.ajax({url: url, 
+															success: function(result){
+																debugger
+																if('' != result){
+																	alert(result);
+																	location.reload();
+																}else{
+																	alert("Delete Rollback Successfull");
+																	window.location  = baseUrl+"index.php/Dashboard";
+																}
+															}});
+														}
+													});
+												});
+											</script>
 
 </section>
