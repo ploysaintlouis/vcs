@@ -267,7 +267,7 @@ define('ER_TRN_013', "Change process fail. Unable to connect to database target.
 define('ER_TRN_014', "Delete Rollback Fail");
 
 //**INFORMATION MESSAGE
-define('IF_MSG_001', 'This change request has been successfully cancelled.');
+define('IF_MSG_001', 'This change request has been successfully rollbacked.');
 define('IF_MSG_002', "The Functional Requirement' Inputs has been successfully changed.");
 define('IF_MSG_003', "Database Schema, Table: '{0}' imported successfully.");
 define('IF_MSG_004', "Functional Requirement ID: '{0}' imported successfully.");

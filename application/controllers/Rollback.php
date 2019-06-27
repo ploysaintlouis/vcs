@@ -104,74 +104,23 @@ class Rollback extends CI_Controller{
 	//	echo 	$headerInfo['fnReqId'];
 			$FRdetailInfo = $this->mRollback->getFRList($headerInfo);
 
-			//** FR
-			$FnList = $this->mRollback->getFRRollbackList($criteria);
-			if (0 < count($FnList)){
-				foreach ($FnList as $value){
-					$FRHistoryList = (object) array(
-						'changeRequestNo' => $changeRequestNo,
-						'projectId' 	  => $projectId,
-						'functionId' => $value["functionId"],
-						'functionVersion'	=> $value["functionVersion"]
-					);			
-					$affectedFnReqList = $this->mRollback->getAffFR($FRHistoryList);
-				}
-			}
-			//print_r($FnList[0]['functionId']);
-
+			//** FR		
+			$affectedFnReqList = $this->mRollback->getAffFR($criteria);
 			//$affectedFnReqList = $this->mRollback->getChangeHistoryFnReqHeaderList($changeRequestNo);
 	
-			//** TC
-			$TCList = $this->mRollback->getTCRollbackList($criteria);
-			if (0 < count($TCList)){
-				foreach ($TCList as $value){
-					$TCHistoryList = (object) array(
-						'changeRequestNo' => $changeRequestNo,
-						'projectId' 	  => $projectId,
-						'testcaseId' => $value["testcaseId"],
-						'testcaseVersion'	=> $value["testcaseVersion"]
-					);			
-					$affectedTCList = $this->mRollback->getAffTC($TCHistoryList);
-				}
-			}
+			//** TC	
+			$affectedTCList = $this->mRollback->getAffTC($criteria);
 			//$affectedTCList = $this->mRollback->getChangeHistoryTestCaseList($changeRequestNo);
 
-			//** DB */
-			$DBList = $this->mRollback->getDBRollbackList($criteria);
-			if (0 < count($DBList)){
-				foreach ($DBList as $value){
-					$DBHistoryList = (object) array(
-						'changeRequestNo' => $changeRequestNo,
-						'projectId' 	  => $projectId,
-						'schemaVersionId' => $value["schemaVersionId"],
-						'schemaVersion'	=> $value["schemaVersion"],
-						'tableName'			=> $value["tableName"]
-					);			
-					$affectedSchemaList = $this->mRollback->getAffDB($DBHistoryList);
-				}
-			}
+			//** DB */		
+			$affectedSchemaList = $this->mRollback->getAffDB($criteria);
 			//$affectedSchemaList = $this->mRollback->getChangeHistoryDatabaseSchemaList($changeRequestNo);
 
 			//** RTM
-			$RTMList = $this->mRollback->getRTMRollbackList($criteria);
-			if (0 < count($RTMList)){
-				foreach ($RTMList as $value){
-					$RTMHistoryList = (object) array(
-						'changeRequestNo' => $changeRequestNo,
-						'projectId' 	  => $projectId,
-						'functionId' => $value["functionId"],
-						'functionVersion'	=> $value["functionVersion"],
-						'testcaseId' => $value["testcaseId"],
-						'testcaseVersion'	=> $value["testcaseVersion"]
-					);			
-					$affectedRTMList = $this->mRollback->getAffRTM($RTMHistoryList);
-				}
-			}
+			$affectedRTMList = $this->mRollback->getAffRTM($criteria);
+			//$affectedRTMList = $this->mRollback->getChangeHistoryRTM($changeRequestNo);
 
 			$reasonRollback = $this->mRollback->RollbackReason($changeRequestNo,$projectId);
-
-			//$affectedRTMList = $this->mRollback->getRTMRollbackList($criteria);
-			//$affectedRTMList = $this->mRollback->getChangeHistoryRTM($changeRequestNo);
 
 		}else{
 			$error_message = ER_MSG_017;

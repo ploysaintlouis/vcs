@@ -86,15 +86,15 @@
 				 	<div class="row">
 				 		<div class="col-sm-12">
 				 			<div class="form-group table-responsive no-padding" style="margin-top: -5px;margin-bottom: -5px;">
-				 				<h4>Change Functional Requirement's Inputs List</h4>
+				 				<h4>Functional Requirement's List</h4>
 				 				<table class="table table-striped" cellpadding="1px" cellspacing="1px">
 	                				<tbody>
 	                					<tr>
 	                						<th class="col-md-1">#</th>
-	                						<th class="col-md-1">Change Type</th>
+	                						<th class="col-md-2">Type of Data</th>
 	            							<th class="col-md-1">Data Name</th>
-	            							<th class="col-md-1">Data Type</th>
-	            							<th class="col-md-1">Data Length</th>
+	            							<th class="col-md-2">Data Type</th>
+	            							<th class="col-md-2">Data Length</th>
 	            							<th class="col-md-1">Scale</th>
 	            							<th class="col-md-1">Unique</th>
 	            							<th class="col-md-1">NOT NULL</th>
@@ -114,12 +114,10 @@
 							                	</td>
 						                		<td>
                 									<?php 
-                									if('add' == $value['changeType']){
-                										echo "<span class=' badge bg-green'>".$value['changeType']."</span>";
-                									}else if('edit' == $value['changeType']){
-                										echo "<span class='badge bg-orange'>".$value['changeType']."</span>";
-                									}else{
-                										echo "<span class='badge bg-red'>".$value['changeType']."</span>";
+                									if('1' == $value['typeData']){
+                										echo "<span class=' badge bg-blue'>Input</span>";
+                									}else if('2' == $value['typeData']){
+                										echo "<span class='badge bg-yellow'>Output</span>";
                 									}
                 									?>
                 								</td>
@@ -133,22 +131,22 @@
                 									<?php echo $value['dataLength']; ?>
                 								</td>
                 								<td>
-                									<?php echo $value['scale']; ?>
+                									<?php echo $value['decimalPoint']; ?>
                 								</td>
                 								<td>
                 									<?php echo $value['constraintUnique']; ?>
                 								</td>
                 								<td>
-                									<?php echo $value['constraintNotNull']; ?>
+                									<?php echo $value['constraintNull']; ?>
                 								</td>
                 								<td>
                 									<?php echo $value['constraintDefault']; ?>
                 								</td>
                 								<td>
-                									<?php echo $value['constraintMin']; ?>
+                									<?php echo $value['constraintMinValue']; ?>
                 								</td>
                 								<td>
-                									<?php echo $value['constraintMax']; ?>
+                									<?php echo $value['constraintMaxValue']; ?>
                 								</td>
                 								<td>
                 									<?php echo $value['refTableName']; ?>
