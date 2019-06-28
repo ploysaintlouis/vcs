@@ -253,14 +253,14 @@
                 							<tr>
 												
                 								<td><?php echo $define++; ?></td>
-												<?php 
-												if ($value['typeData'] == 1) { 
-													$value["typeData"] = "Input"; 
-												}
-												if ($value['typeData'] == 2) { 
-													$value["typeData"] = "Output"; 
-												}?>
-												<td><?php echo $value['typeData']; ?> 
+
+												<td>               									<?php 
+                									if('1' == $value['typeData']){
+                										echo "<span class=' badge bg-blue'>Input</span>";
+                									}else if('2' == $value['typeData']){
+                										echo "<span class='badge bg-yellow'>Output</span>";
+                									}
+                									?>
 												</td>
                 								<td>
                 									<?php echo $value['dataName']; ?>

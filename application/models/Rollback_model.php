@@ -227,14 +227,17 @@ class Rollback_model extends CI_Model{
 	
 	public function getAffTC($param){
 
-		$sqlStr = "SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'0' activeflag
-				FROM  MAP_RTM a,M_TESTCASE_HEADER b
-				WHERE a.changeRequestNo = '$param->changeRequestNo'
+		$sqlStr = "SELECT DISTINCT a.testCaseId,a.testCaseNo,a.testcaseVersion,a.testCaseDescription,'0' activeflag
+		FROM M_TESTCASE_HEADER a
+					WHERE NOT EXISTS
+								(SELECT b.* FROM MAP_RTM b 
+							WHERE b.testcaseId = a.testCaseId
+							AND b.testcaseVersion = a.testcaseVersion
+							AND b.activeflag = '0'
+							AND b.changeRequestNo = '$param->changeRequestNo'
+							AND a.projectId = b.projectId)
 				AND a.projectId = '$param->projectId'
-				AND a.projectId = b.projectId
-				AND a.testcaseId = b.testCaseId
-				AND a.testcaseVersion = b.testcaseVersion
-				AND b.activeflag = '1'
+				AND a.activeflag = '1'
 				UNION
 				SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'1' activeflag
 				FROM  MAP_RTM a,M_TESTCASE_HEADER b
@@ -245,21 +248,22 @@ class Rollback_model extends CI_Model{
 				AND a.testcaseVersion = b.testcaseVersion
 				AND b.activeflag = '0'
 				ORDER BY activeflag desc,2,3";
-				echo $sqlStr;
+				//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
 
 	public function getAffDB($param){
 
-		$sqlStr = "SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'0' activeflag
-				FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
-				WHERE a.changeRequestNo = '$param->changeRequestNo'
+		$sqlStr = "SELECT DISTINCT a.schemaVersionId,a.schemaVersionNumber,a.tableName,'0' activeflag
+				FROM M_DATABASE_SCHEMA_VERSION a
+					WHERE  NOT EXISTS (SELECT b.* FROM MAP_SCHEMA b 
+							WHERE b.schemaVersionId = a.schemaVersionId
+							AND b.schemaVersion = a.schemaVersionNumber
+							AND b.changeRequestNo = '$param->changeRequestNo'
+							AND a.projectId = b.projectId)
 				AND a.projectId = '$param->projectId'
-				AND a.projectId = b.projectId
-				AND a.schemaVersionId <> b.schemaVersionId
-				AND a.schemaVersion <> b.schemaVersionNumber
-				AND b.activeflag = '1'
+				AND a.activeflag = '1'
 				UNION
 				SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'1' activeflag
 				FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
@@ -436,14 +440,15 @@ class Rollback_model extends CI_Model{
 
 	public function getChangeRequestFunctionalRequirement($param){
 
-			$sqlStr = "SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'0' activeflag
-			FROM  MAP_RTM a,M_FN_REQ_HEADER b
-			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			$sqlStr = "SELECT DISTINCT a.functionId,a.functionNo,a.functionVersion,a.functionDescription,'0' activeflag
+			FROM M_FN_REQ_HEADER a
+				WHERE  NOT EXISTS (SELECT b.* FROM MAP_RTM b 
+													WHERE a.functionId = b.functionId
+					AND a.functionVersion = b.functionVersion
+					AND b.activeflag = '0'
+					AND b.changeRequestNo = '$param->changeRequestNo')
 			AND a.projectId = '$param->projectId'
-			AND a.projectId = b.projectId
-			AND a.functionId = b.functionId
-			AND a.functionVersion = b.functionVersion
-			AND b.activeflag = '1'
+			AND a.activeflag = '1'
 			UNION
 			SELECT DISTINCT b.functionId,b.functionNo,b.functionVersion,b.functionDescription,'1' activeflag
 			FROM  MAP_RTM a,M_FN_REQ_HEADER b
@@ -461,14 +466,17 @@ class Rollback_model extends CI_Model{
 	
 	public function getChangeRequestTestCase($param){
 
-			$sqlStr = "SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'0' activeflag
-			FROM  MAP_RTM a,M_TESTCASE_HEADER b
-			WHERE a.changeRequestNo = '$param->changeRequestNo'
-			AND a.projectId = '$param->projectId'
-			AND a.projectId = b.projectId
-			AND a.testcaseId = b.testCaseId
-			AND a.testcaseVersion = b.testcaseVersion
-			AND b.activeflag = '1'
+			$sqlStr = "SELECT DISTINCT a.testCaseId,a.testCaseNo,a.testcaseVersion,a.testCaseDescription,'0' activeflag
+			FROM M_TESTCASE_HEADER a
+						WHERE NOT EXISTS
+									(SELECT b.* FROM MAP_RTM b 
+								WHERE b.testcaseId = a.testCaseId
+								AND b.testcaseVersion = a.testcaseVersion
+								AND b.activeflag = '0'
+								AND b.changeRequestNo = '$param->changeRequestNo'
+								AND a.projectId = b.projectId)
+					AND a.projectId = '$param->projectId'
+					AND a.activeflag = '1'
 			UNION
 			SELECT DISTINCT b.testCaseId,b.testCaseNo,b.testcaseVersion,b.testCaseDescription,'1' activeflag
 			FROM  MAP_RTM a,M_TESTCASE_HEADER b
@@ -486,14 +494,15 @@ class Rollback_model extends CI_Model{
 
 	public function getChangeRequestSchema($param){
 
-			$sqlStr = "SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'0' activeflag
-			FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
-			WHERE a.changeRequestNo = '$param->changeRequestNo'
+			$sqlStr = "SELECT DISTINCT a.schemaVersionId,a.schemaVersionNumber,a.tableName,'0' activeflag
+			FROM M_DATABASE_SCHEMA_VERSION a
+				WHERE  NOT EXISTS (SELECT b.* FROM MAP_SCHEMA b 
+						WHERE b.schemaVersionId = a.schemaVersionId
+						AND b.schemaVersion = a.schemaVersionNumber
+						AND b.changeRequestNo = '$param->changeRequestNo'
+						AND a.projectId = b.projectId)
 			AND a.projectId = '$param->projectId'
-			AND a.projectId = b.projectId
-			AND a.schemaVersionId <> b.schemaVersionId
-			AND a.schemaVersion <> b.schemaVersionNumber
-			AND b.activeflag = '1'
+			AND a.activeflag = '1'
 			UNION
 			SELECT DISTINCT b.schemaVersionId,b.schemaVersionNumber,b.tableName,'1' activeflag
 			FROM  MAP_SCHEMA a,M_DATABASE_SCHEMA_VERSION b
