@@ -814,16 +814,16 @@ class ChangeManagement extends CI_Controller{
 					$oldMinValue = $this->input->post('oldMin');
 					$oldMaxValue = $this->input->post('oldMax');
 
-					if($oldDataType == $dataType
-						|| (!empty($oldDataLength) && !empty($dataLength) && ((int)$dataLength == (int)$oldDataLength) && !empty($oldScale) && !empty($scalePoint) && ((int)$scalePoint == (int)$oldScale))
-						|| (!empty($oldScale) && !empty($scalePoint) && ((int)$scalePoint == (int)$oldScale))
-						|| (!empty($oldDefaultValue) && !empty($defaultValue) && ($oldDefaultValue == $defaultValue))
-						|| (!empty($oldMinValue) && !empty($minValue) && ((int)$oldMinValue == (int)$minValue))
-						|| (!empty($oldMaxValue) && !empty($maxValue) && ((int)$oldMaxValue == (int)$maxValue)))
+					if($oldDataType == $dataType 
+						&& (!empty($oldDataLength) && !empty($dataLength) && ((int)$dataLength == (int)$oldDataLength) && !empty($oldScale) && !empty($scalePoint) && ((int)$scalePoint == (int)$oldScale))
+						&& (!empty($oldScale) && !empty($scalePoint) && ((int)$scalePoint == (int)$oldScale))
+						&& (!empty($oldDefaultValue) && !empty($defaultValue) && ($oldDefaultValue == $defaultValue))
+						&& (!empty($oldMinValue) && !empty($minValue) && ((int)$oldMinValue == (int)$minValue))
+						&& (!empty($oldMaxValue) && !empty($maxValue) && ((int)$oldMaxValue == (int)$maxValue)))
 						//return true;
 					{
-						//echo 'error|'.ER_TRN_009;
-						echo 'error|'.(int)$oldDataLength;
+						echo 'error|'.ER_TRN_009;
+						//echo 'error|'.(int)$oldDataLength;
 
 						return false;
 					}

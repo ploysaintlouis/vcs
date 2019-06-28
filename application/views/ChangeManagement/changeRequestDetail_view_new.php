@@ -212,15 +212,24 @@
 															//var tr = $(this).parent().parent().html());
 															var url = baseUrl + "index.php/ChangeManagementRequest/delete_detail/"+id;
 															$.ajax({url: url, 
-															success: function(result){
+															success: function(data){
 																debugger
-																if(null != result){
-																	alert(result);
-																	location.reload();
+																if(null != data){
+																	var result = data.split("|");
+																	//alert(result[0]);
+																	if("error" == result[0]){
+																		alert(result[1]);
+																		return false;
+																	}
+																	if("error" != result[0]){
+																		alert('Delete Complete');
+																		location.reload();
+																	}
 																}else{
-																	alert(result);
-																	location.reload();
+																	alert("There is a problem when save Data, Please try to save again.");
+																	return false; 
 																}
+
 															}});
 														}
 													});

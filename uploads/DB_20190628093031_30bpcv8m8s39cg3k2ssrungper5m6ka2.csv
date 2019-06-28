@@ -1,0 +1,6 @@
+projectId,tableName,columnName,primaryKey,dataType,dataLength,decimalPoint,unique,defaultValue,notNull,minValue,maxValue
+1,Patient,SSN,Y,varchar,10,,Y,,Y,,
+1,Patient,FIRSTNAME,N,varchar,50,,N,,Y,,
+1,Patient,LASTNAME,N,varchar,50,,N,,Y,,
+1,Patient,BIRTHDATE,N,DATE,,,N,,Y,,
+1,Patient,ADDRESS,N,varchar,100,,N,,Y,,

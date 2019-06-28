@@ -192,22 +192,22 @@ class ChangeManagementRequest extends CI_Controller {
     function delete_detail($id){
 			$data = array();
 			$data['keyid'] = $id;
-
+			$output = '';
 			$userId = $this->session->userdata('userId');
 			$user = $this->session->userdata('username');
 
 			if(null !== $id && !empty($id)){
-				//echo $id;
+				//echo $keyList[2];
 				$keyList = explode("%7C", $id);
-				//inputid
+				//echo $keyList[2];
 				$param = (object) array(
 					'projectId' => $keyList[0], 
 					'dataId' => $keyList[1], 
-					'schemaVersionId' => $keyList[2], 
+					'schemaVersionId' => trim($keyList[2]), 
 					'functionId' => $keyList[3], 
 					'typeData' => $keyList[4],
 					'functionVersion' => $keyList[5],
-					'schemaId' => $keyList[6],
+					'schemaId' => trim($keyList[6]),
 					'userId'	=>$userId,
 					'user' => $user
 				);
@@ -225,55 +225,18 @@ class ChangeManagementRequest extends CI_Controller {
 			$records = $this->mChange->searchTempFRInputChangeList($param);
 			//echo count($records);
 			if(0 == count($records)){
-				$saveResult = $this->deleteTempFRInputChangeList($param,$paramdetail);
+				$saveResult = $this->mChange->deleteTempFRChangeList($param,$paramdetail);
 				if($saveResult){
 					//	refresh Change List
-					$output = 'Done';
+					$output = "DONE";
 				}else{
-					$output = 'error|'.ER_MSG_013;
+					$output = "error|".ER_MSG_013;
 				}
 			}else{
-				$output = 'error|'.ER_TRN_001;
+				$output = "error|".ER_TRN_001;
 			}
 			echo $output;
     }	
-
-		function deleteTempFRInputChangeList($param,$paramdetail){
-			$currentDateTime = date('Y-m-d H:i:s');
-
-			$sqlStr = "INSERT INTO T_TEMP_CHANGE_LIST (userId, functionId, functionVersion,typeData, dataName, schemaVersionId, newDataType, newDataLength, 
-			newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag,
-			schemaId) 
-				VALUES (
-					'$param->userId', 
-					'$param->functionId',
-					'$param->functionVersion',
-					'$param->typeData',
-					'$paramdetail->dataName',
-					'$param->schemaVersionId',
-				  '$paramdetail->dataType',
-					'',
-					'',
-					'',
-					'',
-					'',
-					'',
-					'',
-					'$paramdetail->tableName',
-					'$paramdetail->columnName',
-					'delete',
-					'$param->user', 
-					'$currentDateTime',
-					'$param->dataId',
-					NULL,
-					NULL,
-					'$param->schemaId')";
-			//echo $sqlStr;
-			$result = $this->db->query($sqlStr);
-			return $result;
-
-		}
-
 		
 	function deleteTempFRInputList($id){
 
@@ -303,7 +266,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$data = array();
 		$data['change_title'] = array();
 		/// *** call model and bind data here.
-		$ChangeRequestNo = $this->mRunning->running_ch();
+		$ChangeRequestNo = $this->mRunning->running_ch($param);
 		$Change_title = "CH";
 		$ChangeRequestNo->changeRequestId = str_pad($ChangeRequestNo->changeRequestId, 2,'0',STR_PAD_LEFT);
 		$UserName = $this->mUser->UserName($param->userId);
@@ -430,7 +393,7 @@ class ChangeManagementRequest extends CI_Controller {
 				}
 				$row["change_type"]= $change_title;
 				$row["version"]= $value['functionVersion'];
-				$frNo = $value["functionId"];
+				$frId = $value["functionId"];
 				$frVersion = $value['functionVersion'];
 				array_push($data['aff_fr_list'],$row);
 			}
@@ -500,6 +463,7 @@ class ChangeManagementRequest extends CI_Controller {
 			//echo $change_title;
 
 			if($frId != $value["functionId"] && $frVersion != $value['functionVersion']){
+
 				$row["no"] = $i++;
 				$row["frId"]= $value["functionId"];
 				$row["fr_no"] =$param->functionNo;
@@ -514,8 +478,9 @@ class ChangeManagementRequest extends CI_Controller {
 				}
 				$row["change_type"]= $change_title;
 				$row["version"]= $value['functionVersion'];
-				$frNo = $value["functionId"];
+				$frId = $value["functionId"];
 				$frVersion = $value['functionVersion'];
+
 				array_push($data['aff_fr_list'],$row);
 			}
 		}
@@ -537,6 +502,7 @@ class ChangeManagementRequest extends CI_Controller {
 				$row["frId"]= $value["FROth_Id"];
 				$row["fr_no"]= $value["FROth_NO"];
 				$row["version"]= $value['FROth_Version'];
+
 				array_push($data['aff_fr_list'],$row);
 				$frId = $value["FROth_Id"];
 			}
@@ -551,6 +517,7 @@ class ChangeManagementRequest extends CI_Controller {
 		/// *** call model and bind data here.
 		$row=array();
 		$ListofChangeSchemaOthFr = $this->mChange->checkOtherFr($param);
+		//echo count($ListofChangeSchemaOthFr);
 		$y=1;
 		if(0 < count($ListofChangeSchemaOthFr)) {
 		foreach($ListofChangeSchemaOthFr as $value){
@@ -608,9 +575,13 @@ class ChangeManagementRequest extends CI_Controller {
 			$y++;}
 		}
 	}else{
-		$paramothFR = array();
+		$paramothFR = (object) array(
+			'FROth_Id' => '',
+			'FROth_Version' => '',
+			'FROth_NO'	=> ''
+		);		//print_r($paramothFR);
 		$ListofTCAffected= $this->mChange->checkTestCaseAffected($param,$paramothFR,$y);
-		//	print_r($ListofTCAffected);
+			//print_r($ListofTCAffected);
 			$i = 1;
 			$testNo = "";
 			$testVersion = "";
@@ -649,6 +620,7 @@ class ChangeManagementRequest extends CI_Controller {
 								}
 							}
 						}
+						//echo $row["test_no"]; echo $row["version"];
 						$row['change_type'] = $changetype;
 						array_push($data['aff_testcase_list'],$row);
 					}
@@ -1150,7 +1122,7 @@ class ChangeManagementRequest extends CI_Controller {
 		$FR_Description = $this->input->post('FR_Description');
 		$userId = $this->session->userdata('userId');
 		$user = $this->session->userdata('username');
-		$rowResult = $this->mRunning->Update_Running_ch();
+		$rowResult = $this->mRunning->Update_Running_ch($prjId);
 
 		$output = '';
 		//print_r($_POST);
@@ -1641,9 +1613,10 @@ class ChangeManagementRequest extends CI_Controller {
 				//echo "2";
 				$updateRTM = $this->mVersion->updateRTMVersion($rtm_relate);
 				$Complete = $this->mVersion->insertRTMVersion($relate_new_fr,$relate_new_tc);
-				if (0 <	count($Complete)){
-					$DeleteTemp_change = $this->mVersion->deleteTempChange($param);
-				}
+
+			}
+			if (0 <	count($Complete)){
+				$DeleteTemp_change = $this->mVersion->deleteTempChange($param);
 			}
 			$updateMapRTM = $this->mVersion->updateMAPRTM($param);
 			$CompleteMAP = $this->mVersion->insertRTMMAP($param);

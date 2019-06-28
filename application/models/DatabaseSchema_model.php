@@ -58,7 +58,7 @@ class DatabaseSchema_model extends CI_Model{
 
 	function searchCountAllDatabaseSchema(){
 		$result = $this->db->query("
-			SELECT distinct tableName, columnName FROM M_DATABASE_SCHEMA_INFO");
+			SELECT distinct tableName,Version  FROM M_DATABASE_SCHEMA_INFO");
 		return $result->num_rows();
 	}
 
@@ -106,9 +106,9 @@ class DatabaseSchema_model extends CI_Model{
 				$value->schemaVersionId = $result;
 				$this->insertDatabaseSchemaInfo($value, $projectId,$schemaVersionId);
 			}
-			$this->insertDatabaseSchemaMAP($value, $projectId,$schemaVersionId);
 		}
-		
+		$this->insertDatabaseSchemaMAP($value, $projectId,$schemaVersionId);
+
     	$trans_status = $this->db->trans_status();
 	    if($trans_status == FALSE){
 	    	$this->db->trans_rollback();
@@ -174,7 +174,7 @@ class DatabaseSchema_model extends CI_Model{
 	function insertDatabaseSchemaMAP($param, $projectId,$schemaVersionId){
 
 		$sqlStr = "INSERT INTO MAP_SCHEMA 
-		(chagneRequestNo,tableName, schemaVersionId,projectId,schemaVersion) 
+		(changeRequestNo,tableName, schemaVersionId,projectId,schemaVersion) 
 		VALUES (NULL,'{$param->tableName}', {$schemaVersionId},$projectId,{$param->schemaVersionNo})";
 
 		$result = $this->db->query($sqlStr);

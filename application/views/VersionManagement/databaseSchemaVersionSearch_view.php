@@ -130,14 +130,14 @@
                                     <tbody>
                                         <tr>
                                             <th>#</th>
-                                            <th>Table Name</th>
+                                            <!--<th>Table Name</th> -->
                                             <th>Column Name</th>
-                                            <th>Version</th>
-                                            <th>isPrimaryKey</th>
-                                            <th>Data Type</th>
-                                            <th>Data Length</th>
+											<!--<th>Version</th> -->
+											<th>Data Type</th>
+											<th>Data Length</th>
                                             <th>Scale</th>
-                                            <th>Unique</th>
+											<th>PrimaryKey</th>
+											<th>Unique</th>
                                             <th>NOT NULL</th>
                                             <th>Default</th>
                                             <th>Min</th>
@@ -149,15 +149,15 @@
                                             foreach ($resultList as $value): ?>
                                             <tr>
                                                 <td><?php echo $define++; ?></td>
-                                                <td><?php echo $value['tableName']; ?></td>
+                                               <!-- <td><?php echo $value['tableName']; ?></td>  -->
                                                 <td><?php echo $value['columnName']; ?></td>
-                                                <td>
+                                               <!-- <td>
                                                     <?php echo $value['schemaVersionNumber']; ?>
-                                                </td> 
-                                                <td><?php echo $value['constraintPrimaryKey']; ?></td>
-                                                <td><?php echo $value['dataType']; ?></td>
-                                                <td><?php echo $value['dataLength']; ?></td>
-                                                <td><?php echo $value['decimalPoint']; ?></td>
+                                                </td>  -->
+												<td><?php echo $value['dataType']; ?></td>
+												<td><?php echo $value['dataLength']; ?></td>
+												<td><?php echo $value['decimalPoint']; ?></td>
+												<td><?php echo $value['constraintPrimaryKey']; ?></td>
                                                 <td><?php echo $value['constraintUnique']; ?></td>
                                                 <td><?php echo $value['constraintNull']; ?></td>
                                                 <td><?php echo $value['constraintDefault']; ?></td>

@@ -214,6 +214,56 @@ class ChangeManagement_model extends CI_Model{
 		return $this->db->affected_rows();
 	}
 
+	function deleteTempFRChangeList($param,$paramdetail){
+		$currentDateTime = date('Y-m-d H:i:s');
+
+		$param->schemaVersionId = ('0' == $param->schemaVersionId)? "": "NULL";
+		$param->schemaId = ('0' == $param->schemaId)? "": "NULL";
+
+		if (('0' == $param->schemaVersionId) || (null == $param->schemaVersionId) || (empty($param->schemaVersionId)) ) {
+			$param->schemaVersionId = "NULL";
+		}
+
+		$dataLength = !empty($param->dataLength)? "'".$param->dataLength."'" : "NULL";
+		$tableName = !empty($paramdetail->tableName)? "'".$paramdetail->tableName."'" : "NULL";
+		$columnName = !empty($paramdetail->columnName)? "'".$paramdetail->columnName."'" : "NULL";
+
+		$dataLength = !empty($dataLength)? $dataLength : "NULL";
+
+
+		$sqlStr = "INSERT INTO T_TEMP_CHANGE_LIST (userId, functionId, functionVersion,typeData, dataName, schemaVersionId, newDataType, newDataLength, 
+		newScaleLength, newUnique, newNotNull, newDefaultValue, newMinValue, newMaxValue, tableName, columnName, changeType, createUser, createDate,dataId,confirmflag,approveflag,
+		schemaId) 
+			VALUES (
+				'$param->userId', 
+				'$param->functionId',
+				'$param->functionVersion',
+				'$param->typeData',
+				'$paramdetail->dataName',
+				'$param->schemaVersionId',
+			    '$paramdetail->dataType',
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				$tableName,
+				$columnName,
+				'delete',
+				'$param->user', 
+				'$currentDateTime',
+				'$param->dataId',
+				NULL,
+				NULL,
+				'$param->schemaId')";
+		//echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result;
+
+	}
+
 	function insertTempFRInputChange($param){
 		$currentDateTime = date('Y-m-d H:i:s');
 
@@ -783,7 +833,7 @@ class ChangeManagement_model extends CI_Model{
 
 		$sqlStr = " SELECT a.*,b.dataName FR_NAME
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
-		WHERE a.confirmflag=1 
+		WHERE a.confirmflag= '1' 
 		AND a.tableName=b.refTableName 
 		AND a.columnName = b.refColumnName
 		AND a.functionId = b.functionId
@@ -861,12 +911,6 @@ class ChangeManagement_model extends CI_Model{
 
 	function checkChangeRequestNotRelateSchema($param){
 
-		$sqlStr = "CREATE TEMPORARY TABLE tmp_existdb 
-		(SELECT  *,'' FR_NAME
-		FROM T_TEMP_CHANGE_LIST
-		WHERE 1=2)";
-		$result = $this->db->query($sqlStr);
-
 		$sqlStr = " SELECT a.*,b.dataName FR_NAME
 		FROM T_TEMP_CHANGE_LIST a, M_FN_REQ_DETAIL b
 		WHERE a.confirmflag='1' 
@@ -885,7 +929,7 @@ class ChangeManagement_model extends CI_Model{
 		AND a.functionId = '$param->functionId'
 		AND a.functionversion ='$param->functionVersion'
 		AND a.columnName is  NULL
-		";
+		";//echo $sqlStr ;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}		
@@ -929,7 +973,7 @@ class ChangeManagement_model extends CI_Model{
 
 	function checkTestCaseAffected($param,$paramothFR,$y){
 //echo $paramothFR->FROth_NO;
-		if (!empty($paramothFR)){
+		if (!empty($paramothFR) || (null != $paramothFR)){
 				$FROth_No =  $paramothFR->FROth_NO;
 				$FROth_Id =  $paramothFR->FROth_Id;
 				$FROth_Version =  $paramothFR->FROth_Version;
@@ -980,9 +1024,10 @@ class ChangeManagement_model extends CI_Model{
 			AND a.testCaseId = b.testCaseId
 			AND a.testCaseversion = b.testCaseversion	";
 		}
+		//echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
-//echo $sqlStr;
+
 		//หา TESTCASE ที่สัมพันธ์กับ dataname โดยดูจาก dataId ที่ทำการ change ของ testId นั้น
 		/*
 		$sqlStr = "SELECT a.testCaseId,a.testCaseNo,a.testcaseVersion,c.tctype

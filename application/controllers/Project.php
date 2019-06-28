@@ -27,6 +27,8 @@ class Project extends CI_Controller {
 		$this->load->model('RTM_model', 'mRTM');
 		$this->load->library('form_validation', null, 'FValidate');
 		$this->load->library('session');
+		$this->load->model('Running_model', 'mRunning');
+
 	}
 
 	public function index(){
@@ -183,6 +185,7 @@ class Project extends CI_Controller {
 						//echo "success";
 						$result = $this->Project->insertProjectInformation($paramObj);
 						if(null != $result){
+							$result = $this->mRunning->Add_Running_ch($paramObj);
 							echo "<script type='text/javascript'>alert('Save Successful!')</script>";
 							$this->viewDetail($result);
 							return false;
