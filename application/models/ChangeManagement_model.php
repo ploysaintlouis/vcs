@@ -54,6 +54,27 @@ class ChangeManagement_model extends CI_Model{
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
+	
+	function searchTempFRChange($param){
+
+		if(!empty($param->functionId)){
+			$where[] = "functionId = '$param->functionId'";
+		}
+
+		if(!empty($param->functionVersion)){
+			$where[] = "functionVersion = '$param->functionVersion'";
+		}
+
+		$where_clause = implode(' AND ', $where);
+
+		$sqlStr = "SELECT DISTINCT functionId,functionVersion
+			FROM T_TEMP_CHANGE_LIST
+			WHERE $where_clause
+			ORDER BY lineNumber";
+		//	echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}
 
 	function searchTempFRChangeList($param){
 

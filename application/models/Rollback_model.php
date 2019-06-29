@@ -841,9 +841,9 @@ function updateTestcaseDetail($param_TC){
 	AND h.changeFunctionId = fh.functionId
 	AND h.changeFunctionVersion = fh.functionVersion
 	AND $where_condition
-	AND  h.changeRequestNo NOT IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1')
+	AND  h.changeRequestNo NOT IN (SELECT ChangeRequestNo FROM TEMP_ROLLBACK WHERE status = '1' and projectId = '$param->projectId')
   ORDER BY h.changeDate desc";
-	echo $sqlStr;
+//	echo $sqlStr;
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}

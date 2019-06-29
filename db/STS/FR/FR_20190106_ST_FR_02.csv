@@ -2,4 +2,4 @@ functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataT
 ST_FR_02,View Customer Information,input,ACCOUNT,,,,CUSTOMER,ACCOUNT
 ST_FR_02,View Customer Information,input,CUSTOMER_NAME,,,,CUSTOMER,CUSTOMER_NAME
 ST_FR_02,View Customer Information,input,BIRTHDATE,,,,CUSTOMER,BIRTHDATE
-ST_FR_02,View Customer Information,output,AGE,INT,,,,
+ST_FR_02,View Customer Information,output,AGE,INT,3,,,

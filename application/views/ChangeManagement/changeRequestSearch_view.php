@@ -109,7 +109,8 @@
 			                			<i class="fa fa-edit"></i>
 			                			 Change
 			                		</button>
-			                	</td>
+								</td>
+
 			                </tr>
 			            	<?php endforeach; ?>
 						</tbody>

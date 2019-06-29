@@ -328,6 +328,7 @@ class FunctionalRequirement_model extends CI_Model {
 
 	function insertFRHeader($param,$New_functionId){
 		$currentDateTime = date('Y-m-d H:i:s');
+		
 	/*	$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionNo, functionDescription, projectId, createDate, createUser, updateDate, updateUser) VALUES ('{$param->functionNo}', '{$param->functionDescription}', {$param->projectId}, '$currentDateTime', '{$param->user}', '$currentDateTime', '{$param->user}')";*/
 	if($param->functionVersionNo == null){
 		$sqlStr = "INSERT INTO M_FN_REQ_HEADER (functionId,functionNo, functionDescription, projectId, 
@@ -372,6 +373,7 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 		$param->constraintDefault = !empty($param->constraintDefault)?  "'".$param->constraintDefault."'" : "NULL";
 		$param->constraintMinValue = !empty($param->constraintMinValue)?  "'".$param->constraintMinValue."'" : "NULL";
 		$param->constraintMaxValue = !empty($param->constraintMaxValue)?  "'".$param->constraintMaxValue."'" : "NULL";
+		$param->dataLength = !empty($param->dataLength)?  "'".$param->dataLength."'" : "NULL";
 
 		if ($param->referTableName !=null) {
 				$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,
@@ -382,7 +384,7 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 		 '{$param->referColumnName}', '$currentDateTime', '{$param->user}', '$currentDateTime', 
 		 '{$param->user}','$functionId','$param->functionNo','$param->schemaVersionId','$param->dataType',
 		 '$currentDateTime',NULL,'1','1',
-		 '{$param->dataLength}',{$param->decimalPoint},'{$param->constraintPrimaryKey}','{$param->constraintUnique}','{$param->constraintDefault}','{$param->constraintNull}','{$param->constraintMinValue}','{$param->constraintMaxValue}')";
+		 {$param->dataLength},{$param->decimalPoint},'{$param->constraintPrimaryKey}','{$param->constraintUnique}','{$param->constraintDefault}','{$param->constraintNull}',{$param->constraintMinValue},{$param->constraintMaxValue})";
 		//var_dump($sqlStr);
 		}else{
 			$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,
@@ -393,7 +395,7 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 			NULL, '$currentDateTime', '{$param->user}', '$currentDateTime', 
 			'{$param->user}','$functionId','$param->functionNo',NULL,'$param->dataType',
 			'$currentDateTime',NULL,'1','1',
-			'{$param->dataLength}','{$param->decimalPoint}',NULL,NULL,NULL,NULL,NULL,NULL)";   
+			{$param->dataLength},{$param->decimalPoint},NULL,NULL,NULL,NULL,NULL,NULL)";   
 		}
 		$result = $this->db->query($sqlStr);
 

@@ -71,7 +71,7 @@ class ApproveChange extends CI_Controller{
 		$result = null;
 
 		$projectId = $this->input->post('inputProject');
-		print_r($projectId);
+		//print_r($projectId);
 		$this->FValidate->set_rules('inputProject', null, 'required');
 		if($this->FValidate->run()){
 			$param = (object) array('projectId' => $projectId, 'status' => ACTIVE_CODE);
