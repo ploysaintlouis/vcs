@@ -966,7 +966,8 @@ class ChangeManagement_model extends CI_Model{
 		AND a.tableName is NOT NULL
 		AND a.columnName is NOT NULL
 		AND (a.newdataType <> b.dataType
-		OR a.newdataLength <> b.dataLength)";
+		OR a.newdataLength <> b.dataLength)
+		AND b.activeflag = '1' ";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
 		return $result->result_array();

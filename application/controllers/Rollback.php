@@ -180,6 +180,10 @@ class Rollback extends CI_Controller{
 				'projectId' 	  => $projectId,
 				'changeRequestNo' => $changeRequestNo);
 
+			//** Delete RTM MAP */
+			$DeleteRTMMap = $this->mRollback->DeleteRTMMAP($param);
+			$DeleteSchemaMap = $this->mRollback->DeleteSchemaMAP($param);
+
 				/** 1. Get FR Change Details */
 				$changeFRInfo = $this->mRollback->getChangeRequestFunctionalRequirement($param);
 				//print_r($changeFRInfo);
@@ -258,6 +262,37 @@ class Rollback extends CI_Controller{
 							$UpdateStatusRTM_New = $this->mRollback->updateRollback_RTMHeader($param_RTM);
 						}
 				}
+
+			/** 5. Get Schema Details */
+				$changeSchema = $this->mRollback->getChangeSchema($param);
+				foreach ($changeSchema as $value) {	
+					$paramSchema = (object) array(
+						'projectId'  => $projectId,
+						'schemaVersionId' => $value['schemaVersionId'],
+						'schemaVersion' 	  => $value['schemaVersionNumber'],
+						'tableName' => $value['tableName']
+						);	
+						if (0 < count($paramSchema)){
+							$UpdateMAPSchema = $this->mRollback->insertRollback_MAPSchema($paramSchema);
+						}
+				}	
+
+
+				/** 6. Get RTM Details */
+				$changeRTM = $this->mRollback->getChangeRTM($param);
+				foreach ($changeRTM as $value) {	
+					$paramRTM = (object) array(
+						'projectId'  => $projectId,
+						'functionId' => $value['functionId'],
+						'functionVersion' 	  => $value['functionVersion'],
+						'testcaseId' => $value['testCaseId'],
+						'testcaseVersion' => $value['testCaseVersion'],
+						'activeflag'	=> 1
+						);	
+						if (0 < count($paramRTM)){
+							$UpdateMAPRTM = $this->mRollback->insertRollback_MAPRTM($paramRTM);
+						}
+				}				
 
 					/** 5. Display Result */
 					$this->displayResult($changeRequestNo,$projectId);

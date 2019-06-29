@@ -1,0 +1,30 @@
+{
+	"title_panel":{
+		"change_title":{
+			"CH_NO":"CH03",
+			"FR_Request":"HO_FR_02",
+			"FR_Description":"View Patient Information",
+			"FR_Version":"1 ",
+			"username":"ploy"
+		}
+	},
+	"change_panel":{
+		"change_list":[{
+			"no":1,
+			"typeData":"output",
+			"dataName":"FIRSTNAME",
+			"newDataType":"VARCHAR ",
+			"newDataLength":"30",
+			"newScaleLength":null,
+			"newUnique":"N",
+			"newNotNull":"Y",
+			"newDefaultValue":null,
+			"newMinValue":null,
+			"newMaxValue":null,
+			"tableName":"PATIENT",
+			"columnName":"FIRSTNAME",
+			"changeType":"edit"
+		}]
+	}
+}
+

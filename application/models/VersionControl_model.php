@@ -73,7 +73,14 @@ class VersionControl_model extends CI_Model{
     function InsertRequirementsHeader($param){
         
 		$currentDateTime = date('Y-m-d H:i:s');
-        $New_functionVersion = $param->functionVersion+1;
+        $fnId = $this->SearchRequirementFRId($param);
+        foreach($fnId as $value){
+            $New_functionVersion = (object) array(
+                'functionVersion' => $value['functionVersion']
+            );
+        }  
+        $New_functionVersion = $New_functionVersion->functionVersion+1;
+
         $fnDesc = $this->SearchRequirementsDesc($param);
         foreach($fnDesc as $value){
             $fnDesc = (object) array(
@@ -193,6 +200,32 @@ class VersionControl_model extends CI_Model{
                 WHERE projectid = '$param->projectId' 
                 AND functionNo = '$param->functionNo'
                 AND functionVersion = '$param->functionVersion'
+        ";
+       $result = $this->db->query($strsql);
+       //echo $sqlStr ;
+       return $result->result_array();
+    } 
+
+    function SearchRequirementFRId($param) {
+    
+        $strsql = "SELECT MAX(functionVersion) AS functionVersion
+                FROM M_FN_REQ_HEADER
+                WHERE projectid = '$param->projectId' 
+                AND functionNo = '$param->functionNo'
+                AND functionId = '$param->functionId'
+        ";
+       $result = $this->db->query($strsql);
+       //echo $sqlStr ;
+       return $result->result_array();
+    } 
+
+    function SearchRequirementTCId($param,$data_list) {
+    
+        $strsql = "SELECT MAX(testcaseVersion) AS testcaseVersion
+                FROM M_TESTCASE_HEADER
+                WHERE projectid = '$param->projectId' 
+                AND testCaseNo = '$data_list->testCaseNo'
+                AND testCaseId = '$data_list->testCaseId'
         ";
        $result = $this->db->query($strsql);
        //echo $sqlStr ;
@@ -698,9 +731,16 @@ class VersionControl_model extends CI_Model{
 	function InsertTestCaseHeader($param,$data_list){
         
 		$currentDateTime = date('Y-m-d H:i:s');
-        $New_TCVer = $data_list->testcaseVersion+1;
 
-        $sqlStr = "INSERT INTO M_TESTCASE_HEADER (projectId,testcaseId,testCaseNo,testcaseVersion,
+        $TC_Ver = $this->SearchRequirementTCId($param,$data_list);
+        foreach($TC_Ver as $value){
+            $TCVer = (object) array(
+                'testcaseVersion' => $value['testcaseVersion']
+            );
+        }  
+        $New_TCVer = $TCVer->testcaseVersion+1;
+
+        $sqlStr = "INSERT INTO M_TESTCASE_HEADER (projectId,testCaseId,testCaseNo,testcaseVersion,
         testCaseDescription,expectedResult,createDate, createUser, updateDate, updateUser,activeflag) 
         VALUES ('{$param->projectId}','{$data_list->testCaseId}','{$data_list->testCaseNo}',
         '$New_TCVer','{$data_list->testCaseDescription}','{$data_list->expectedResult}',

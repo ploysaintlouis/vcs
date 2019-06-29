@@ -860,6 +860,32 @@ function updateTestcaseDetail($param_TC){
 		//return $strsql;
 	}   
 
+	function DeleteRTMMAP($param){
+
+		$strsql = "DELETE FROM MAP_RTM
+					 WHERE changeRequestNo IS NULL
+					   AND projectId = '$param->projectId'
+					 ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+		//return $strsql;
+	} 
+
+	
+	function DeleteSchemaMAP($param){
+
+		$strsql = "DELETE FROM MAP_SCHEMA
+					 WHERE changeRequestNo IS NULL
+					 AND projectId = '$param->projectId'
+					 ";
+
+		$result = $this->db->query($strsql);
+		return $this->db->affected_rows();
+		//return $strsql;
+	} 
+
+
 	public function searchChangesInformation($param){
 		
 		if(isset($param->projectId) && !empty($param->projectId)){
@@ -898,6 +924,64 @@ function updateTestcaseDetail($param_TC){
 		$result = $this->db->query($sqlStr);
 		return $result->result_array();
 	}
+
+	public function getChangeRTM($param){
+
+		$sqlStr = "SELECT functionId,functionVersion,testCaseId,testCaseVersion
+								 FROM M_RTM_VERSION
+								WHERE activeflag = '1' 
+								  AND projectId = '$param->projectId' ";
+	//	print_r($sqlStr);
+	$result = $this->db->query($sqlStr);
+	return $result->result_array();
+}
+
+public function getChangeSchema($param){
+
+	$sqlStr = "SELECT DISTINCT schemaVersionId,schemaVersionNumber,tableName
+							 FROM M_DATABASE_SCHEMA_VERSION
+							WHERE activeflag = '1' 
+								AND projectId = '$param->projectId' 
+								";
+//	print_r($sqlStr);
+$result = $this->db->query($sqlStr);
+return $result->result_array();
+}
+
+function insertRollback_MAPRTM($paramRTM) {
+	$currentDateTime = date('Y-m-d H:i:s');
+
+	$strsql = "INSERT INTO MAP_RTM 
+	(projectid,changeRequestNo,functionId,functionVersion,testcaseId,testcaseVersion,activeflag)
+	VALUES('$paramRTM->projectId',NULL,'$paramRTM->functionId',
+	'$paramRTM->functionVersion','$paramRTM->testcaseId','$paramRTM->testcaseVersion',
+	'$paramRTM->activeflag')
+	";
+	$result = $this->db->query($strsql);
+ if($result){
+	$query = $this->db->query("SELECT MAX(Id) AS last_id FROM MAP_RTM");
+		 $resultId = $query->result();
+		 return $resultId[0]->last_id;
+ }
+ return NULL;
+} 
+
+function insertRollback_MAPSchema($paramSchema) {
+	$currentDateTime = date('Y-m-d H:i:s');
+
+	$strsql = "INSERT INTO MAP_SCHEMA
+	(projectid,changeRequestNo,schemaVersionId,schemaVersion,tableName)
+	VALUES('$paramSchema->projectId',NULL,'$paramSchema->schemaVersionId',
+	'$paramSchema->schemaVersion','$paramSchema->tableName')
+	";
+	$result = $this->db->query($strsql);
+ if($result){
+	$query = $this->db->query("SELECT MAX(Id) AS last_id FROM MAP_SCHEMA");
+		 $resultId = $query->result();
+		 return $resultId[0]->last_id;
+ }
+ return NULL;
+} 
 
 
 }
