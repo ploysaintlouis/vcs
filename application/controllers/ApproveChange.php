@@ -18,6 +18,7 @@ class ApproveChange extends CI_Controller{
 		$this->load->model('Miscellaneous_model', 'mMisc');
 		$this->load->model('ChangeManagement_model', 'mChange');
 		$this->load->model('FunctionalRequirement_model', 'mFR');
+		$this->load->model('Running_model', 'mRunning');
 		$this->load->library('form_validation', null, 'FValidate');
 	}
 
@@ -168,7 +169,9 @@ class ApproveChange extends CI_Controller{
 
 	function delete_detail($id){
 		$data = array();
-		$data['keyid'] = $id;
+		$data['keyid'] = $id;		
+		$userId = $this->session->userdata('userId');
+		$user = $this->session->userdata('username');
 	//	echo $id;
 		if(null !== $id && !empty($id)){
 			//echo $keyId;
@@ -180,10 +183,65 @@ class ApproveChange extends CI_Controller{
 				'functionVersion' => $keyList[2]
 			);
 		}	
-		$userId = $this->session->userdata('userId');
-		$user = $this->session->userdata('username');
+		$FR_NO  = $this->mChange->getFunctionNo($param);
+		//echo $FR_NO;
+		foreach ($FR_NO as $value){
+			$functionNo = (object) array ( 
+					'FR_NO' => $value['functionNo']);
+		}
+		$prjId = $param->projectId;
 
 		//echo $param->functionId;
+		$CH_NO = $this->mRunning->running_ch_change($param);
+		foreach ($CH_NO as $value){
+			$CH = (object) array ( 'CH_NO' => $value['changeRequestId']);
+		}
+
+		$newCurrentDate = date('Y-m-d H:i:s');
+		//** save change request header.
+		$paramInsert = (object) array(
+			'changeRequestNo' => 'CH0'.$CH->CH_NO,
+			'changeUser' => $userId,
+			'changeDate' => $newCurrentDate,
+			'projectId' => $param->projectId,
+			'changeFunctionId' => $param->functionId,
+			'changeFunctionNo' => $functionNo->FR_NO,
+			'changeFunctionVersion' => $param->functionVersion,
+			'changeStatus' => 0,
+			'user' => $user,
+			'currentDate' => $newCurrentDate
+		);
+		$this->mChange->insertChangeRequestHeader($paramInsert);
+
+		//2. save change request details.
+		$i = 1;
+		$RelateResultSCHEMA = $this->mChange->searchChangeRequestrelateSCHEMA($param);
+		print_r($RelateResultSCHEMA);
+		
+		foreach ($RelateResultSCHEMA as $value) {
+			$paramInsert = (object) array(
+				'changeRequestNo' => 'CH0'.$CH->CH_NO,
+				'sequenceNo' => $i++,
+				'typeData'	=> $value['typeData'],
+				'changeType' => $value['changeType'],
+				'dataId' => $value['dataId'],
+				'dataName' => $value['dataName'], 
+				'schemaId' => $value['schemaId'],
+				'schemaVersionId' => $value['schemaVersionId'],
+				'dataType' => $value['newDataType'],
+				'dataLength' => $value['newDataLength'],
+				'scale' => $value['newScaleLength'],
+				'unique' => $value['newUnique'],
+				'notNull' => $value['newNotNull'],
+				'default' => $value['newDefaultValue'],
+				'min' => $value['newMinValue'],
+				'max' => $value['newMaxValue'],
+				'tableName' => $value['tableName'],
+				'columnName' => $value['columnName']);
+			$this->mChange->insertChangeRequestDetail($paramInsert);		
+		}
+		$rowResult = $this->mRunning->Update_Running_ch($prjId);
+
 		$dataDelete = $this->mChange->deleteTempFRInputChangeList($param);
 		
 	}			

@@ -410,7 +410,7 @@ class Rollback_model extends CI_Model{
 
 		$strsql = "INSERT INTO TEMP_ROLLBACK 
 		(projectid,ChangeRequestNo,status,userId,requestDate,reason)
-		VALUES('$projectId','$changeRequestNo','0','$userId','$currentDateTime','$reason')
+		VALUES('$projectId','$changeRequestNo',NULL,'$userId','$currentDateTime','$reason')
 		";
     $result = $this->db->query($strsql);
    if($result){
@@ -431,7 +431,7 @@ class Rollback_model extends CI_Model{
 				a.reason
 			 FROM TEMP_ROLLBACK a,M_USERS b
 			WHERE a.userId = b.userId
-			AND a.status = '0'
+			AND a.status IS NULL
 			AND projectId = '$param->projectId'
 			ORDER BY requestDate";
 		$result = $this->db->query($sqlStr);
@@ -802,7 +802,7 @@ function updateTestcaseDetail($param_TC){
 		 status = '$criteria->changeStatus'
 		WHERE projectId = '$criteria->projectId'
 		AND changeRequestNo =  '$criteria->changeRequestNo'
-		AND status = '0'
+		AND status IS NULL
 		";
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
@@ -848,12 +848,14 @@ function updateTestcaseDetail($param_TC){
 		return $result->result_array();
 	}
 
-	function deleteTempRollbackList($changeRequestNo){
+	function deleteTempRollbackList($changeRequestNo,$projectId){
 		$changeRequestNo  = trim($changeRequestNo);
 
-		$strsql = "DELETE FROM TEMP_ROLLBACK
+		$strsql = "UPDATE TEMP_ROLLBACK
+		SET status = '0'
 					 WHERE ChangeRequestNo ='$changeRequestNo'
-					 AND status = '0' ";
+					 AND projectId = '$projectId'
+					 AND status is NULL ";
 
 		$result = $this->db->query($strsql);
 		return $this->db->affected_rows();
@@ -965,6 +967,20 @@ function insertRollback_MAPRTM($paramRTM) {
  }
  return NULL;
 } 
+
+public function searchRollbackList(){
+
+	$sqlStr = "SELECT a.*,b.projectNameAlias,b.projectName,c.changeFunctionNo,c.changeFunctionVersion
+							 FROM TEMP_ROLLBACK a,M_PROJECT b,T_CHANGE_REQUEST_HEADER c
+							WHERE a.projectId = b.projectId
+								AND a.projectId = c.projectId
+								AND a.ChangeRequestNo = c.changeRequestNo
+								AND a.status IS NOT NULL
+								";
+//	print_r($sqlStr);
+$result = $this->db->query($sqlStr);
+return $result->result_array();
+}
 
 function insertRollback_MAPSchema($paramSchema) {
 	$currentDateTime = date('Y-m-d H:i:s');

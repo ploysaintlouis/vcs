@@ -578,7 +578,7 @@
 		<div class="col-md-12">
 			<form role="form" method="post" id="cancelChange_form" action="<?php echo base_url() ?>index.php/Rollback/doCancelProcess/">
 				<input type="hidden" name="changeRequestNo" value="<?php echo $keyParam['changeRequestNo'] ?>">
-        		<input type="hidden" name="projectId" value="<?php echo $keyParam['projectId'] ?>">
+        		<input type="hidden" name="projectId" id="projectId" value="<?php echo $keyParam['projectId'] ?>">
 				<div class="box box-solid" style="margin-top: 10px;">
 					<div class="box-body">
 						<div class="row">
@@ -611,7 +611,8 @@
 														if(confirm(msg))
 														{
 															var changeRequestNo = $('#headerchangeRequestNo').val();
-															var url = baseUrl + "index.php/Rollback/delete_detail/"+changeRequestNo;
+															var projectId = $('#projectId').val();
+															var url = baseUrl + "index.php/Rollback/delete_detail/"+changeRequestNo+"/"+projectId;
 															$.ajax({url: url, 
 															success: function(result){
 																debugger

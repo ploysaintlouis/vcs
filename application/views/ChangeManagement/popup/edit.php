@@ -204,7 +204,7 @@
 							}else{
 								//alert(result[1]);
 								//debugger
-								alert(data);
+								//alert(data);
 								$('#changeInput_form')[0].reset();  
      							$('#edit_input_modal').modal('hide');
 								 location.reload();

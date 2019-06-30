@@ -87,6 +87,8 @@
 			            <li id="dhbs001"><a href="<?php echo base_url();?>index.php/Dashboard/"><i class="fa fa-circle-o"></i> Dashboard</a></li>
 		          	</ul>
 		        </li>
+				<?php if ( 3 != $_SESSION['staffflag'] ){ ?>
+
 		        <li class="treeview">
 		        	<a href="#">
 		        		<i class="fa fa-pencil-square-o"></i>
@@ -124,6 +126,7 @@
 		        		</li>
 		        	</ul>
 		        </li>
+						<?php } ?>
 		        <li class="treeview">
 		        	<a href="#">
 		        		<i class="fa fa-code-fork"></i>
@@ -155,6 +158,7 @@
 		        		</li>
 		        	</ul>
 		        </li>
+			
 						<?php if ( 3 == $_SESSION['staffflag'] ){ ?>
 
 						<li class="treeview">

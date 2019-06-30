@@ -10,6 +10,8 @@ class Dashboard extends CI_Controller {
 		$this->load->model('FunctionalRequirement_model', 'mFR');
 		$this->load->model('TestCase_model', 'mTestCase');
 		$this->load->model('DatabaseSchema_model', 'mDB');
+		$this->load->model('Rollback_model', 'mRollback');
+
 	}
 
 	/**
@@ -48,6 +50,9 @@ class Dashboard extends CI_Controller {
 
 		//2. Get Latest Change Information
 		$data['changeList'] = $this->mChange->searchChangeRequestList();
+
+		//2. Get Latest Change Information
+		$data['RollbackList'] = $this->mRollback->searchRollbackList();
 
 		$this->load->view('template/header');
 		$this->load->view('template/body',$data);

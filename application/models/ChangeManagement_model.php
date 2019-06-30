@@ -1062,7 +1062,18 @@ class ChangeManagement_model extends CI_Model{
 */
 
 	}	
-	
+
+	function getFunctionNo($param){
+
+		$sqlStr = "SELECT functionNo
+		FROM M_FN_REQ_HEADER
+		WHERE functionId = '$param->functionId'
+		AND functionversion = '$param->functionVersion'
+		AND projectId = '$param->projectId' ";
+//echo $sqlStr;
+		$result = $this->db->query($sqlStr);
+		return $result->result_array();
+	}	
 
 }
 ?>

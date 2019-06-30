@@ -1,5 +1,5 @@
 functionalRequirementId,functionalRequirementDescription,typeData,dataName,dataType,dataLength,decimalPoint,referTableName,referColumnName
 ST_FR_02,View Customer Information,input,ACCOUNT,,,,CUSTOMER,ACCOUNT
-ST_FR_02,View Customer Information,input,CUSTOMER_NAME,,,,CUSTOMER,CUSTOMER_NAME
-ST_FR_02,View Customer Information,input,BIRTHDATE,,,,CUSTOMER,BIRTHDATE
+ST_FR_02,View Customer Information,output,CUSTOMER_NAME,,,,CUSTOMER,CUSTOMER_NAME
+ST_FR_02,View Customer Information,output,BIRTHDATE,,,,CUSTOMER,BIRTHDATE
 ST_FR_02,View Customer Information,output,AGE,INT,3,,,

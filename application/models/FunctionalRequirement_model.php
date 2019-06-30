@@ -384,7 +384,7 @@ VALUES ('$New_functionId','{$param->functionNo}', '{$param->functionDescription}
 		 '{$param->referColumnName}', '$currentDateTime', '{$param->user}', '$currentDateTime', 
 		 '{$param->user}','$functionId','$param->functionNo','$param->schemaVersionId','$param->dataType',
 		 '$currentDateTime',NULL,'1','1',
-		 {$param->dataLength},{$param->decimalPoint},'{$param->constraintPrimaryKey}','{$param->constraintUnique}','{$param->constraintDefault}','{$param->constraintNull}',{$param->constraintMinValue},{$param->constraintMaxValue})";
+		 {$param->dataLength},{$param->decimalPoint},'{$param->constraintPrimaryKey}','{$param->constraintUnique}',{$param->constraintDefault},'{$param->constraintNull}',{$param->constraintMinValue},{$param->constraintMaxValue})";
 		//var_dump($sqlStr);
 		}else{
 			$sqlStr = " INSERT INTO M_FN_REQ_DETAIL (projectId,typeData,dataName,refTableName,refColumnName,

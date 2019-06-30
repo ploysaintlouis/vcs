@@ -313,9 +313,9 @@ class Rollback extends CI_Controller{
 	}
 	
 	
-	function delete_detail($changeRequestNo){
+	function delete_detail($changeRequestNo,$projectId){
 		$output = null;
-		$saveResult = $this->mRollback->deleteTempRollbackList($changeRequestNo);
+		$saveResult = $this->mRollback->deleteTempRollbackList($changeRequestNo,$projectId);
 		if(0 < count($saveResult)){
 				//	refresh Change List
 				$output = '';

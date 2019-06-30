@@ -85,7 +85,7 @@
 									<td><?php echo $value['changeUser']; ?></td>
 									<td>
 									<?php
-										if("CCL" == $value['changeStatus']){
+										if("0" == $value['changeStatus']){
 											echo "<span class='label label-danger'>Cancelled
 												 </span>";
 										}else{
@@ -108,6 +108,66 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="row">
+		<div class="col-md-12">
+			<div class="box box-info">
+				<div class="box-header with-border">
+					<h3 class="box-title">
+						Latest Rollback
+					</h3>
+				</div>
+				<div class="box-body">
+					<div class="table-responsive">
+						<table class="table table-striped">
+							<tbody>
+								<tr>
+									<th>#</th>
+									<th>Project</th>
+									<th>Change Request No.</th>
+									<th>Functional Requirement No.</th>
+									<th>Functional Requirement Version</th>
+									<th>Rollback Date</th>
+									<th>Rollback User</th>
+									<th>Status</th>
+								</tr>
+							<?php if(isset($RollbackList) && 0 < count($RollbackList)){ 
+								$define = 1;
+								foreach($RollbackList as $value): ?>
+								<tr>
+									<td><?php echo $define++; ?></td>
+									<td><?php echo $value['projectNameAlias']." : ".$value['projectName'] ?></td>
+									<td><?php echo $value['ChangeRequestNo']; ?></td>
+									<td><?php echo $value['changeFunctionNo']; ?></td>
+									<td><?php echo $value['changeFunctionVersion']; ?></td>
+									<td><?php echo $value['requestDate']; ?></td>
+									<td><?php echo $value['reason']; ?></td>
+									<td>
+									<?php
+										if("0" == $value['status']){
+											echo "<span class='label label-danger'>Cancelled
+												 </span>";
+										}else{
+											echo "<span class='label label-success'>Closed
+												 </span>";
+										}
+									 ?>
+									 </td>
+								</tr>
+							<?php endforeach; } ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- <div class="box-footer clearfix">
+					<ul class="pagination pagination-sm no-margin pull-right">
+						
+					</ul>
+				</div> -->
+			</div>
+		</div>
+	</div>
+
 	<!-- <div class="row">
 		<div class="col-md-12">
 			<div class="box box-danger">

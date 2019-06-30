@@ -17,14 +17,22 @@ class Running_model extends CI_Model{
 		$this->load->model('Common_model', 'mCommon');
 	}
 
-    function running_ch($param){
+    function running_ch_change($param){
 
 		$sqlStr = "select max(changeRequestId) AS changeRequestId from M_RUNNING_CH where projectId = '$param->projectId' ";
 		$result = $this->db->query($sqlStr);
 		//echo $sqlStr ;
-		return $result->row();
+		return $result->result_array();
     }	
-    
+		
+		function running_ch($param){
+
+			$sqlStr = "select max(changeRequestId) AS changeRequestId from M_RUNNING_CH where projectId = '$param->projectId' ";
+			$result = $this->db->query($sqlStr);
+			//echo $sqlStr ;
+			return $result->row();
+			}	
+
     function Update_Running_ch($prjId){
 		$this->db->trans_start(); //Starting Transaction
         $this->db->trans_strict(FALSE);

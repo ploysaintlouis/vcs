@@ -1,15 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.8.3
--- https://www.phpmyadmin.net/
+-- version 4.5.1
+-- http://www.phpmyadmin.net
 --
 -- Host: 127.0.0.1
--- Generation Time: Jun 28, 2019 at 09:38 AM
--- Server version: 10.1.36-MariaDB
--- PHP Version: 5.6.38
+-- Generation Time: Jun 30, 2019 at 09:12 AM
+-- Server version: 10.1.16-MariaDB
+-- PHP Version: 5.6.24
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
 SET time_zone = "+00:00";
 
 
@@ -290,13 +288,13 @@ CREATE TABLE `m_miscellaneous` (
 --
 
 INSERT INTO `m_miscellaneous` (`miscData`, `miscValue1`, `miscValue2`, `miscDescription`, `activeFlag`) VALUES
-('inputDataType', 'CHAR', 'char', '', 1),
-('inputDatatype', 'VARCHAR', 'varchar', '', 1),
-('inputDatatype', 'DATE', 'date', '', 1),
-('inputDatatype', 'INT', 'int', '', 1),
-('inputDatatype', 'FLOAT', 'float', '', 1),
-('inputDatatype', 'DOUBLE', 'double', '', 1),
-('inputDatatype', 'DECIMAL', 'decimal', '', 1);
+('inputDataType', 'CHAR', 'Strings', '', 1),
+('inputDatatype', 'VARCHAR', 'Strings', '', 1),
+('inputDatatype', 'DATE', 'Date', '', 1),
+('inputDatatype', 'INT', 'Numerics', '', 1),
+('inputDatatype', 'FLOAT', 'Numerics', '', 1),
+('inputDatatype', 'DOUBLE', 'Numerics', '', 1),
+('inputDatatype', 'DECIMAL', 'Numerics', '', 1);
 
 -- --------------------------------------------------------
 
@@ -559,13 +557,6 @@ CREATE TABLE `t_temp_change_list` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `t_temp_change_list`
---
-
-INSERT INTO `t_temp_change_list` (`lineNumber`, `userId`, `functionId`, `functionVersion`, `typeData`, `dataName`, `schemaId`, `schemaVersionId`, `newDataType`, `newDataLength`, `newScaleLength`, `newUnique`, `newNotNull`, `newDefaultValue`, `newMinValue`, `newMaxValue`, `tableName`, `columnName`, `changeType`, `createUser`, `createDate`, `dataId`, `confirmflag`, `approveflag`) VALUES
-(4, '1', 10, '1 ', 2, 'AGE', 0, 0, 'DECIMAL ', '3', '2', 'N', 'N', NULL, NULL, NULL, NULL, NULL, 'edit', 'ploy', '2019-06-24', 46, 1, NULL);
-
---
 -- Indexes for dumped tables
 --
 
@@ -698,116 +689,96 @@ ALTER TABLE `t_temp_change_list`
 --
 ALTER TABLE `aff_fr`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `aff_rtm`
 --
 ALTER TABLE `aff_rtm`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `aff_schema`
 --
 ALTER TABLE `aff_schema`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `aff_testcase`
 --
 ALTER TABLE `aff_testcase`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `map_fr_version`
 --
 ALTER TABLE `map_fr_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `map_rtm`
 --
 ALTER TABLE `map_rtm`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `map_schema`
 --
 ALTER TABLE `map_schema`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `map_schema_version`
 --
 ALTER TABLE `map_schema_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `map_tc_version`
 --
 ALTER TABLE `map_tc_version`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_database_schema_info`
 --
 ALTER TABLE `m_database_schema_info`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_database_schema_version`
 --
 ALTER TABLE `m_database_schema_version`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_fn_req_detail`
 --
 ALTER TABLE `m_fn_req_detail`
   MODIFY `dataId` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_fn_req_header`
 --
 ALTER TABLE `m_fn_req_header`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_project`
 --
 ALTER TABLE `m_project`
   MODIFY `projectId` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
 --
 -- AUTO_INCREMENT for table `m_rtm_version`
 --
 ALTER TABLE `m_rtm_version`
   MODIFY `Id` int(10) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_testcase_detail`
 --
 ALTER TABLE `m_testcase_detail`
   MODIFY `sequenceNo` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `m_testcase_header`
 --
 ALTER TABLE `m_testcase_header`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `temp_rollback`
 --
 ALTER TABLE `temp_rollback`
   MODIFY `id` int(10) NOT NULL AUTO_INCREMENT;
-
 --
 -- AUTO_INCREMENT for table `t_temp_change_list`
 --
 ALTER TABLE `t_temp_change_list`
-  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-COMMIT;
-
+  MODIFY `lineNumber` int(11) NOT NULL AUTO_INCREMENT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
